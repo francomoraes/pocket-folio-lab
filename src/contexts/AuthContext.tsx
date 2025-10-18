@@ -7,6 +7,7 @@ import {
 } from "@/types/auth";
 import { createContext, useEffect, useState } from "react";
 import { authService } from "@/services/authService";
+import { toast } from "sonner";
 
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined,
@@ -69,6 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setToken(null);
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
+    toast.success("Logout successful");
   };
 
   const value: AuthContextType = {

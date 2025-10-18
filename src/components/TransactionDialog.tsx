@@ -1,19 +1,38 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Plus } from "lucide-react";
-import { Transaction, OperationType, AssetClass, AssetType } from "@/types/investment";
+import {
+  Transaction,
+  OperationType,
+  AssetClass,
+  AssetType,
+} from "@/types/investment";
 import { toast } from "sonner";
 
 interface TransactionDialogProps {
-  onAddTransaction: (transaction: Omit<Transaction, "id" | "createdAt">) => void;
+  onAddTransaction: (
+    transaction: Omit<Transaction, "id" | "createdAt">,
+  ) => void;
 }
 
-export const TransactionDialog = ({ onAddTransaction }: TransactionDialogProps) => {
+export const TransactionDialog = () => {
   const [open, setOpen] = useState(false);
   const [operation, setOperation] = useState<OperationType>("buy");
   const [ticker, setTicker] = useState("");
@@ -35,21 +54,11 @@ export const TransactionDialog = ({ onAddTransaction }: TransactionDialogProps) 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!ticker || !quantity || !price) {
       toast.error("Preencha todos os campos obrigatórios");
       return;
     }
-
-    onAddTransaction({
-      ticker: ticker.toUpperCase(),
-      operation,
-      assetClass,
-      assetType,
-      quantity: parseFloat(quantity),
-      price: parseFloat(price),
-      date,
-    });
 
     toast.success("Transação adicionada com sucesso");
     resetForm();
@@ -81,15 +90,22 @@ export const TransactionDialog = ({ onAddTransaction }: TransactionDialogProps) 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label>Operação</Label>
-            <RadioGroup value={operation} onValueChange={(v) => setOperation(v as OperationType)}>
+            <RadioGroup
+              value={operation}
+              onValueChange={(v) => setOperation(v as OperationType)}
+            >
               <div className="flex gap-4">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="buy" id="buy" />
-                  <Label htmlFor="buy" className="cursor-pointer font-normal">Compra</Label>
+                  <Label htmlFor="buy" className="cursor-pointer font-normal">
+                    Compra
+                  </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="sell" id="sell" />
-                  <Label htmlFor="sell" className="cursor-pointer font-normal">Venda</Label>
+                  <Label htmlFor="sell" className="cursor-pointer font-normal">
+                    Venda
+                  </Label>
                 </div>
               </div>
             </RadioGroup>
@@ -108,12 +124,15 @@ export const TransactionDialog = ({ onAddTransaction }: TransactionDialogProps) 
 
           <div className="space-y-2">
             <Label htmlFor="assetClass">Classe</Label>
-            <Select value={assetClass} onValueChange={(v) => {
-              setAssetClass(v as AssetClass);
-              if (v === "stocks") setAssetType("stock");
-              else if (v === "fiis") setAssetType("fii");
-              else setAssetType("post_fixed");
-            }}>
+            <Select
+              value={assetClass}
+              onValueChange={(v) => {
+                setAssetClass(v as AssetClass);
+                if (v === "stocks") setAssetType("stock");
+                else if (v === "fiis") setAssetType("fii");
+                else setAssetType("post_fixed");
+              }}
+            >
               <SelectTrigger id="assetClass">
                 <SelectValue />
               </SelectTrigger>
@@ -127,7 +146,10 @@ export const TransactionDialog = ({ onAddTransaction }: TransactionDialogProps) 
 
           <div className="space-y-2">
             <Label htmlFor="assetType">Tipo</Label>
-            <Select value={assetType} onValueChange={(v) => setAssetType(v as AssetType)}>
+            <Select
+              value={assetType}
+              onValueChange={(v) => setAssetType(v as AssetType)}
+            >
               <SelectTrigger id="assetType">
                 <SelectValue />
               </SelectTrigger>
@@ -176,7 +198,11 @@ export const TransactionDialog = ({ onAddTransaction }: TransactionDialogProps) 
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setOpen(false)}
+            >
               Cancelar
             </Button>
             <Button type="submit">Salvar</Button>

@@ -1,12 +1,21 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TransactionDialog } from "@/components/TransactionDialog";
 import { Positions } from "@/pages/Positions";
 import { Dashboard } from "@/pages/Dashboard";
-import { Transaction, Position, AllocationByClass, AllocationByTicker, PatrimonyEvolution } from "@/types/investment";
-import { saveTransactions, loadTransactions, calculatePositions } from "@/lib/investmentStorage";
+import {
+  Transaction,
+  Position,
+  AllocationByClass,
+  AllocationByTicker,
+  PatrimonyEvolution,
+} from "@/types/investment";
+import {
+  saveTransactions,
+  loadTransactions,
+  calculatePositions,
+} from "@/lib/investmentStorage";
 import { TrendingUp } from "lucide-react";
+import { Navbar } from "@/components/Layout";
 
 const Index = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -19,7 +28,9 @@ const Index = () => {
     setPositions(calculatePositions(loaded));
   }, []);
 
-  const handleAddTransaction = (transaction: Omit<Transaction, "id" | "createdAt">) => {
+  const handleAddTransaction = (
+    transaction: Omit<Transaction, "id" | "createdAt">,
+  ) => {
     const newTransaction: Transaction = {
       ...transaction,
       id: crypto.randomUUID(),
@@ -37,8 +48,9 @@ const Index = () => {
       const randomVariation = (Math.random() - 0.5) * 0.1;
       const newPrice = pos.currentPrice * (1 + randomVariation);
       const newTotalValue = newPrice * pos.quantity;
-      const profitLoss = newTotalValue - (pos.averagePrice * pos.quantity);
-      const profitLossPercentage = ((newPrice - pos.averagePrice) / pos.averagePrice) * 100;
+      const profitLoss = newTotalValue - pos.averagePrice * pos.quantity;
+      const profitLossPercentage =
+        ((newPrice - pos.averagePrice) / pos.averagePrice) * 100;
 
       return {
         ...pos,
@@ -52,41 +64,50 @@ const Index = () => {
     setPositions(updatedPositions);
   };
 
-  const totalPatrimony = positions.reduce((sum, pos) => sum + pos.totalValue, 0);
+  const totalPatrimony = positions.reduce(
+    (sum, pos) => sum + pos.totalValue,
+    0,
+  );
 
-  const allocationByClass: AllocationByClass[] = positions.reduce((acc, pos) => {
-    const existing = acc.find((item) => item.class === pos.assetClass);
-    if (existing) {
-      existing.value += pos.totalValue;
-    } else {
-      acc.push({
-        class: pos.assetClass,
-        value: pos.totalValue,
-        percentage: 0,
-      });
-    }
-    return acc;
-  }, [] as AllocationByClass[]);
+  const allocationByClass: AllocationByClass[] = positions.reduce(
+    (acc, pos) => {
+      const existing = acc.find((item) => item.class === pos.assetClass);
+      if (existing) {
+        existing.value += pos.totalValue;
+      } else {
+        acc.push({
+          class: pos.assetClass,
+          value: pos.totalValue,
+          percentage: 0,
+        });
+      }
+      return acc;
+    },
+    [] as AllocationByClass[],
+  );
 
   allocationByClass.forEach((item) => {
-    item.percentage = totalPatrimony > 0 ? (item.value / totalPatrimony) * 100 : 0;
+    item.percentage =
+      totalPatrimony > 0 ? (item.value / totalPatrimony) * 100 : 0;
   });
 
   const allocationByTicker: AllocationByTicker[] = positions.map((pos) => ({
     ticker: pos.ticker,
     value: pos.totalValue,
-    percentage: totalPatrimony > 0 ? (pos.totalValue / totalPatrimony) * 100 : 0,
+    percentage:
+      totalPatrimony > 0 ? (pos.totalValue / totalPatrimony) * 100 : 0,
   }));
 
   const patrimonyEvolution: PatrimonyEvolution[] = transactions
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     .reduce((acc, transaction, index) => {
       const previousValue = acc.length > 0 ? acc[acc.length - 1].value : 0;
-      const change = transaction.operation === "buy" 
-        ? transaction.quantity * transaction.price 
-        : -(transaction.quantity * transaction.price);
-      
-      const existingDate = acc.find(item => item.date === transaction.date);
+      const change =
+        transaction.operation === "buy"
+          ? transaction.quantity * transaction.price
+          : -(transaction.quantity * transaction.price);
+
+      const existingDate = acc.find((item) => item.date === transaction.date);
       if (existingDate) {
         existingDate.value += change;
       } else {
@@ -95,23 +116,13 @@ const Index = () => {
           value: previousValue + change,
         });
       }
-      
+
       return acc;
     }, [] as PatrimonyEvolution[]);
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-6 w-6 text-accent" />
-              <h1 className="text-2xl font-semibold">InvestTracker</h1>
-            </div>
-            <TransactionDialog onAddTransaction={handleAddTransaction} />
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
