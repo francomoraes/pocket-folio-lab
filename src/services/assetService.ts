@@ -21,7 +21,7 @@ class AssetService {
 
   async sellAsset(ticker: string, data: SellAssetRequest): Promise<void> {
     const url = API_ENDPOINTS.assets.sell.replace(":ticker", ticker);
-    const response = await api.post<void>(url, data);
+    const response = await api.put<void>(url, data);
     return response.data;
   }
 
