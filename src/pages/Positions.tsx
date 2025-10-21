@@ -1,52 +1,60 @@
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Position } from "@/types/investment";
-import { toast } from "sonner";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { TransactionDialog } from "@/components/TransactionDialog";
+import { usePositions } from "@/hooks/usePositions";
+import CircularProgress from "@/components/ui/circular-progress";
+import { formatCentsToCurrency, formatPercentage } from "@/utils/formatters";
 
-interface PositionsProps {
-  positions: Position[];
-  totalPatrimony: number;
-  onUpdatePrices: () => void;
-}
+export const Positions = () => {
+  const { assets, isLoading } = usePositions();
 
-const getAssetClassLabel = (assetClass: string) => {
-  const labels: Record<string, string> = {
-    stocks: "Ação",
-    fiis: "FII",
-    fixed_income: "Renda Fixa",
-  };
-  return labels[assetClass] || assetClass;
-};
+  const totalPatrimonyCents = assets?.reduce((sum, asset) => {
+    sum[asset.currency] = (sum[asset.currency] ?? 0) + asset.currentValueCents;
+    return sum;
+  }, {} as Record<string, number>);
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: 2,
-  }).format(value);
-};
+  console.log({ assets, totalPatrimonyCents });
 
-const formatPercentage = (value: number) => {
-  return `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
-};
-
-export const Positions = ({ positions, totalPatrimony, onUpdatePrices }: PositionsProps) => {
-  const handleUpdatePrices = () => {
-    onUpdatePrices();
-    toast.success("Cotações atualizadas!");
-  };
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <CircularProgress size="xl" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
+      <TransactionDialog />
+
       <Card className="p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-muted-foreground">Patrimônio Total</p>
-            <p className="text-3xl font-semibold">{formatCurrency(totalPatrimony)}</p>
+            <p className="text-sm text-muted-foreground">
+              Patromônio (parte em dólares)
+            </p>
+            <p className="text-3xl font-semibold">
+              {formatCentsToCurrency(totalPatrimonyCents?.USD || 0, "USD")}
+            </p>
           </div>
-          <Button onClick={handleUpdatePrices} variant="secondary" className="gap-2">
+          <div>
+            <p className="text-sm text-muted-foreground">
+              Patromônio (parte em reais)
+            </p>
+            <p className="text-3xl font-semibold">
+              {formatCentsToCurrency(totalPatrimonyCents?.BRL || 0, "BRL")}
+            </p>
+          </div>
+          <Button onClick={() => {}} variant="secondary" className="gap-2">
             <RefreshCw className="h-4 w-4" />
             Atualizar Cotações
           </Button>
@@ -67,24 +75,49 @@ export const Positions = ({ positions, totalPatrimony, onUpdatePrices }: Positio
             </TableRow>
           </TableHeader>
           <TableBody>
-            {positions.length === 0 ? (
+            {!assets || assets?.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                  Nenhuma posição encontrada. Adicione uma transação para começar.
+                <TableCell
+                  colSpan={7}
+                  className="text-center text-muted-foreground py-8"
+                >
+                  Nenhuma posição encontrada. Adicione uma transação para
+                  começar.
                 </TableCell>
               </TableRow>
             ) : (
-              positions.map((position) => (
-                <TableRow key={position.ticker}>
-                  <TableCell className="font-medium">{position.ticker}</TableCell>
-                  <TableCell>{getAssetClassLabel(position.assetClass)}</TableCell>
-                  <TableCell className="text-right">{position.quantity.toFixed(2)}</TableCell>
-                  <TableCell className="text-right">{formatCurrency(position.averagePrice)}</TableCell>
-                  <TableCell className="text-right">{formatCurrency(position.currentPrice)}</TableCell>
-                  <TableCell className="text-right font-medium">{formatCurrency(position.totalValue)}</TableCell>
+              assets?.map((asset) => (
+                <TableRow key={asset.ticker}>
+                  <TableCell className="font-medium">{asset.ticker}</TableCell>
+                  <TableCell>{asset.type.assetClass.name}</TableCell>
+                  <TableCell className="text-right">{asset.quantity}</TableCell>
                   <TableCell className="text-right">
-                    <span className={position.profitLossPercentage >= 0 ? "text-success" : "text-destructive"}>
-                      {formatPercentage(position.profitLossPercentage)}
+                    {formatCentsToCurrency(
+                      asset.averagePriceCents,
+                      asset.currency,
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {formatCentsToCurrency(
+                      asset.currentPriceCents,
+                      asset.currency,
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right font-medium">
+                    {formatCentsToCurrency(
+                      asset.currentValueCents,
+                      asset.currency,
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <span
+                      className={
+                        +asset.returnPercentage >= 0
+                          ? "text-success"
+                          : "text-destructive"
+                      }
+                    >
+                      {formatPercentage(+asset.returnPercentage)}
                     </span>
                   </TableCell>
                 </TableRow>
