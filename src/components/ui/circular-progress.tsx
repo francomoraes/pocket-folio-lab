@@ -1,116 +1,105 @@
 import React from "react";
 
-interface CircularProgressProps {
-  value?: number; // 0 - 100, if omitted (or null/undefined) the component becomes indeterminate (infinite)
-  size?: "sm" | "md" | "lg";
-  strokeWidth?: number;
-  colorClass?: string; // Tailwind text color class for the progress (ex: "text-sky-500")
-  trackClass?: string; // Tailwind text color class for the track (ex: "text-gray-200")
-  showLabel?: boolean;
-  className?: string;
-  /**
-   * Optional explicit flag to force indeterminate mode.
-   * If true -> indeterminate regardless of `value`.
-   * If false (default) -> indeterminate only when `value` is null/undefined.
-   */
-  indeterminate?: boolean;
-}
-
 /**
- * CircularProgress agora suporta modo indeterminado (infinito) quando `value` é omitido
- * ou quando `indeterminate` é true. Reaproveita o SVG; usa `animate-spin` do Tailwind para
- * o efeito infinito e um stroke com gap para parecer um spinner.
+ * CircularProgress
+ *
+ * - Pure React component styled only with Tailwind classes.
+ * - Uses an SVG arc + Tailwind's `animate-spin` for an infinite indeterminate loader.
+ * - Stroke color is controlled via Tailwind text color classes (uses `currentColor`).
+ *
+ * Props:
+ * - size: 'sm' | 'md' | 'lg' | 'xl'  (maps to Tailwind w/h)
+ * - thickness: number (strokeWidth on SVG circle)
+ * - className: string (extra wrapper classes)
+ * - colorClass: string (Tailwind text color class, e.g. 'text-sky-500')
+ * - ariaLabel: string (accessibility label)
  */
-export default function CircularProgress({
-  value,
-  size = "md",
-  strokeWidth = 3,
-  colorClass = "text-sky-500",
-  trackClass = "text-gray-200",
-  showLabel = true,
-  className = "",
-  indeterminate = false,
-}: CircularProgressProps) {
-  const isIndeterminate = indeterminate || value == null;
-  const clamped = isIndeterminate
-    ? 0
-    : Math.max(0, Math.min(100, value as number));
 
-  const radius = 16; // circle radius in viewBox coords
+const SIZE_MAP = {
+  sm: "w-6 h-6",
+  md: "w-8 h-8",
+  lg: "w-12 h-12",
+  xl: "w-16 h-16",
+};
+
+export default function CircularProgress({
+  size = "md",
+  thickness = 3,
+  className = "",
+  colorClass = "text-sky-500",
+  ariaLabel = "Loading",
+}) {
+  const sizeClass = SIZE_MAP[size] || SIZE_MAP.md;
+
+  // SVG geometry: viewBox 0 0 44 44 => radius ~ 18 (center 22)
+  // We draw a full circle as track (faint) and an arc for the moving indicator.
+  const strokeWidth = thickness;
+  const radius = 18; // matches viewBox
   const circumference = 2 * Math.PI * radius;
 
-  // Determinate values
-  const dashOffset = circumference - (clamped / 100) * circumference;
-
-  // Indeterminate appearance: use a partial dash and rotate the whole SVG
-  const indeterminateDashArray = circumference * 0.75;
-  const indeterminateDashOffset = circumference * 0.25;
-
-  const sizeMap: Record<
-    NonNullable<CircularProgressProps["size"]>,
-    { container: string; text: string; viewBox: number }
-  > = {
-    sm: { container: "w-8 h-8 text-xs", text: "text-xs", viewBox: 36 },
-    md: { container: "w-12 h-12 text-sm", text: "text-sm", viewBox: 36 },
-    lg: { container: "w-20 h-20 text-base", text: "text-base", viewBox: 36 },
-  };
-
-  const sizes = sizeMap[size];
+  // arc length: we keep a visible arc using stroke-dasharray
+  // first value = arc length, second = remaining circumference
+  // choose about 25% arc by default
+  const arcLength = Math.round(circumference * 0.25);
+  const dashArray = `${arcLength} ${Math.round(circumference - arcLength)}`;
 
   return (
-    <div
-      role="progressbar"
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={isIndeterminate ? undefined : Math.round(clamped)}
-      aria-busy={isIndeterminate ? true : undefined}
-      className={`inline-flex relative items-center justify-center ${sizes.container} ${className}`}
+    <span
+      role="img"
+      aria-label={ariaLabel}
+      className={`${sizeClass} inline-block ${colorClass} ${className}`.trim()}
     >
       <svg
-        viewBox="0 0 36 36"
-        // Keep the -90deg rotation so 0% starts at top; animate-spin will spin from that base.
-        className={`transform -rotate-90 w-full h-full ${
-          isIndeterminate ? "animate-spin" : ""
-        }`}
+        viewBox="0 0 44 44"
+        className="w-full h-full block animate-spin"
         xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
       >
-        {/* Track */}
+        {/* subtle track */}
         <circle
-          cx="18"
-          cy="18"
+          cx="22"
+          cy="22"
           r={radius}
           fill="none"
           stroke="currentColor"
+          strokeOpacity="0.12"
           strokeWidth={strokeWidth}
-          className={`${trackClass} opacity-70`}
         />
 
-        {/* Progress (determinate) or spinner (indeterminate) */}
+        {/* moving arc */}
         <circle
-          cx="18"
-          cy="18"
+          cx="22"
+          cy="22"
           r={radius}
           fill="none"
           stroke="currentColor"
           strokeWidth={strokeWidth}
           strokeLinecap="round"
-          strokeDasharray={
-            isIndeterminate ? indeterminateDashArray : circumference
-          }
-          strokeDashoffset={
-            isIndeterminate ? indeterminateDashOffset : dashOffset
-          }
-          className={`${colorClass} ${isIndeterminate ? "" : "transition-all"}`}
+          strokeDasharray={dashArray}
+          strokeDashoffset="0"
+          transform="rotate(-90 22 22)"
         />
       </svg>
-
-      {showLabel && !isIndeterminate && (
-        <span
-          className={`absolute inset-0 flex items-center justify-center font-medium ${sizes.text}`}
-        >
-          {Math.round(clamped)}%
-        </span>
-      )}
-    </div>
+    </span>
   );
 }
+
+/*
+Example usage:
+
+import CircularProgress from './CircularProgress'
+
+// small
+<CircularProgress size="sm" colorClass="text-rose-500" />
+
+// medium with thicker stroke
+<CircularProgress size="md" thickness={4} colorClass="text-sky-600" />
+
+// large
+<CircularProgress size="lg" />
+
+Notes:
+- The component uses only Tailwind utility classes for layout/colour/animation.
+- The arc is created with SVG stroke-dasharray and the whole SVG is rotated with Tailwind's `animate-spin` for an infinite looping effect.
+- If you want the spinner to rotate slower/faster, wrap the SVG with a utility like `animate-spin` (default) and customize in your Tailwind config (or replace with an inline style animation if you must).
+*/

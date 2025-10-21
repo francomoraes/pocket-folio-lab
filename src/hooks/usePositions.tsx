@@ -7,7 +7,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-const ASSET_QUERY_KEY = ["assets"];
+const ASSETS_QUERY_KEY = ["assets"];
 
 export const usePositions = () => {
   const queryClient = useQueryClient();
@@ -18,7 +18,7 @@ export const usePositions = () => {
     error,
     refetch,
   } = useQuery({
-    queryKey: ASSET_QUERY_KEY,
+    queryKey: ASSETS_QUERY_KEY,
     queryFn: () => assetService.getAssets(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
@@ -35,7 +35,7 @@ export const usePositions = () => {
       return assetService.buyAsset(ticker, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ASSET_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ASSETS_QUERY_KEY });
       toast.success("Ativo comprado com sucesso!");
     },
     onError: (error: Error) => {
@@ -54,7 +54,7 @@ export const usePositions = () => {
       return assetService.sellAsset(ticker, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ASSET_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ASSETS_QUERY_KEY });
       toast.success("Ativo vendido com sucesso!");
     },
     onError: (error: Error) => {
@@ -67,7 +67,7 @@ export const usePositions = () => {
       return assetService.updateAsset(id, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ASSET_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ASSETS_QUERY_KEY });
       toast.success("Ativo atualizado com sucesso!");
     },
     onError: (error: Error) => {
@@ -80,7 +80,7 @@ export const usePositions = () => {
       return assetService.deleteAsset(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ASSET_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ASSETS_QUERY_KEY });
       toast.success("Ativo excluído com sucesso!");
     },
     onError: (error: Error) => {
@@ -93,10 +93,10 @@ export const usePositions = () => {
     isLoading,
     error,
 
-    buyAsset: buyAssetMutation.mutate,
-    sellAsset: sellAssetMutation.mutate,
-    updateAsset: updateAssetMutation.mutate,
-    deleteAsset: deleteAssetMutation.mutate,
+    buyAsset: buyAssetMutation.mutateAsync,
+    sellAsset: sellAssetMutation.mutateAsync,
+    updateAsset: updateAssetMutation.mutateAsync,
+    deleteAsset: deleteAssetMutation.mutateAsync,
 
     isBuying: buyAssetMutation.isPending,
     isSelling: sellAssetMutation.isPending,

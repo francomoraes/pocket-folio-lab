@@ -29,7 +29,6 @@ export interface AssetType {
 }
 
 export interface BuyAssetRequest {
-  ticker: string;
   quantity: number;
   priceCents: number;
   type?: string;
@@ -38,7 +37,6 @@ export interface BuyAssetRequest {
 }
 
 export interface SellAssetRequest {
-  ticker: string;
   quantity: number;
   priceCents: number;
 }

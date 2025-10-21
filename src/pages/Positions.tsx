@@ -9,62 +9,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Position } from "@/types/investment";
-import { toast } from "sonner";
 import { TransactionDialog } from "@/components/TransactionDialog";
 import { usePositions } from "@/hooks/usePositions";
 import CircularProgress from "@/components/ui/circular-progress";
-
-interface PositionsProps {
-  positions: Position[];
-  totalPatrimony: number;
-  onUpdatePrices: () => void;
-}
-
-const getAssetClassLabel = (assetClass: string) => {
-  const labels: Record<string, string> = {
-    stocks: "Ação",
-    fiis: "FII",
-    fixed_income: "Renda Fixa",
-  };
-  return labels[assetClass] || assetClass;
-};
-
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: 2,
-  }).format(value);
-};
-
-const formatPercentage = (value: number) => {
-  return `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
-};
+import { formatCentsToCurrency, formatPercentage } from "@/utils/formatters";
 
 export const Positions = () => {
-  const {
-    assets: positions,
-    isLoading,
-    buyAsset,
-    deleteAsset,
-    isBuying,
-  } = usePositions();
+  const { assets, isLoading } = usePositions();
+
+  const totalPatrimonyCents = assets?.reduce((sum, asset) => {
+    sum[asset.currency] = (sum[asset.currency] ?? 0) + asset.currentValueCents;
+    return sum;
+  }, {} as Record<string, number>);
+
+  console.log({ assets, totalPatrimonyCents });
 
   if (isLoading) {
-    return <CircularProgress indeterminate />;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <CircularProgress size="xl" />
+      </div>
+    );
   }
-
-  const handleBuy = ({ ticker, quantity, priceCents }) => {
-    buyAsset({
-      ticker,
-      data: {
-        ticker,
-        quantity,
-        priceCents,
-      },
-    });
-  };
 
   return (
     <div className="space-y-6">
@@ -73,9 +39,19 @@ export const Positions = () => {
       <Card className="p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-muted-foreground">Patrimônio Total</p>
+            <p className="text-sm text-muted-foreground">
+              Patromônio (parte em dólares)
+            </p>
             <p className="text-3xl font-semibold">
-              {/* {formatCurrency(totalPatrimony)} */}
+              {formatCentsToCurrency(totalPatrimonyCents?.USD || 0, "USD")}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">
+              Patromônio (parte em reais)
+            </p>
+            <p className="text-3xl font-semibold">
+              {formatCentsToCurrency(totalPatrimonyCents?.BRL || 0, "BRL")}
             </p>
           </div>
           <Button onClick={() => {}} variant="secondary" className="gap-2">
@@ -99,7 +75,7 @@ export const Positions = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {positions.length === 0 ? (
+            {!assets || assets?.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={7}
@@ -110,35 +86,38 @@ export const Positions = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              positions.map((position) => (
-                <TableRow key={position.ticker}>
-                  <TableCell className="font-medium">
-                    {position.ticker}
-                  </TableCell>
-                  <TableCell>
-                    {getAssetClassLabel(position.assetClass)}
+              assets?.map((asset) => (
+                <TableRow key={asset.ticker}>
+                  <TableCell className="font-medium">{asset.ticker}</TableCell>
+                  <TableCell>{asset.type.assetClass.name}</TableCell>
+                  <TableCell className="text-right">{asset.quantity}</TableCell>
+                  <TableCell className="text-right">
+                    {formatCentsToCurrency(
+                      asset.averagePriceCents,
+                      asset.currency,
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
-                    {position.quantity.toFixed(2)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {formatCurrency(position.averagePrice)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {formatCurrency(position.currentPrice)}
+                    {formatCentsToCurrency(
+                      asset.currentPriceCents,
+                      asset.currency,
+                    )}
                   </TableCell>
                   <TableCell className="text-right font-medium">
-                    {formatCurrency(position.totalValue)}
+                    {formatCentsToCurrency(
+                      asset.currentValueCents,
+                      asset.currency,
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     <span
                       className={
-                        position.profitLossPercentage >= 0
+                        +asset.returnPercentage >= 0
                           ? "text-success"
                           : "text-destructive"
                       }
                     >
-                      {formatPercentage(position.profitLossPercentage)}
+                      {formatPercentage(+asset.returnPercentage)}
                     </span>
                   </TableCell>
                 </TableRow>

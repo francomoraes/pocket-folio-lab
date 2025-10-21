@@ -132,11 +132,7 @@ const Index = () => {
           </TabsList>
 
           <TabsContent value="positions">
-            <Positions
-              positions={positions}
-              totalPatrimony={totalPatrimony}
-              onUpdatePrices={handleUpdatePrices}
-            />
+            <Positions />
           </TabsContent>
 
           <TabsContent value="dashboard">
