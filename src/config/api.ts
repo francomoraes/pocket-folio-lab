@@ -13,4 +13,8 @@ export const API_ENDPOINTS = {
     delete: "assets/:id",
     export: "assets/export",
   },
+  summary: {
+    get: "summary",
+    overviewByCurrency: "summary/overview",
+  },
 } as const;

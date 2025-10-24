@@ -1,7 +1,29 @@
 import { Card } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { usePositions } from "@/hooks/usePositions";
+import { useSummary } from "@/hooks/useSummary";
 import { AllocationByClass, AllocationByTicker } from "@/types/investment";
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, LineChart, Line, CartesianGrid } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  LineChart,
+  Line,
+  CartesianGrid,
+} from "recharts";
 
 interface DashboardProps {
   allocationByClass: AllocationByClass[];
@@ -9,7 +31,12 @@ interface DashboardProps {
   patrimonyEvolution: Array<{ date: string; value: number }>;
 }
 
-const COLORS = ["hsl(var(--accent))", "hsl(var(--primary))", "hsl(var(--warning))", "hsl(var(--destructive))"];
+const COLORS = [
+  "hsl(var(--accent))",
+  "hsl(var(--primary))",
+  "hsl(var(--warning))",
+  "hsl(var(--destructive))",
+];
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat("pt-BR", {
@@ -29,18 +56,65 @@ const getClassLabel = (className: string) => {
   return labels[className] || className;
 };
 
-export const Dashboard = ({ allocationByClass, allocationByTicker, patrimonyEvolution }: DashboardProps) => {
+export const Dashboard = () => {
+  const {
+    summary,
+    isLoadingSummary,
+    errorSummary,
+    refetchSummary,
+
+    overview,
+    isLoadingOverview,
+    errorOverview,
+    refetchOverview,
+  } = useSummary();
+
+  const { assets, isLoading } = usePositions();
+
+  console.log({
+    summary,
+    overview,
+  });
+
+  const allocationByClass: AllocationByClass[] = summary
+    ? summary.map((item) => ({
+        class: item.assetClassName,
+        percentage: item?.actualPercentage * 100,
+        value: item.totalValueCents / 100,
+      }))
+    : [];
+
   const pieData = allocationByClass.map((item) => ({
     name: getClassLabel(item.class),
     value: item.percentage,
     amount: item.value,
   }));
 
+  const allocationByTicker: AllocationByTicker[] = assets
+    ? assets.map((asset) => ({
+        ticker: asset.ticker,
+        percentage: asset?.portfolioPercentage * 100,
+        value: (asset.quantity * asset.averagePriceCents) / 100,
+      }))
+    : [];
+
   const barData = allocationByTicker.map((item) => ({
     ticker: item.ticker,
     percentage: item.percentage,
     value: item.value,
   }));
+
+  const totalPatrimony = overview
+    ? overview.reduce((sum, item) => sum + item.totalCents / 100, 0)
+    : 0;
+
+  if (isLoadingSummary) {
+    return <div>Carregando dashboard...</div>;
+  }
+
+  if (!summary || summary.length === 0) {
+    return <div>Nenhum dado disponível</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -60,7 +134,10 @@ export const Dashboard = ({ allocationByClass, allocationByTicker, patrimonyEvol
                 <TableBody>
                   {allocationByClass.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
+                      <TableCell
+                        colSpan={3}
+                        className="text-center text-muted-foreground py-8"
+                      >
                         Nenhum dado disponível
                       </TableCell>
                     </TableRow>
@@ -71,13 +148,19 @@ export const Dashboard = ({ allocationByClass, allocationByTicker, patrimonyEvol
                           <div className="flex items-center gap-2">
                             <div
                               className="w-3 h-3 rounded-full"
-                              style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                              style={{
+                                backgroundColor: COLORS[index % COLORS.length],
+                              }}
                             />
                             {getClassLabel(item.class)}
                           </div>
                         </TableCell>
-                        <TableCell className="text-right">{formatCurrency(item.value)}</TableCell>
-                        <TableCell className="text-right font-medium">{item.percentage.toFixed(1)}%</TableCell>
+                        <TableCell className="text-right">
+                          {formatCurrency(item.value)}
+                        </TableCell>
+                        <TableCell className="text-right font-medium">
+                          {item.percentage.toFixed(1)}%
+                        </TableCell>
                       </TableRow>
                     ))
                   )}
@@ -98,12 +181,17 @@ export const Dashboard = ({ allocationByClass, allocationByTicker, patrimonyEvol
                       dataKey="value"
                     >
                       {pieData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
                       ))}
                     </Pie>
                     <Tooltip
                       formatter={(value: number, name: string, props: any) => [
-                        `${value.toFixed(1)}% (${formatCurrency(props.payload.amount)})`,
+                        `${value.toFixed(1)}% (${formatCurrency(
+                          props.payload.amount,
+                        )})`,
                         name,
                       ]}
                     />
@@ -133,16 +221,25 @@ export const Dashboard = ({ allocationByClass, allocationByTicker, patrimonyEvol
                 <TableBody>
                   {allocationByTicker.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
+                      <TableCell
+                        colSpan={3}
+                        className="text-center text-muted-foreground py-8"
+                      >
                         Nenhum dado disponível
                       </TableCell>
                     </TableRow>
                   ) : (
                     allocationByTicker.map((item) => (
                       <TableRow key={item.ticker}>
-                        <TableCell className="font-medium">{item.ticker}</TableCell>
-                        <TableCell className="text-right">{formatCurrency(item.value)}</TableCell>
-                        <TableCell className="text-right font-medium">{item.percentage.toFixed(1)}%</TableCell>
+                        <TableCell className="font-medium">
+                          {item.ticker}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {formatCurrency(item.value)}
+                        </TableCell>
+                        <TableCell className="text-right font-medium">
+                          {item.percentage.toFixed(1)}%
+                        </TableCell>
                       </TableRow>
                     ))
                   )}
@@ -157,11 +254,17 @@ export const Dashboard = ({ allocationByClass, allocationByTicker, patrimonyEvol
                     <YAxis dataKey="ticker" type="category" width={70} />
                     <Tooltip
                       formatter={(value: number, name: string, props: any) => [
-                        `${value.toFixed(1)}% (${formatCurrency(props.payload.value)})`,
+                        `${value.toFixed(1)}% (${formatCurrency(
+                          props.payload.value,
+                        )})`,
                         "Alocação",
                       ]}
                     />
-                    <Bar dataKey="percentage" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
+                    <Bar
+                      dataKey="percentage"
+                      fill="hsl(var(--primary))"
+                      radius={[0, 4, 4, 0]}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
@@ -175,10 +278,13 @@ export const Dashboard = ({ allocationByClass, allocationByTicker, patrimonyEvol
       <div>
         <h2 className="text-2xl font-semibold mb-4">Evolução Patrimonial</h2>
         <Card className="p-6">
-          {patrimonyEvolution.length > 0 ? (
+          {[].length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={patrimonyEvolution}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <LineChart data={[]}>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="hsl(var(--border))"
+                />
                 <XAxis
                   dataKey="date"
                   stroke="hsl(var(--muted-foreground))"
@@ -187,7 +293,10 @@ export const Dashboard = ({ allocationByClass, allocationByTicker, patrimonyEvol
                     return `${date.getMonth() + 1}/${date.getFullYear()}`;
                   }}
                 />
-                <YAxis stroke="hsl(var(--muted-foreground))" tickFormatter={(value) => formatCurrency(value)} />
+                <YAxis
+                  stroke="hsl(var(--muted-foreground))"
+                  tickFormatter={(value) => formatCurrency(value)}
+                />
                 <Tooltip
                   formatter={(value: number) => formatCurrency(value)}
                   labelFormatter={(label) => {
@@ -195,7 +304,13 @@ export const Dashboard = ({ allocationByClass, allocationByTicker, patrimonyEvol
                     return date.toLocaleDateString("pt-BR");
                   }}
                 />
-                <Line type="monotone" dataKey="value" stroke="hsl(var(--accent))" strokeWidth={2} dot={{ fill: "hsl(var(--accent))" }} />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="hsl(var(--accent))"
+                  strokeWidth={2}
+                  dot={{ fill: "hsl(var(--accent))" }}
+                />
               </LineChart>
             </ResponsiveContainer>
           ) : (
