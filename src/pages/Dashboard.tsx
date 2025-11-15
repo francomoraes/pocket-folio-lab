@@ -7,7 +7,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { usePositions } from "@/hooks/usePositions";
 import { useSummary } from "@/hooks/useSummary";
 import { AllocationByClass, AllocationByTicker } from "@/types/investment";
 import {
@@ -20,18 +19,9 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  LineChart,
-  Line,
   CartesianGrid,
   Legend,
-  Rectangle,
 } from "recharts";
-
-interface DashboardProps {
-  allocationByClass: AllocationByClass[];
-  allocationByTicker: AllocationByTicker[];
-  patrimonyEvolution: Array<{ date: string; value: number }>;
-}
 
 const COLORS = [
   "hsl(var(--chart-1))",
@@ -59,19 +49,7 @@ const getClassLabel = (className: string) => {
 };
 
 export const Dashboard = () => {
-  const {
-    summary,
-    isLoadingSummary,
-    errorSummary,
-    refetchSummary,
-
-    overview,
-    isLoadingOverview,
-    errorOverview,
-    refetchOverview,
-  } = useSummary();
-
-  const { assets, isLoading } = usePositions();
+  const { summary, isLoadingSummary } = useSummary();
 
   const allocationByClass: AllocationByClass[] = summary
     ? summary?.map((item) => ({
@@ -103,24 +81,6 @@ export const Dashboard = () => {
     name: getClassLabel(item.assetClassName),
     value: item.targetPercentage,
   }));
-
-  const allocationByTicker: AllocationByTicker[] = assets
-    ? assets?.map((asset) => ({
-        ticker: asset.ticker,
-        percentage: asset?.portfolioPercentage * 100,
-        value: (asset.quantity * asset.averagePriceCents) / 100,
-      }))
-    : [];
-
-  const barData = allocationByTicker?.map((item) => ({
-    ticker: item.ticker,
-    percentage: item.percentage,
-    value: item.value,
-  }));
-
-  const totalPatrimony = overview
-    ? overview.reduce((sum, item) => sum + item.totalCents / 100, 0)
-    : 0;
 
   if (isLoadingSummary) {
     return <div>Carregando dashboard...</div>;

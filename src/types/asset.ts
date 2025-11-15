@@ -1,3 +1,5 @@
+import { AssetType } from "@/types/assetType";
+
 export interface Asset {
   id: number;
   userId: number;
@@ -15,17 +17,6 @@ export interface Asset {
   currency: string;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface AssetType {
-  id: number;
-  name: string;
-  description: string;
-  assetClass: {
-    id: number;
-    name: string;
-    description: string;
-  };
 }
 
 export interface BuyAssetRequest {

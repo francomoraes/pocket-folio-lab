@@ -22,8 +22,6 @@ export const Positions = () => {
     return sum;
   }, {} as Record<string, number>);
 
-  console.log({ assets, totalPatrimonyCents });
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">

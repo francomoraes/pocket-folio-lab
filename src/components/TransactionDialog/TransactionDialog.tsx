@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { usePositions } from "@/hooks/usePositions";
 
 interface TransactionDialogProps {
   onAddTransaction: (
@@ -39,6 +40,18 @@ export const TransactionDialog = () => {
       resetForm();
     }
   };
+
+  const { assets } = usePositions();
+
+  const institutions = useMemo(() => {
+    const uniqueInstitutions = new Set<string>();
+    assets.forEach((asset) => {
+      if (asset.institution) {
+        uniqueInstitutions.add(asset.institution);
+      }
+    });
+    return Array.from(uniqueInstitutions);
+  }, [assets]);
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -117,11 +130,17 @@ export const TransactionDialog = () => {
             <Label htmlFor="institution">Instituição</Label>
             <Input
               id="institution"
+              list="institutions-list"
               type="text"
               placeholder="Nome da Instituição"
               value={formData.institution}
               onChange={(e) => updateField("institution", e.target.value)}
             />
+            <datalist id="institutions-list">
+              {institutions.map((inst) => (
+                <option key={inst} value={inst} />
+              ))}
+            </datalist>
           </div>
 
           <div className="space-y-2">
