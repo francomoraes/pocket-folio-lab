@@ -8,5 +8,6 @@ export interface CreateAssetClass {
 }
 
 export interface UpdateAssetClass {
+  id: number;
   name: string;
 }
