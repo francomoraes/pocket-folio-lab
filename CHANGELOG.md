@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 16-11-2025
+
+- Implemented useAssetClasses hook with tanstack query to manage asset classes.
+
 ### Added
 
 - Initial project setup with Vite, React, TypeScript, and Tailwind CSS
