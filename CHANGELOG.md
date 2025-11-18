@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 17-11-2025
+
+- Implemented useAssetTypes hook with tanstack query to manage asset classes.
+
 ## 16-11-2025
 
 - Implemented useAssetClasses hook with tanstack query to manage asset classes.

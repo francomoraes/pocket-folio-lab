@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useAssetClasses } from "@/hooks/useAssetClasses";
+import { useAssetTypes } from "@/hooks/useAssetTypes";
 import { useSummary } from "@/hooks/useSummary";
 import { AllocationByClass, AllocationByTicker } from "@/types/investment";
 import {
@@ -52,8 +53,9 @@ const getClassLabel = (className: string) => {
 export const Dashboard = () => {
   const { summary, isLoadingSummary } = useSummary();
   const { assetClasses } = useAssetClasses();
+  const { assetTypes } = useAssetTypes();
 
-  console.log({ assetClasses });
+  console.log({ assetClasses, assetTypes });
 
   const allocationByClass: AllocationByClass[] = summary
     ? summary?.map((item) => ({

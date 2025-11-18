@@ -20,7 +20,7 @@ export const useAssetClasses = () => {
     retry: 2,
   });
 
-  const createAssetMutation = useMutation({
+  const createAssetClassMutation = useMutation({
     mutationFn: (data: CreateAssetClass) => {
       return assetClassService.create(data);
     },
@@ -32,7 +32,7 @@ export const useAssetClasses = () => {
     },
   });
 
-  const updateAssetMutation = useMutation({
+  const updateAssetClassMutation = useMutation({
     mutationFn: (data: UpdateAssetClass) => {
       return assetClassService.update(data.id, data);
     },
@@ -44,7 +44,7 @@ export const useAssetClasses = () => {
     },
   });
 
-  const deleteAssetMutation = useMutation({
+  const deleteAssetClassMutation = useMutation({
     mutationFn: (id: number) => {
       return assetClassService.delete(id);
     },
@@ -61,13 +61,13 @@ export const useAssetClasses = () => {
     isLoading,
     error,
 
-    createAssetClass: createAssetMutation.mutateAsync,
-    updateAssetClass: updateAssetMutation.mutateAsync,
-    deleteAssetClass: deleteAssetMutation.mutateAsync,
+    createAssetClass: createAssetClassMutation.mutateAsync,
+    updateAssetClass: updateAssetClassMutation.mutateAsync,
+    deleteAssetClass: deleteAssetClassMutation.mutateAsync,
 
-    isCreating: createAssetMutation.isPending,
-    isUpdating: updateAssetMutation.isPending,
-    isDeleting: deleteAssetMutation.isPending,
+    isCreating: createAssetClassMutation.isPending,
+    isUpdating: updateAssetClassMutation.isPending,
+    isDeleting: deleteAssetClassMutation.isPending,
 
     refetch,
   };
