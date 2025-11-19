@@ -28,10 +28,16 @@ This document contains the list of features, improvements, and tasks to be imple
   - Handle API rate limits
 
 - [ ] **Dashboard Enhancements**
+
   - Add date range selector for patrimony evolution
   - Show profit/loss metrics
   - Add comparison with benchmarks (IBOV, CDI, etc.)
   - Export charts as images
+
+- [ ] **User profile**
+  - User details page
+  - Change password
+  - Recover password
 
 ### Bug Fixes
 

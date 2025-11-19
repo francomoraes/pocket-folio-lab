@@ -29,7 +29,7 @@ class AssetClassService {
     data: Partial<CreateAssetClass>,
   ): Promise<AssetClass> {
     const url = API_ENDPOINTS.assetClasses.update.replace(":id", id.toString());
-    const response = await api.put<AssetClass>(url, data);
+    const response = await api.patch<AssetClass>(url, data);
     return response.data;
   }
 

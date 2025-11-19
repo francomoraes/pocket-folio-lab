@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 18-11-2025
+
+- Add Crud for asset class
+- Add home and settings to navbar
+- Add settings page to manage asset classes and types
+
 ## 17-11-2025
 
 - Implemented useAssetTypes hook with tanstack query to manage asset classes.
