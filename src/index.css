@@ -43,6 +43,18 @@ All colors MUST be HSL.
     --ring: 220 13% 18%;
 
     --radius: 0.5rem;
+
+    /* chart colors */
+    --chart-1: 210 100% 56%;
+    --chart-2: 174 100% 29%;
+    --chart-3: 48 100% 67%;
+    --chart-4: 348 100% 61%;
+    --chart-5: 291 100% 64%;
+    --chart-6: 39 100% 49%;
+    --chart-7: 141 100% 34%;
+    --chart-8: 26 100% 55%;
+    --chart-9: 199 100% 41%;
+    --chart-10: 327 100% 58%;
   }
 
   .dark {

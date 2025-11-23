@@ -8,6 +8,7 @@ import { LoginForm } from "@/components/Auth";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
+import { Settings } from "@/pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Index />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
                 </ProtectedRoute>
               }
             />
