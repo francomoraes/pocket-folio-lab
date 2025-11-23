@@ -40,6 +40,7 @@ export const AssetTypesTable = () => {
           <TableRow>
             <TableHead>Nome</TableHead>
             <TableHead>Percentual Meta (%)</TableHead>
+            <TableHead>Classe</TableHead>
             <TableHead className="text-right">Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -48,6 +49,7 @@ export const AssetTypesTable = () => {
             <TableRow key={assetType.id}>
               <TableCell>{assetType.name}</TableCell>
               <TableCell>{assetType.targetPercentage * 100 + "%"}</TableCell>
+              <TableCell>{assetType.assetClass.name}</TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
                   <Button

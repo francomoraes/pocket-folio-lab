@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -37,12 +37,20 @@ export const AssetTypesDialog = ({
     assetType?.targetPercentage ? assetType.targetPercentage * 100 : 0,
   );
   const [assetClassId, setAssetClassId] = useState(
-    assetType?.assetClassId || null,
+    assetType?.assetClass?.id || null,
   );
   const { createAssetType, updateAssetType, isCreating, isUpdating } =
     useAssetTypes();
 
   const { assetClasses } = useAssetClasses();
+
+  useEffect(() => {
+    if (assetType) {
+      setName(assetType.name);
+      setTargetPercentage(assetType.targetPercentage * 100);
+      setAssetClassId(assetType.assetClass?.id || null);
+    }
+  }, [assetType]);
 
   const handleClose = () => {
     setOpen(false);

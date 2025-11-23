@@ -1,6 +1,6 @@
 import { API_ENDPOINTS } from "@/config/api";
 import { api } from "@/lib/axios";
-import { AssetType, CreateAssetType } from "@/types/assetType";
+import { AssetType, CreateAssetType, UpdateAssetType } from "@/types/assetType";
 
 class AssetTypeService {
   async list(): Promise<AssetType[]> {
@@ -22,12 +22,9 @@ class AssetTypeService {
     return response.data;
   }
 
-  async update(
-    id: number,
-    data: Partial<Omit<AssetType, "id" | "createdAt" | "updatedAt">>,
-  ): Promise<AssetType> {
+  async update(id: number, data: UpdateAssetType): Promise<AssetType> {
     const url = API_ENDPOINTS.assetTypes.update.replace(":id", id.toString());
-    const response = await api.put<AssetType>(url, data);
+    const response = await api.patch<AssetType>(url, data);
     return response.data;
   }
 
