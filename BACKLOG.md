@@ -4,6 +4,10 @@ This document contains the list of features, improvements, and tasks to be imple
 
 ## High Priority
 
+### Backend
+
+- [ ] Implement sorting and pagination (and frontend too)
+
 ### Features
 
 - [ ] **Asset Details Page**
