@@ -13,11 +13,11 @@ export interface CreateAssetType {
   name: string;
   targetPercentage: number;
   assetClassId: number;
-  userId: number;
 }
 
 export interface UpdateAssetType {
-  id: string;
+  id: number;
   name?: string;
   targetPercentage?: number;
+  assetClassId?: number;
 }

@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 21-11-2025
+
+- Add crud and page for asset types
+
 ## 18-11-2025
 
-- Add Crud for asset class
+- Add crud and page for asset class
 - Add home and settings to navbar
 - Add settings page to manage asset classes and types
 

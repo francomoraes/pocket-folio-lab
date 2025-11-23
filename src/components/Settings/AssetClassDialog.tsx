@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
-import { useForm } from "react-hook-form";
 import { useAssetClasses } from "@/hooks/useAssetClasses";
 import { AssetClass } from "@/types/assetClass";
 
@@ -24,7 +23,7 @@ export const AssetClassDialog = ({
   assetClass?: AssetClass;
   onClose?: () => void;
 }) => {
-  const [open, setOpen] = useState(!!assetClass); // Se tem assetClass, já abre
+  const [open, setOpen] = useState(!!assetClass);
   const [name, setName] = useState(assetClass?.name || "");
   const { createAssetClass, updateAssetClass, isCreating, isUpdating } =
     useAssetClasses();

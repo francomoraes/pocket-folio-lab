@@ -1,6 +1,6 @@
 import { API_ENDPOINTS } from "@/config/api";
 import { api } from "@/lib/axios";
-import { AssetType } from "@/types/assetType";
+import { AssetType, CreateAssetType } from "@/types/assetType";
 
 class AssetTypeService {
   async list(): Promise<AssetType[]> {
@@ -14,9 +14,7 @@ class AssetTypeService {
     return response.data;
   }
 
-  async create(
-    data: Omit<AssetType, "id" | "createdAt" | "updatedAt">,
-  ): Promise<AssetType> {
+  async create(data: CreateAssetType): Promise<AssetType> {
     const response = await api.post<AssetType>(
       API_ENDPOINTS.assetTypes.create,
       data,

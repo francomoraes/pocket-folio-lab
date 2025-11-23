@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/Layout";
 import { AssetClassTable } from "@/components/Settings/AssetClassTable";
+import { AssetTypesTable } from "@/components/Settings/AssetTypesTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Settings = () => {
@@ -23,15 +24,15 @@ export const Settings = () => {
             </TabsList>
 
             <TabsContent value="classes">
-              {/* Aqui vai a tabela de Asset Classes */}
               <div>
                 <AssetClassTable />
               </div>
             </TabsContent>
 
             <TabsContent value="types">
-              {/* Aqui vai a tabela de Asset Types */}
-              <div>Asset Types aqui</div>
+              <div>
+                <AssetTypesTable />
+              </div>
             </TabsContent>
           </Tabs>
         </div>
