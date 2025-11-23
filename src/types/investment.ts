@@ -2,11 +2,11 @@ export type OperationType = "buy" | "sell";
 
 export type AssetClass = "stocks" | "fiis" | "fixed_income";
 
-export type AssetType = 
-  | "post_fixed" 
-  | "inflation" 
-  | "pre_fixed" 
-  | "stock" 
+export type AssetType =
+  | "post_fixed"
+  | "inflation"
+  | "pre_fixed"
+  | "stock"
   | "fii";
 
 export interface Transaction {
@@ -34,9 +34,12 @@ export interface Position {
 }
 
 export interface AllocationByClass {
-  class: AssetClass;
-  value: number;
-  percentage: number;
+  class: string;
+  type: string;
+  actualPercentage: number;
+  targetPercentage: number;
+  actualValue: number;
+  targetValue: number;
 }
 
 export interface AllocationByTicker {

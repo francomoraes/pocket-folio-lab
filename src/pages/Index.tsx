@@ -136,11 +136,7 @@ const Index = () => {
           </TabsContent>
 
           <TabsContent value="dashboard">
-            <Dashboard
-              allocationByClass={allocationByClass}
-              allocationByTicker={allocationByTicker}
-              patrimonyEvolution={patrimonyEvolution}
-            />
+            <Dashboard />
           </TabsContent>
         </Tabs>
       </main>

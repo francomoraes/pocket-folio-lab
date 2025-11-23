@@ -13,4 +13,22 @@ export const API_ENDPOINTS = {
     delete: "assets/:id",
     export: "assets/export",
   },
+  summary: {
+    get: "summary",
+    overviewByCurrency: "summary/overview",
+  },
+  assetClasses: {
+    list: "asset-class",
+    create: "asset-class",
+    get: "asset-class/:id",
+    update: "asset-class/:id",
+    delete: "asset-class/:id",
+  },
+  assetTypes: {
+    list: "asset-type",
+    create: "asset-type",
+    get: "asset-type/:id",
+    update: "asset-type/:id",
+    delete: "asset-type/:id",
+  },
 } as const;
