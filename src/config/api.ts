@@ -31,4 +31,11 @@ export const API_ENDPOINTS = {
     update: "asset-type/:id",
     delete: "asset-type/:id",
   },
+  institutions: {
+    list: "institutions",
+    create: "institutions",
+    get: "institutions/:id",
+    update: "institutions/:id",
+    delete: "institutions/:id",
+  },
 } as const;

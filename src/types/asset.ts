@@ -1,4 +1,5 @@
 import { AssetType } from "@/types/assetType";
+import { Institution } from "@/types/institution";
 
 export interface Asset {
   id: number;
@@ -13,7 +14,7 @@ export interface Asset {
   resultCents: number;
   returnPercentage: number;
   portfolioPercentage: number;
-  institution: string;
+  institution: Institution;
   currency: string;
   createdAt: string;
   updatedAt: string;

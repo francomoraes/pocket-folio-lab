@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/Layout";
 import { AssetClassTable } from "@/components/Settings/AssetClassTable";
 import { AssetTypesTable } from "@/components/Settings/AssetTypesTable";
+import { InstitutionsTable } from "@/components/Settings/InstitutionsTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Settings = () => {
@@ -21,6 +22,7 @@ export const Settings = () => {
             <TabsList>
               <TabsTrigger value="classes">Classes de Ativos</TabsTrigger>
               <TabsTrigger value="types">Tipos de Ativos</TabsTrigger>
+              <TabsTrigger value="institutions">Instituições</TabsTrigger>
             </TabsList>
 
             <TabsContent value="classes">
@@ -32,6 +34,12 @@ export const Settings = () => {
             <TabsContent value="types">
               <div>
                 <AssetTypesTable />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="institutions">
+              <div>
+                <InstitutionsTable />
               </div>
             </TabsContent>
           </Tabs>
