@@ -124,7 +124,7 @@ export const Dashboard = () => {
                     </TableRow>
                   ) : (
                     allocationByClass?.map((item, index) => (
-                      <TableRow key={item.class}>
+                      <TableRow key={item.class + index}>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <div

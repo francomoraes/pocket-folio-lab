@@ -24,7 +24,7 @@ export interface BuyAssetRequest {
   quantity: number;
   priceCents: number;
   type?: string;
-  institution?: string;
+  institutionId?: number;
   currency?: string;
 }
 
@@ -38,6 +38,6 @@ export interface UpdateAssetRequest {
   ticker?: string;
   quantity?: number;
   averagePriceCents?: number;
-  institution?: string;
+  institutionId?: number;
   currency?: string;
 }
