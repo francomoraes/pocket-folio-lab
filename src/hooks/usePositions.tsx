@@ -88,6 +88,19 @@ export const usePositions = () => {
     },
   });
 
+  const refreshMarketPricesMutation = useMutation({
+    mutationFn: () => {
+      return assetService.refreshMarketPrices();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ASSETS_QUERY_KEY });
+      toast.success("Preços de mercado atualizados com sucesso!");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Erro ao atualizar preços de mercado.");
+    },
+  });
+
   return {
     assets,
     isLoading,
@@ -97,11 +110,13 @@ export const usePositions = () => {
     sellAsset: sellAssetMutation.mutateAsync,
     updateAsset: updateAssetMutation.mutateAsync,
     deleteAsset: deleteAssetMutation.mutateAsync,
+    refreshMarketPrices: refreshMarketPricesMutation.mutateAsync,
 
     isBuying: buyAssetMutation.isPending,
     isSelling: sellAssetMutation.isPending,
     isUpdating: updateAssetMutation.isPending,
     isDeleting: deleteAssetMutation.isPending,
+    isRefreshingMarketPrices: refreshMarketPricesMutation.isPending,
 
     refetch,
   };

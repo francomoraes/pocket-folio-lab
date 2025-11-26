@@ -42,6 +42,19 @@ class AssetService {
     });
     return response.data;
   }
+
+  async refreshMarketPrices(): Promise<{
+    updated: number;
+    failed: number;
+    failedTickers: string[];
+  }> {
+    const response = await api.get<{
+      updated: number;
+      failed: number;
+      failedTickers: string[];
+    }>(API_ENDPOINTS.assets.refreshMarketPrices);
+    return response.data;
+  }
 }
 
 export const assetService = new AssetService();

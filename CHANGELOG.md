@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 26-11-2025
+
+- Implement update prices by user with update prices batch function
+
 ## 24-11-2025
 
 - Created Institution entity

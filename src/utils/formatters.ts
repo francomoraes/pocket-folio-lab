@@ -28,5 +28,5 @@ export const formatCurrencyToCents = (value: number): number => {
 };
 
 export const formatPercentage = (value: number): string => {
-  return `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
+  return `${value.toFixed(2)}%`;
 };
