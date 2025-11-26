@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 26-11-2025
 
 - Implement update prices by user with update prices batch function
+- Reorganized header of positions screen
+- Fix error on buyAsset operation
 
 ## 24-11-2025
 

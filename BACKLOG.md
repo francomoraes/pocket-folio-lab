@@ -27,7 +27,7 @@ This document contains the list of features, improvements, and tasks to be imple
 
 - [ ] **Quote Update System**
 
-  - Implement the "Atualizar Cotações" button functionality
+  - [x] Implement the "Atualizar Cotações" button functionality
   - Auto-refresh quotes at regular intervals
   - Show last update timestamp
   - Handle API rate limits
