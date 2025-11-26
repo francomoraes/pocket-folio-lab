@@ -13,7 +13,7 @@ export const ProtectedRoute = ({ children }: ProtectedRoutesProps) => {
   if (isLoading) {
     return (
       <div>
-        <CircularProgress indeterminate={true} />
+        <CircularProgress />
       </div>
     );
   }

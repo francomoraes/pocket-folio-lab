@@ -1,5 +1,5 @@
 import { ConfirmDeleteDialog } from "@/components/ConfirmDeleteDialog";
-import { AssetTypesDialog } from "@/components/Settings/AssetTypesDialog";
+import { InstitutionDialog } from "@/components/Settings/InstitutionsDialog";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -9,23 +9,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useAssetTypes } from "@/hooks/useAssetTypes";
-import { AssetType } from "@/types/assetType";
+import { useInstitutions } from "@/hooks/useInstitutions";
+import { Institution } from "@/types/institution";
 import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 
-export const AssetTypesTable = () => {
-  const { assetTypes, isLoading, deleteAssetType } = useAssetTypes();
-  const [editingClass, setEditingClass] = useState<AssetType | null>(null);
-  const [deletingClass, setDeletingClass] = useState<AssetType | null>(null);
+export const InstitutionsTable = () => {
+  const { institutions, isLoading, deleteInstitution } = useInstitutions();
+  const [editingInstitution, setEditingInstitution] =
+    useState<Institution | null>(null);
+  const [deletingInstitution, setDeletingInstitution] =
+    useState<Institution | null>(null);
 
   if (isLoading) return <div>Carregando...</div>;
 
-  if (assetTypes.length === 0) {
+  if (institutions.length === 0) {
     return (
       <div>
-        <p>Nenhuma classe de ativo encontrada.</p>
-        <AssetTypesDialog mode="create" />
+        <p>Nenhuma instituição encontrada.</p>
+        <InstitutionDialog mode="create" />
       </div>
     );
   }
@@ -33,36 +35,32 @@ export const AssetTypesTable = () => {
   return (
     <div>
       <div className="flex justify-end">
-        <AssetTypesDialog mode="create" />
+        <InstitutionDialog mode="create" />
       </div>
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Nome</TableHead>
-            <TableHead>Percentual Meta (%)</TableHead>
-            <TableHead>Classe</TableHead>
             <TableHead className="text-right">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {assetTypes.map((assetType) => (
-            <TableRow key={assetType.id}>
-              <TableCell>{assetType.name}</TableCell>
-              <TableCell>{assetType.targetPercentage * 100 + "%"}</TableCell>
-              <TableCell>{assetType.assetClass.name}</TableCell>
+          {institutions.map((institution) => (
+            <TableRow key={institution.id}>
+              <TableCell>{institution.name}</TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => setEditingClass(assetType)}
+                    onClick={() => setEditingInstitution(institution)}
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => setDeletingClass(assetType)}
+                    onClick={() => setDeletingInstitution(institution)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -73,24 +71,24 @@ export const AssetTypesTable = () => {
         </TableBody>
       </Table>
 
-      {editingClass && (
-        <AssetTypesDialog
+      {editingInstitution && (
+        <InstitutionDialog
           mode="edit"
-          assetType={editingClass}
-          onClose={() => setEditingClass(null)}
+          institution={editingInstitution}
+          onClose={() => setEditingInstitution(null)}
         />
       )}
 
-      {deletingClass && (
+      {deletingInstitution && (
         <ConfirmDeleteDialog
-          open={!!deletingClass}
+          open={!!deletingInstitution}
           onOpenChange={(open) => {
-            if (!open) setDeletingClass(null);
+            if (!open) setDeletingInstitution(null);
           }}
           onConfirm={() => {
-            if (deletingClass) {
-              deleteAssetType(deletingClass.id);
-              setDeletingClass(null);
+            if (deletingInstitution) {
+              deleteInstitution(deletingInstitution.id);
+              setDeletingInstitution(null);
             }
           }}
         />

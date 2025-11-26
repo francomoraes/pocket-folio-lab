@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { usePositions } from "@/hooks/usePositions";
+import { useInstitutions } from "@/hooks/useInstitutions";
 
 interface TransactionDialogProps {
   onAddTransaction: (
@@ -42,16 +43,9 @@ export const TransactionDialog = () => {
   };
 
   const { assets } = usePositions();
+  const { institutions, isLoading: isLoadingInstitutions } = useInstitutions();
 
-  const institutions = useMemo(() => {
-    const uniqueInstitutions = new Set<string>();
-    assets.forEach((asset) => {
-      if (asset.institution) {
-        uniqueInstitutions.add(asset.institution);
-      }
-    });
-    return Array.from(uniqueInstitutions);
-  }, [assets]);
+  console.log({});
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -127,20 +121,26 @@ export const TransactionDialog = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="institution">Instituição</Label>
-            <Input
-              id="institution"
-              list="institutions-list"
-              type="text"
-              placeholder="Nome da Instituição"
-              value={formData.institution}
-              onChange={(e) => updateField("institution", e.target.value)}
-            />
-            <datalist id="institutions-list">
-              {institutions.map((inst) => (
-                <option key={inst} value={inst} />
-              ))}
-            </datalist>
+            <Select
+              value={
+                formData.institutionId ? formData.institutionId.toString() : ""
+              }
+              onValueChange={(v) => updateField("institutionId", v)}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {institutions?.map((institution) => (
+                  <SelectItem
+                    key={institution.id}
+                    value={institution.id.toString()}
+                  >
+                    {institution.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">

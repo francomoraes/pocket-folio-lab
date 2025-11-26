@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 24-11-2025
+
+- Created Institution entity
+- Created CRUDs for institution (BE and FE)
+- Update transaction dialog to use institution
+
 ## 21-11-2025
 
 - Add crud and page for asset types

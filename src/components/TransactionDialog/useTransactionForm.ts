@@ -10,7 +10,7 @@ type TransactionFormData = {
   quantity: string;
   price: string;
   operation: OperationType;
-  institution: string;
+  institutionId: number | null;
   currency: string;
 };
 
@@ -19,7 +19,7 @@ const initialState = {
   quantity: "",
   price: "",
   operation: "buy" as OperationType,
-  institution: "",
+  institutionId: null,
   currency: "BRL",
 };
 
@@ -51,6 +51,10 @@ export const useTransactionForm = (onSuccess?: () => void) => {
       toast.error("A moeda é obrigatória.");
       return false;
     }
+    if (!formData.institutionId && formData.operation === "buy") {
+      toast.error("A instituição é obrigatória para compras.");
+      return false;
+    }
     return true;
   };
 
@@ -67,6 +71,7 @@ export const useTransactionForm = (onSuccess?: () => void) => {
     const price = parseFloat(formData.price);
     const priceCents = formatCurrencyToCents(price);
     const ticker = formData.ticker.toUpperCase();
+    const institutionId = formData.institutionId;
 
     try {
       if (formData.operation === "buy") {
@@ -75,7 +80,7 @@ export const useTransactionForm = (onSuccess?: () => void) => {
           data: {
             quantity,
             priceCents,
-            institution: formData.institution || undefined,
+            institutionId,
             currency: formData.currency,
           },
         });

@@ -65,11 +65,12 @@ export const Positions = () => {
             <TableRow>
               <TableHead>Ticker</TableHead>
               <TableHead>Tipo</TableHead>
-              <TableHead className="text-right">Quantidade</TableHead>
-              <TableHead className="text-right">PM Compra</TableHead>
-              <TableHead className="text-right">Cotação</TableHead>
-              <TableHead className="text-right">Total</TableHead>
-              <TableHead className="text-right">L/P</TableHead>
+              <TableHead>Quantidade</TableHead>
+              <TableHead>PM Compra</TableHead>
+              <TableHead>Cotação</TableHead>
+              <TableHead>Total</TableHead>
+              <TableHead>L/P</TableHead>
+              <TableHead>Instituição</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -88,26 +89,26 @@ export const Positions = () => {
                 <TableRow key={asset.ticker}>
                   <TableCell className="font-medium">{asset.ticker}</TableCell>
                   <TableCell>{asset.type.assetClass.name}</TableCell>
-                  <TableCell className="text-right">{asset.quantity}</TableCell>
-                  <TableCell className="text-right">
+                  <TableCell>{asset.quantity}</TableCell>
+                  <TableCell>
                     {formatCentsToCurrency(
                       asset.averagePriceCents,
                       asset.currency,
                     )}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell>
                     {formatCentsToCurrency(
                       asset.currentPriceCents,
                       asset.currency,
                     )}
                   </TableCell>
-                  <TableCell className="text-right font-medium">
+                  <TableCell className="font-medium">
                     {formatCentsToCurrency(
                       asset.currentValueCents,
                       asset.currency,
                     )}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell>
                     <span
                       className={
                         +asset.returnPercentage >= 0
@@ -115,9 +116,10 @@ export const Positions = () => {
                           : "text-destructive"
                       }
                     >
-                      {formatPercentage(+asset.returnPercentage)}
+                      {formatPercentage(Number(asset.returnPercentage))}
                     </span>
                   </TableCell>
+                  <TableCell>{asset?.institution?.name}</TableCell>
                 </TableRow>
               ))
             )}

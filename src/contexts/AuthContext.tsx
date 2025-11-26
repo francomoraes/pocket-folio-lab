@@ -19,7 +19,7 @@ const USER_KEY = "auth_user";
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const storedToken = localStorage.getItem(TOKEN_KEY);
@@ -29,7 +29,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
     }
-    setIsLoading(false);
   }, []);
 
   const login = async (data: LoginRequest) => {
