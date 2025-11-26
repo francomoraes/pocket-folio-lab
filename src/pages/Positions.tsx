@@ -13,6 +13,7 @@ import { TransactionDialog } from "@/components/TransactionDialog";
 import { usePositions } from "@/hooks/usePositions";
 import CircularProgress from "@/components/ui/circular-progress";
 import { formatCentsToCurrency, formatPercentage } from "@/utils/formatters";
+import { CsvUploadDialog } from "@/components/CsvUpload/CsvUploadDialog";
 
 export const Positions = () => {
   const { assets, isLoading, refreshMarketPrices, isRefreshingMarketPrices } =
@@ -33,10 +34,30 @@ export const Positions = () => {
 
   return (
     <div className="space-y-6">
-      <TransactionDialog />
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold">Minhas Posições</h2>
+          <p className="text-muted-foreground">
+            Gerencie sua carteira de investimentos
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <CsvUploadDialog />
+          <Button
+            onClick={() => refreshMarketPrices()}
+            variant="secondary"
+            className="gap-2"
+            disabled={isRefreshingMarketPrices}
+          >
+            <RefreshCw className="h-4 w-4" />
+            Atualizar Cotações
+          </Button>
+          <TransactionDialog />
+        </div>
+      </div>
 
       <Card className="p-6">
-        <div className="flex items-center justify-between">
+        <div className="grid grid-cols-2 gap-8">
           <div>
             <p className="text-sm text-muted-foreground">
               Patromônio (parte em dólares)
@@ -53,15 +74,6 @@ export const Positions = () => {
               {formatCentsToCurrency(totalPatrimonyCents?.BRL || 0, "BRL")}
             </p>
           </div>
-          <Button
-            onClick={() => refreshMarketPrices()}
-            variant="secondary"
-            className="gap-2"
-            disabled={isRefreshingMarketPrices}
-          >
-            <RefreshCw className="h-4 w-4" />
-            Atualizar Cotações
-          </Button>
         </div>
       </Card>
 

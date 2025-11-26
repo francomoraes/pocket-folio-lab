@@ -71,7 +71,7 @@ export const useTransactionForm = (onSuccess?: () => void) => {
     const price = parseFloat(formData.price);
     const priceCents = formatCurrencyToCents(price);
     const ticker = formData.ticker.toUpperCase();
-    const institutionId = formData.institutionId;
+    const institutionId = Number(formData.institutionId);
 
     try {
       if (formData.operation === "buy") {
