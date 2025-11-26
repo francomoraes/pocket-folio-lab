@@ -12,6 +12,7 @@ export const API_ENDPOINTS = {
     update: "assets/:id",
     delete: "assets/:id",
     export: "assets/export",
+    refreshMarketPrices: "assets/refresh-market-prices",
   },
   summary: {
     get: "summary",

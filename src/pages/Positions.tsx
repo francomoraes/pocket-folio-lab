@@ -15,7 +15,8 @@ import CircularProgress from "@/components/ui/circular-progress";
 import { formatCentsToCurrency, formatPercentage } from "@/utils/formatters";
 
 export const Positions = () => {
-  const { assets, isLoading } = usePositions();
+  const { assets, isLoading, refreshMarketPrices, isRefreshingMarketPrices } =
+    usePositions();
 
   const totalPatrimonyCents = assets?.reduce((sum, asset) => {
     sum[asset.currency] = (sum[asset.currency] ?? 0) + asset.currentValueCents;
@@ -52,7 +53,12 @@ export const Positions = () => {
               {formatCentsToCurrency(totalPatrimonyCents?.BRL || 0, "BRL")}
             </p>
           </div>
-          <Button onClick={() => {}} variant="secondary" className="gap-2">
+          <Button
+            onClick={() => refreshMarketPrices()}
+            variant="secondary"
+            className="gap-2"
+            disabled={isRefreshingMarketPrices}
+          >
             <RefreshCw className="h-4 w-4" />
             Atualizar Cotações
           </Button>
@@ -71,6 +77,7 @@ export const Positions = () => {
               <TableHead>Total</TableHead>
               <TableHead>L/P</TableHead>
               <TableHead>Instituição</TableHead>
+              <TableHead>% Carteira</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -119,7 +126,12 @@ export const Positions = () => {
                       {formatPercentage(Number(asset.returnPercentage))}
                     </span>
                   </TableCell>
-                  <TableCell>{asset?.institution?.name}</TableCell>
+                  <TableCell>
+                    {asset.institution ? asset.institution.name : "-"}
+                  </TableCell>
+                  <TableCell>
+                    {formatPercentage(Number(asset.portfolioPercentage))}
+                  </TableCell>
                 </TableRow>
               ))
             )}
