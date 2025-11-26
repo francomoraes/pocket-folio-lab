@@ -39,4 +39,8 @@ export const API_ENDPOINTS = {
     update: "institutions/:id",
     delete: "institutions/:id",
   },
+  csv: {
+    upload: "csv/upload-csv",
+    downloadTemplate: "csv/csv-template",
+  },
 } as const;

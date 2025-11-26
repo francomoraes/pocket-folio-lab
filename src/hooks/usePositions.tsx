@@ -7,7 +7,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-const ASSETS_QUERY_KEY = ["assets"];
+export const ASSETS_QUERY_KEY = ["assets"];
 
 export const usePositions = () => {
   const queryClient = useQueryClient();

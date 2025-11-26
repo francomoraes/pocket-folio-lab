@@ -23,12 +23,6 @@ import {
 import { usePositions } from "@/hooks/usePositions";
 import { useInstitutions } from "@/hooks/useInstitutions";
 
-interface TransactionDialogProps {
-  onAddTransaction: (
-    transaction: Omit<Transaction, "id" | "createdAt">,
-  ) => void;
-}
-
 export const TransactionDialog = () => {
   const [open, setOpen] = useState(false);
 
@@ -42,10 +36,7 @@ export const TransactionDialog = () => {
     }
   };
 
-  const { assets } = usePositions();
-  const { institutions, isLoading: isLoadingInstitutions } = useInstitutions();
-
-  console.log({});
+  const { institutions } = useInstitutions();
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>

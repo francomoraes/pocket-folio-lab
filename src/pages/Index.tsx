@@ -73,12 +73,12 @@ const Index = () => {
     (acc, pos) => {
       const existing = acc.find((item) => item.class === pos.assetClass);
       if (existing) {
-        existing.value += pos.totalValue;
+        existing.actualValue += pos.totalValue;
       } else {
         acc.push({
           class: pos.assetClass,
-          value: pos.totalValue,
-          percentage: 0,
+          actualValue: pos.totalValue,
+          actualPercentage: 0,
         });
       }
       return acc;
@@ -87,8 +87,8 @@ const Index = () => {
   );
 
   allocationByClass.forEach((item) => {
-    item.percentage =
-      totalPatrimony > 0 ? (item.value / totalPatrimony) * 100 : 0;
+    item.actualPercentage =
+      totalPatrimony > 0 ? (item.actualValue / totalPatrimony) * 100 : 0;
   });
 
   const allocationByTicker: AllocationByTicker[] = positions.map((pos) => ({
@@ -124,9 +124,9 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto p-4">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-8">
+          <TabsList className="mb-2">
             <TabsTrigger value="positions">Posições</TabsTrigger>
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
           </TabsList>
