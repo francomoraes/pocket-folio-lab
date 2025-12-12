@@ -2,13 +2,15 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LoginForm } from "@/components/Auth";
-import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
 import { Settings } from "@/pages/Settings";
+import { Positions } from "@/pages/Positions";
+import { Dashboard } from "@/pages/Dashboard";
+import { Navbar } from "@/components/Layout";
 
 const queryClient = new QueryClient();
 
@@ -19,12 +21,23 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <Navbar />
+
           <Routes>
+            <Route path="/" element={<Navigate to="/positions" replace />} />
             <Route
-              path="/"
+              path="/positions"
               element={
                 <ProtectedRoute>
-                  <Index />
+                  <Positions />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
                 </ProtectedRoute>
               }
             />

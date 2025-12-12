@@ -71,7 +71,7 @@ export const Positions = () => {
   }
 
   return (
-    <div className="flex flex-col gap-3 h-full">
+    <div className="flex flex-col gap-3 h-[calc(100vh-61px)] p-3">
       <div className="flex items-center justify-between flex-shrink-0">
         <div>
           <h2 className="text-2xl font-bold">Minhas Posições</h2>
@@ -116,81 +116,77 @@ export const Positions = () => {
       </Card>
 
       <Card className="flex-1 flex flex-col min-h-0">
-        <div className="flex-1 overflow-auto">
-          <Table>
-            <TableHeader className="sticky top-0 bg-background z-10">
+        <Table>
+          <TableHeader className="sticky top-0 bg-background z-10">
+            <TableRow>
+              <TableHead>Ticker</TableHead>
+              <TableHead>Tipo</TableHead>
+              <TableHead>Quantidade</TableHead>
+              <TableHead>PM Compra</TableHead>
+              <TableHead>Cotação</TableHead>
+              <TableHead>Total</TableHead>
+              <TableHead>L/P</TableHead>
+              <TableHead>Instituição</TableHead>
+              <TableHead>% Carteira</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {!assets || assets?.data?.length === 0 ? (
               <TableRow>
-                <TableHead>Ticker</TableHead>
-                <TableHead>Tipo</TableHead>
-                <TableHead>Quantidade</TableHead>
-                <TableHead>PM Compra</TableHead>
-                <TableHead>Cotação</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead>L/P</TableHead>
-                <TableHead>Instituição</TableHead>
-                <TableHead>% Carteira</TableHead>
+                <TableCell
+                  colSpan={7}
+                  className="text-center text-muted-foreground py-8"
+                >
+                  Nenhuma posição encontrada. Adicione uma transação para
+                  começar.
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {!assets || assets?.data?.length === 0 ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={7}
-                    className="text-center text-muted-foreground py-8"
-                  >
-                    Nenhuma posição encontrada. Adicione uma transação para
-                    começar.
+            ) : (
+              assets?.data?.map((asset) => (
+                <TableRow key={asset.ticker}>
+                  <TableCell className="font-medium">{asset.ticker}</TableCell>
+                  <TableCell>{asset.type.assetClass.name}</TableCell>
+                  <TableCell>{asset.quantity}</TableCell>
+                  <TableCell>
+                    {formatCentsToCurrency(
+                      asset.averagePriceCents,
+                      asset.currency,
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {formatCentsToCurrency(
+                      asset.currentPriceCents,
+                      asset.currency,
+                    )}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {formatCentsToCurrency(
+                      asset.currentValueCents,
+                      asset.currency,
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      className={
+                        +asset.returnPercentage >= 0
+                          ? "text-success"
+                          : "text-destructive"
+                      }
+                    >
+                      {formatPercentage(Number(asset.returnPercentage))}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    {asset.institution ? asset.institution.name : "-"}
+                  </TableCell>
+                  <TableCell>
+                    {formatPercentage(Number(asset.portfolioPercentage))}
                   </TableCell>
                 </TableRow>
-              ) : (
-                assets?.data?.map((asset) => (
-                  <TableRow key={asset.ticker}>
-                    <TableCell className="font-medium">
-                      {asset.ticker}
-                    </TableCell>
-                    <TableCell>{asset.type.assetClass.name}</TableCell>
-                    <TableCell>{asset.quantity}</TableCell>
-                    <TableCell>
-                      {formatCentsToCurrency(
-                        asset.averagePriceCents,
-                        asset.currency,
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {formatCentsToCurrency(
-                        asset.currentPriceCents,
-                        asset.currency,
-                      )}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {formatCentsToCurrency(
-                        asset.currentValueCents,
-                        asset.currency,
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={
-                          +asset.returnPercentage >= 0
-                            ? "text-success"
-                            : "text-destructive"
-                        }
-                      >
-                        {formatPercentage(Number(asset.returnPercentage))}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      {asset.institution ? asset.institution.name : "-"}
-                    </TableCell>
-                    <TableCell>
-                      {formatPercentage(Number(asset.portfolioPercentage))}
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
+              ))
+            )}
+          </TableBody>
+        </Table>
         {/* simple pagination */}
         <PaginationControls pagination={pagination} />
       </Card>
