@@ -124,7 +124,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <main className="container mx-auto p-4">
+      <main className="container mx-auto p-4 max-h-[calc(100vh-61px)] overflow-hidden [&_[role='tabpanel']]:h-[calc(100vh-150px)]">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-2">
             <TabsTrigger value="positions">Posições</TabsTrigger>

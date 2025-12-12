@@ -41,3 +41,15 @@ export interface UpdateAssetRequest {
   institutionId?: number;
   currency?: string;
 }
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: {
+    totalItems: number;
+    currentPage: number;
+    itemsPerPage: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}

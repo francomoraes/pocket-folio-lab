@@ -3,13 +3,30 @@ import { api } from "@/lib/axios";
 import {
   Asset,
   BuyAssetRequest,
+  PaginatedResponse,
   SellAssetRequest,
   UpdateAssetRequest,
 } from "@/types/asset";
 
 class AssetService {
-  async getAssets(): Promise<Asset[]> {
-    const response = await api.get<Asset[]>(API_ENDPOINTS.assets.list);
+  async getAssets({
+    page = 1,
+    itemsPerPage = 10,
+    sortBy = "ticker",
+    order = "ASC",
+    skipPagination = false,
+  }): Promise<PaginatedResponse<Asset>> {
+    const params = new URLSearchParams({
+      page: String(page),
+      itemsPerPage: String(itemsPerPage),
+      sortBy,
+      order,
+      ...(skipPagination && { skipPagination: "true" }),
+    });
+
+    const requestUrl = `${API_ENDPOINTS.assets.list}?${params.toString()}`;
+    const response = await api.get<PaginatedResponse<Asset>>(requestUrl);
+
     return response.data;
   }
 
