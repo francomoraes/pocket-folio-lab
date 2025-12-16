@@ -11,53 +11,64 @@ import { Settings } from "@/pages/Settings";
 import { Positions } from "@/pages/Positions";
 import { Dashboard } from "@/pages/Dashboard";
 import { Navbar } from "@/components/Layout";
+import {
+  ErrorBoundary,
+  ErrorFallback,
+} from "@/shared/components/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Navbar />
+  <ErrorBoundary
+    fallback={<ErrorFallback />}
+    onError={(error, errorInfo) => {
+      console.error("Global error", error, errorInfo);
+    }}
+  >
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Navbar />
 
-          <Routes>
-            <Route path="/" element={<Navigate to="/positions" replace />} />
-            <Route
-              path="/positions"
-              element={
-                <ProtectedRoute>
-                  <Positions />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute>
-                  <Settings />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/login" element={<LoginForm />} />
+            <Routes>
+              <Route path="/" element={<Navigate to="/positions" replace />} />
+              <Route
+                path="/positions"
+                element={
+                  <ProtectedRoute>
+                    <Positions />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/login" element={<LoginForm />} />
 
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;

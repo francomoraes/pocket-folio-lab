@@ -1,5 +1,5 @@
-import { ASSETS_QUERY_KEY } from "@/hooks/usePositions";
 import { csvService } from "@/services/csvService";
+import { QUERY_KEYS } from "@/shared/constants/queryKeys";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -14,7 +14,7 @@ export const useCsvUpload = () => {
     mutationFn: (file: File) => csvService.uploadCsv(file),
     onSuccess: () => {
       toast.success("Arquivo CSV enviado com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ASSETS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
       setIsOpen(false);
       setFile(null);
     },

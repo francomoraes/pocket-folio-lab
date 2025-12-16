@@ -6,8 +6,8 @@ This document contains the list of features, improvements, and tasks to be imple
 
 ### Backend
 
-- [ ] Implement sorting and pagination (and frontend too)
-- [ ] Implement institutions CRUD
+- [x] Implement sorting and pagination (and frontend too)
+- [x] Implement institutions CRUD
 
 ### Features
 
