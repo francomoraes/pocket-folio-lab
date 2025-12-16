@@ -14,14 +14,52 @@ import { usePositions } from "@/hooks/usePositions";
 import CircularProgress from "@/components/ui/circular-progress";
 import { formatCentsToCurrency, formatPercentage } from "@/utils/formatters";
 import { CsvUploadDialog } from "@/components/CsvUpload/CsvUploadDialog";
+import { usePagination } from "@/hooks/usePagination";
+import { useEffect } from "react";
+import { useSummary } from "@/hooks/useSummary";
+import {
+  Pagination,
+  PaginationPrevious,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+} from "@/components/ui/pagination";
+import { PaginationControls } from "@/components/ui/pagination-control";
 
 export const Positions = () => {
-  const { assets, isLoading, refreshMarketPrices, isRefreshingMarketPrices } =
-    usePositions();
+  const pagination = usePagination();
 
-  const totalPatrimonyCents = assets?.reduce((sum, asset) => {
-    sum[asset.currency] = (sum[asset.currency] ?? 0) + asset.currentValueCents;
-    return sum;
+  const {
+    page,
+    itemsPerPage,
+    sortBy,
+    order,
+
+    setMeta,
+  } = pagination;
+
+  const { assets, isLoading, refreshMarketPrices, isRefreshingMarketPrices } =
+    usePositions({
+      page,
+      itemsPerPage,
+      sortBy,
+      order,
+    });
+
+  const { summary } = useSummary();
+
+  useEffect(() => {
+    if (assets && assets.meta) {
+      setMeta(assets.meta);
+    }
+  }, [assets]);
+
+  const totalPatrimonyCents = summary?.reduce((acc, item) => {
+    const currency = item.currency;
+    acc[currency] = (acc[currency] || 0) + item.totalValueCents;
+    return acc;
   }, {} as Record<string, number>);
 
   if (isLoading) {
@@ -33,8 +71,8 @@ export const Positions = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-3 h-[calc(100vh-61px)] p-3">
+      <div className="flex items-center justify-between flex-shrink-0">
         <div>
           <h2 className="text-2xl font-bold">Minhas Posições</h2>
           <p className="text-muted-foreground">
@@ -56,30 +94,30 @@ export const Positions = () => {
         </div>
       </div>
 
-      <Card className="p-6">
+      <Card className="p-3 flex-shrink-0">
         <div className="grid grid-cols-2 gap-8">
           <div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Patromônio (parte em dólares)
             </p>
-            <p className="text-3xl font-semibold">
+            <p className="text-xl font-semibold">
               {formatCentsToCurrency(totalPatrimonyCents?.USD || 0, "USD")}
             </p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Patromônio (parte em reais)
             </p>
-            <p className="text-3xl font-semibold">
+            <p className="text-xl font-semibold">
               {formatCentsToCurrency(totalPatrimonyCents?.BRL || 0, "BRL")}
             </p>
           </div>
         </div>
       </Card>
 
-      <Card>
+      <Card className="flex-1 flex flex-col min-h-0">
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
               <TableHead>Ticker</TableHead>
               <TableHead>Tipo</TableHead>
@@ -93,7 +131,7 @@ export const Positions = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {!assets || assets?.length === 0 ? (
+            {!assets || assets?.data?.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={7}
@@ -104,7 +142,7 @@ export const Positions = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              assets?.map((asset) => (
+              assets?.data?.map((asset) => (
                 <TableRow key={asset.ticker}>
                   <TableCell className="font-medium">{asset.ticker}</TableCell>
                   <TableCell>{asset.type.assetClass.name}</TableCell>
@@ -149,6 +187,8 @@ export const Positions = () => {
             )}
           </TableBody>
         </Table>
+        {/* simple pagination */}
+        <PaginationControls pagination={pagination} />
       </Card>
     </div>
   );

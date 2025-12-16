@@ -4,12 +4,19 @@ import {
   SellAssetRequest,
   UpdateAssetRequest,
 } from "@/types/asset";
+import { PaginationQuery } from "@/types/pagination";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export const ASSETS_QUERY_KEY = ["assets"];
 
-export const usePositions = () => {
+export const usePositions = ({
+  page = 1,
+  itemsPerPage = 10,
+  sortBy = "ticker",
+  order = "ASC",
+  skipPagination,
+}: PaginationQuery = {}) => {
   const queryClient = useQueryClient();
 
   const {
@@ -18,8 +25,22 @@ export const usePositions = () => {
     error,
     refetch,
   } = useQuery({
-    queryKey: ASSETS_QUERY_KEY,
-    queryFn: () => assetService.getAssets(),
+    queryKey: [
+      ...ASSETS_QUERY_KEY,
+      page,
+      itemsPerPage,
+      sortBy,
+      order,
+      skipPagination,
+    ],
+    queryFn: () =>
+      assetService.getAssets({
+        page,
+        itemsPerPage,
+        sortBy,
+        order,
+        skipPagination,
+      }),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
   });

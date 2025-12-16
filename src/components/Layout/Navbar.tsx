@@ -16,16 +16,24 @@ export const Navbar = () => {
 
         <nav className="flex items-center gap-4">
           <NavLink
-            to="/"
-            end
+            to="/positions"
             className={({ isActive }) =>
               `flex items-center gap-2 text-sm font-medium hover:text-accent transition-colors ${
                 isActive ? "text-accent" : ""
               }`
             }
           >
-            <Home className="h-4 w-4" />
-            <span className="hidden sm:inline">Início</span>
+            Posições
+          </NavLink>
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              `flex items-center gap-2 text-sm font-medium hover:text-accent transition-colors ${
+                isActive ? "text-accent" : ""
+              }`
+            }
+          >
+            Dashboard
           </NavLink>
           <NavLink
             to="/settings"
@@ -35,7 +43,6 @@ export const Navbar = () => {
               }`
             }
           >
-            <Settings className="h-4 w-4" />
             <span className="hidden sm:inline">Configurações</span>
           </NavLink>
           <UserMenu />

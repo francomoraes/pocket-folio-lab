@@ -55,8 +55,6 @@ export const Dashboard = () => {
   const { assetClasses } = useAssetClasses();
   const { assetTypes } = useAssetTypes();
 
-  console.log({ assetClasses, assetTypes });
-
   const allocationByClass: AllocationByClass[] = summary
     ? summary?.map((item) => ({
         class: item.assetClassName,
@@ -97,61 +95,56 @@ export const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-semibold mb-4">Alocação por Classe</h2>
-        <Card className="p-6">
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Classe</TableHead>
-                    <TableHead className="text-right">Tipo</TableHead>
-                    <TableHead className="text-right">Valor</TableHead>
-                    <TableHead className="text-right">%</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {allocationByClass.length === 0 ? (
-                    <TableRow>
-                      <TableCell
-                        colSpan={3}
-                        className="text-center text-muted-foreground py-8"
-                      >
-                        Nenhum dado disponível
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    allocationByClass?.map((item, index) => (
-                      <TableRow key={item.class + index}>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <div
-                              className="w-3 h-3 rounded-full"
-                              style={{
-                                backgroundColor: COLORS[index % COLORS.length],
-                              }}
-                            />
-                            {getClassLabel(item.class)}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {item.type}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {formatCurrency(item.actualValue)}
-                        </TableCell>
-                        <TableCell className="text-right font-medium">
-                          {item.actualPercentage.toFixed(1)}%
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-            <div className="flex items-center justify-center">
+    <div className="flex flex-col gap-3 h-[calc(100vh-61px)] p-3">
+      <h2 className="text-2xl font-semibold mb-4">Alocação por Classe</h2>
+      <Card className="flex-1 flex flex-col min-h-0">
+        {/* <div className="grid md:grid-cols-2 gap-8"> */}
+        <Table>
+          <TableHeader className="sticky top-0 bg-background z-10">
+            <TableRow>
+              <TableHead>Classe</TableHead>
+              <TableHead className="text-right">Tipo</TableHead>
+              <TableHead className="text-right">Valor</TableHead>
+              <TableHead className="text-right">%</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {allocationByClass.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={3}
+                  className="text-center text-muted-foreground py-8"
+                >
+                  Nenhum dado disponível
+                </TableCell>
+              </TableRow>
+            ) : (
+              allocationByClass?.map((item, index) => (
+                <TableRow key={item.class + index}>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{
+                          backgroundColor: COLORS[index % COLORS.length],
+                        }}
+                      />
+                      {getClassLabel(item.class)}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right">{item.type}</TableCell>
+                  <TableCell className="text-right">
+                    {formatCurrency(item.actualValue)}
+                  </TableCell>
+                  <TableCell className="text-right font-medium">
+                    {item.actualPercentage.toFixed(1)}%
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+        {/* <div className="flex items-center justify-center">
               {classSummaryBarChartData.length > 0 ? (
                 <ResponsiveContainer width="100%" height={250}>
                   <BarChart
@@ -181,11 +174,10 @@ export const Dashboard = () => {
               ) : (
                 <p className="text-muted-foreground">Sem dados para exibir</p>
               )}
-            </div>
-          </div>
-        </Card>
-      </div>
-      <div>
+            </div> */}
+        {/* </div> */}
+      </Card>
+      {/* <div>
         <h2 className="text-2xl font-semibold mb-4">Alocação por Classe</h2>
         <Card className="p-6">
           <div className="grid md:grid-cols-2 gap-8">
@@ -259,7 +251,7 @@ export const Dashboard = () => {
             </div>
           </div>
         </Card>
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 12-12-2025
+
+- Restructure app layout and navigation, enhance settings and dashboard components
+- Increase auth rate limit from 5 to 10 requests per window for production
+
+## 11-12-2025
+
+- Implement pagination controls and hooks for asset management
+
 ## 26-11-2025
 
 - Implement update prices by user with update prices batch function
