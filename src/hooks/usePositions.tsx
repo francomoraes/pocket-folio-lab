@@ -1,4 +1,5 @@
 import { assetService } from "@/services/assetService";
+import { QUERY_KEYS } from "@/shared/constants/queryKeys";
 import {
   BuyAssetRequest,
   SellAssetRequest,
@@ -7,8 +8,6 @@ import {
 import { PaginationQuery } from "@/types/pagination";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-
-export const ASSETS_QUERY_KEY = ["assets"];
 
 export const usePositions = ({
   page = 1,
@@ -26,7 +25,7 @@ export const usePositions = ({
     refetch,
   } = useQuery({
     queryKey: [
-      ...ASSETS_QUERY_KEY,
+      ...QUERY_KEYS.ASSETS,
       page,
       itemsPerPage,
       sortBy,
@@ -56,7 +55,7 @@ export const usePositions = ({
       return assetService.buyAsset(ticker, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ASSETS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
       toast.success("Ativo comprado com sucesso!");
     },
     onError: (error: Error) => {
@@ -75,7 +74,7 @@ export const usePositions = ({
       return assetService.sellAsset(ticker, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ASSETS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
       toast.success("Ativo vendido com sucesso!");
     },
     onError: (error: Error) => {
@@ -88,7 +87,7 @@ export const usePositions = ({
       return assetService.updateAsset(id, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ASSETS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
       toast.success("Ativo atualizado com sucesso!");
     },
     onError: (error: Error) => {
@@ -101,7 +100,7 @@ export const usePositions = ({
       return assetService.deleteAsset(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ASSETS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
       toast.success("Ativo excluído com sucesso!");
     },
     onError: (error: Error) => {
@@ -114,7 +113,7 @@ export const usePositions = ({
       return assetService.refreshMarketPrices();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ASSETS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
       toast.success("Preços de mercado atualizados com sucesso!");
     },
     onError: (error: Error) => {

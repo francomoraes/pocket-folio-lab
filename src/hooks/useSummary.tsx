@@ -1,8 +1,6 @@
 import { summaryService } from "@/services/summaryService";
+import { QUERY_KEYS } from "@/shared/constants/queryKeys";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-
-const SUMMARY_QUERY_KEY = ["summary"];
-const OVERVIEW_QUERY_KEY = ["overview"];
 
 export const useSummary = () => {
   const {
@@ -11,7 +9,7 @@ export const useSummary = () => {
     error: errorSummary,
     refetch: refetchSummary,
   } = useQuery({
-    queryKey: SUMMARY_QUERY_KEY,
+    queryKey: QUERY_KEYS.SUMMARY,
     queryFn: () => summaryService.getSummary(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
@@ -23,7 +21,7 @@ export const useSummary = () => {
     error: errorOverview,
     refetch: refetchOverview,
   } = useQuery({
-    queryKey: OVERVIEW_QUERY_KEY,
+    queryKey: QUERY_KEYS.OVERVIEW,
     queryFn: () => summaryService.getOverviewByCurrency(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,

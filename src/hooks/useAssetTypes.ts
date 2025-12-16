@@ -1,9 +1,7 @@
 import { assetTypeService } from "@/services/assetTypeService";
-import { UpdateAssetClass } from "@/types/assetClass";
+import { QUERY_KEYS } from "@/shared/constants/queryKeys";
 import { CreateAssetType, UpdateAssetType } from "@/types/assetType";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
-const ASSET_TYPES_QUERY_KEY = ["asset-types"];
 
 export const useAssetTypes = () => {
   const queryClient = useQueryClient();
@@ -14,7 +12,7 @@ export const useAssetTypes = () => {
     error,
     refetch,
   } = useQuery({
-    queryKey: ASSET_TYPES_QUERY_KEY,
+    queryKey: QUERY_KEYS.ASSET_TYPES,
     queryFn: async () => assetTypeService.list(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
@@ -25,7 +23,7 @@ export const useAssetTypes = () => {
       return assetTypeService.create(data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ASSET_TYPES_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_TYPES });
     },
     onError: (error: Error) => {
       console.error(error.message || "Error creating asset type");
@@ -37,7 +35,7 @@ export const useAssetTypes = () => {
       return assetTypeService.update(Number(data.id), data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ASSET_TYPES_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_TYPES });
     },
     onError: (error: Error) => {
       console.error(error.message || "Error updating asset type");
@@ -49,7 +47,7 @@ export const useAssetTypes = () => {
       return assetTypeService.delete(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ASSET_TYPES_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_TYPES });
     },
     onError: (error: Error) => {
       console.error(error.message || "Error deleting asset type");

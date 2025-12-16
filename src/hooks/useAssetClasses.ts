@@ -1,9 +1,8 @@
 import { assetClassService } from "@/services/assetClassService";
+import { QUERY_KEYS } from "@/shared/constants/queryKeys";
 import { CreateAssetClass, UpdateAssetClass } from "@/types/assetClass";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-
-const ASSET_CLASSES_QUERY_KEY = ["asset-classes"];
 
 export const useAssetClasses = () => {
   const queryClient = useQueryClient();
@@ -14,7 +13,7 @@ export const useAssetClasses = () => {
     error,
     refetch,
   } = useQuery({
-    queryKey: ASSET_CLASSES_QUERY_KEY,
+    queryKey: QUERY_KEYS.ASSET_CLASSES,
     queryFn: async () => assetClassService.list(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
@@ -25,7 +24,7 @@ export const useAssetClasses = () => {
       return assetClassService.create(data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ASSET_CLASSES_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_CLASSES });
     },
     onError: (error: Error) => {
       toast.error(error.message || "Error creating asset class");
@@ -37,7 +36,7 @@ export const useAssetClasses = () => {
       return assetClassService.update(data.id, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ASSET_CLASSES_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_CLASSES });
     },
     onError: (error: Error) => {
       toast.error(error.message || "Error updating asset class");
@@ -49,7 +48,7 @@ export const useAssetClasses = () => {
       return assetClassService.delete(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ASSET_CLASSES_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_CLASSES });
     },
     onError: (error: Error) => {
       toast.error(error.message || "Error deleting asset class");

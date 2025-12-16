@@ -1,9 +1,8 @@
 import { institutionService } from "@/services/institutionService";
+import { QUERY_KEYS } from "@/shared/constants/queryKeys";
 import { CreateInstitution, UpdateInstitution } from "@/types/institution";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-
-const INSTITUTIONS_QUERY_KEY = ["institutions"];
 
 export const useInstitutions = () => {
   const queryClient = useQueryClient();
@@ -14,7 +13,7 @@ export const useInstitutions = () => {
     error,
     refetch,
   } = useQuery({
-    queryKey: INSTITUTIONS_QUERY_KEY,
+    queryKey: QUERY_KEYS.INSTITUTIONS,
     queryFn: async () => institutionService.list(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
@@ -25,7 +24,7 @@ export const useInstitutions = () => {
       return institutionService.create(data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: INSTITUTIONS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.INSTITUTIONS });
     },
     onError: (error: Error) => {
       toast.error(error.message || "Error creating institution");
@@ -37,7 +36,7 @@ export const useInstitutions = () => {
       return institutionService.update(data.id, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: INSTITUTIONS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.INSTITUTIONS });
     },
     onError: (error: Error) => {
       toast.error(error.message || "Error updating asset class");
@@ -49,7 +48,7 @@ export const useInstitutions = () => {
       return institutionService.delete(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: INSTITUTIONS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.INSTITUTIONS });
     },
     onError: (error: Error) => {
       toast.error(error.message || "Error deleting institution");
