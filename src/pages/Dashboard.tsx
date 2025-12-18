@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui/card";
+import { Card } from "@/shared/components/ui/card";
 import {
   Table,
   TableBody,
@@ -6,11 +6,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useAssetClasses } from "@/hooks/useAssetClasses";
-import { useAssetTypes } from "@/hooks/useAssetTypes";
-import { useSummary } from "@/hooks/useSummary";
-import { AllocationByClass, AllocationByTicker } from "@/types/investment";
+} from "@/shared/components/ui/table";
+import { useAssetClasses } from "@/features/settings/hooks/useAssetClasses";
+import { useAssetTypes } from "@/features/settings/hooks/useAssetTypes";
+import { useSummary } from "@/shared/hooks/useSummary";
+import {
+  AllocationByClass,
+  AllocationByTicker,
+} from "@/shared/types/investment";
 import {
   PieChart,
   Pie,

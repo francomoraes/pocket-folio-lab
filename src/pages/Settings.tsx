@@ -1,8 +1,13 @@
-import { Navbar } from "@/components/Layout";
-import { AssetClassTable } from "@/components/Settings/AssetClassTable";
-import { AssetTypesTable } from "@/components/Settings/AssetTypesTable";
-import { InstitutionsTable } from "@/components/Settings/InstitutionsTable";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Navbar } from "@/shared/components/Layout";
+import { AssetClassTable } from "@/features/settings/components/AssetClassTable";
+import { AssetTypesTable } from "@/features/settings/components/AssetTypesTable";
+import { InstitutionsTable } from "@/features/settings/components/InstitutionsTable";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/components/ui/tabs";
 
 export const Settings = () => {
   return (

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 15-12-2025
+
+- Implement sorting and pagination to positions table
+
 ## 12-12-2025
 
 - Restructure app layout and navigation, enhance settings and dashboard components
