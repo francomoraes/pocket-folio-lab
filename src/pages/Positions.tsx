@@ -1,6 +1,6 @@
 import { RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Button } from "@/shared/components/ui/button";
+import { Card } from "@/shared/components/ui/card";
 import {
   Table,
   TableBody,
@@ -8,25 +8,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { TransactionDialog } from "@/components/TransactionDialog";
-import { usePositions } from "@/hooks/usePositions";
-import CircularProgress from "@/components/ui/circular-progress";
-import { formatCentsToCurrency, formatPercentage } from "@/utils/formatters";
-import { CsvUploadDialog } from "@/components/CsvUpload/CsvUploadDialog";
-import { usePagination } from "@/hooks/usePagination";
-import { useEffect } from "react";
-import { useSummary } from "@/hooks/useSummary";
+} from "@/shared/components/ui/table";
 import {
-  Pagination,
-  PaginationPrevious,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-} from "@/components/ui/pagination";
-import { PaginationControls } from "@/components/ui/pagination-control";
+  TransactionDialog,
+  CsvUploadDialog,
+} from "@/features/positions/components";
+import { usePositions } from "@/features/positions/hooks/usePositions";
+import CircularProgress from "@/shared/components/ui/circular-progress";
+import {
+  formatCentsToCurrency,
+  formatPercentage,
+} from "@/shared/utils/formatters";
+import { usePagination } from "@/shared/hooks/usePagination";
+import { useEffect } from "react";
+import { useSummary } from "@/shared/hooks/useSummary";
+import { PaginationControls } from "@/shared/components/ui/pagination-control";
 
 export const Positions = () => {
   const pagination = usePagination();

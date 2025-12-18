@@ -1,16 +1,16 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/shared/components/ui/toaster";
+import { Toaster as Sonner } from "@/shared/components/ui/sonner";
+import { TooltipProvider } from "@/shared/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { LoginForm } from "@/components/Auth";
+import { AuthProvider } from "@/shared/contexts/AuthContext";
+import { LoginForm } from "@/features/auth/components/LoginForm";
 import NotFound from "./pages/NotFound";
-import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
+import { ProtectedRoute } from "@/features/auth/components/ProtectedRoute";
 import { Settings } from "@/pages/Settings";
 import { Positions } from "@/pages/Positions";
 import { Dashboard } from "@/pages/Dashboard";
-import { Navbar } from "@/components/Layout";
+import { Navbar } from "@/shared/components/Layout";
 import {
   ErrorBoundary,
   ErrorFallback,

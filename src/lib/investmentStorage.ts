@@ -1,4 +1,4 @@
-import { Transaction, Position } from "@/types/investment";
+import { Transaction, Position } from "@/shared/types/investment";
 
 const STORAGE_KEY = "investTracker_transactions";
 
@@ -16,7 +16,7 @@ export const calculatePositions = (transactions: Transaction[]): Position[] => {
 
   transactions.forEach((transaction) => {
     const existing = positionsMap.get(transaction.ticker);
-    
+
     if (!existing) {
       if (transaction.operation === "buy") {
         positionsMap.set(transaction.ticker, {
@@ -34,10 +34,11 @@ export const calculatePositions = (transactions: Transaction[]): Position[] => {
     } else {
       if (transaction.operation === "buy") {
         const newQuantity = existing.quantity + transaction.quantity;
-        const newAveragePrice = 
-          (existing.averagePrice * existing.quantity + transaction.price * transaction.quantity) / 
+        const newAveragePrice =
+          (existing.averagePrice * existing.quantity +
+            transaction.price * transaction.quantity) /
           newQuantity;
-        
+
         positionsMap.set(transaction.ticker, {
           ...existing,
           quantity: newQuantity,
@@ -46,7 +47,7 @@ export const calculatePositions = (transactions: Transaction[]): Position[] => {
         });
       } else {
         const newQuantity = existing.quantity - transaction.quantity;
-        
+
         if (newQuantity <= 0) {
           positionsMap.delete(transaction.ticker);
         } else {
@@ -61,9 +62,13 @@ export const calculatePositions = (transactions: Transaction[]): Position[] => {
   });
 
   return Array.from(positionsMap.values()).map((position) => {
-    const profitLoss = position.totalValue - (position.averagePrice * position.quantity);
-    const profitLossPercentage = ((position.currentPrice - position.averagePrice) / position.averagePrice) * 100;
-    
+    const profitLoss =
+      position.totalValue - position.averagePrice * position.quantity;
+    const profitLossPercentage =
+      ((position.currentPrice - position.averagePrice) /
+        position.averagePrice) *
+      100;
+
     return {
       ...position,
       profitLoss,
