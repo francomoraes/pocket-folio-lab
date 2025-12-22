@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 22-12-2025
+
+- Implement locale and profilePictureUrl to user;
+- Implement updateUser function to backend;
+- Implement user dropdown menu and locale change;
+
 ## 18-12-2025
 
 - Refactor query keys
