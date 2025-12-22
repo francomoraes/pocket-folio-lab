@@ -18,6 +18,14 @@ class AuthService {
     );
     return response.data;
   }
+
+  async updateUser(data: Partial<AuthResponse> & { id: number }) {
+    const response = await api.put<AuthResponse>(
+      API_ENDPOINTS.auth.updateUser.replace(":id", data.id.toString()),
+      data,
+    );
+    return response.data;
+  }
 }
 
 export const authService = new AuthService();

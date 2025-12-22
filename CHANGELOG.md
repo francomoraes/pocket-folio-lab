@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 18-12-2025
+
+- Refactor query keys
+- Set Error Boundary
+- Changed file structure to vertical slicing
+
 ## 15-12-2025
 
 - Implement sorting and pagination to positions table

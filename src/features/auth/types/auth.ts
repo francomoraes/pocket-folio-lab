@@ -1,6 +1,9 @@
 export interface User {
   id: number;
   email: string;
+  name: string;
+  profilePictureUrl?: string;
+  locale?: string;
 }
 
 export interface AuthResponse {
@@ -24,6 +27,7 @@ export interface AuthContextType {
   login: (data: LoginRequest) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
   logout: () => void;
+  updateUser: (updatedUser: User) => void;
   isLoading: boolean;
   isAuthenticated: boolean;
 }

@@ -72,12 +72,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     toast.success("Logout successful");
   };
 
+  const updateUser = async (updatedUser: User) => {
+    setIsLoading(true);
+
+    try {
+      const response = await authService.updateUser(updatedUser);
+      setUser(response.user);
+      setToken(response.token);
+      localStorage.setItem(USER_KEY, JSON.stringify(response.user));
+      localStorage.setItem(TOKEN_KEY, response.token);
+      toast.success("User updated successfully");
+    } catch (error) {
+      toast.error("Failed to update user");
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const value: AuthContextType = {
     user,
     token,
     login,
     register,
     logout,
+    updateUser,
     isLoading,
     isAuthenticated: !!user && !!token,
   };

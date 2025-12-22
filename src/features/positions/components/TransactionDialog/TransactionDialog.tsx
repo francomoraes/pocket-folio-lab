@@ -19,7 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
-import { usePositions } from "@/features/positions/hooks/usePositions";
 import { useInstitutions } from "@/features/settings/hooks/useInstitutions";
 import { useTransactionForm } from "@/features/positions/components/TransactionDialog/useTransactionForm";
 
