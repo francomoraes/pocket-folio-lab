@@ -10,6 +10,7 @@ import {
 } from "@/shared/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { useLoginForm } from "@/features/auth/components/LoginForm/useLoginForm";
+import { useTranslation } from "react-i18next";
 
 export const LoginForm = () => {
   const {
@@ -21,21 +22,26 @@ export const LoginForm = () => {
     onSubmit,
     toggleMode,
   } = useLoginForm();
+  const { t } = useTranslation();
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4 bg-background">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">Pocket Folio Lab</CardTitle>
+          <CardTitle className="text-2xl font-bold">
+            {t("navbar.appName")}
+          </CardTitle>
           <CardDescription>
-            {isRegisterMode ? "Criar uma nova conta" : "Entre com sua conta"}
+            {isRegisterMode
+              ? t("auth.register.subtitle")
+              : t("auth.login.subtitle")}
           </CardDescription>
         </CardHeader>
 
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("auth.login.email")}</Label>
               <Input
                 id="email"
                 type="email"
@@ -51,7 +57,7 @@ export const LoginForm = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
+              <Label htmlFor="password">{t("auth.login.password")}</Label>
               <Input
                 id="password"
                 type="password"
@@ -66,7 +72,7 @@ export const LoginForm = () => {
               )}
               {isRegisterMode && (
                 <p className="text-xs text-muted-foreground">
-                  Mínimo 6 caracteres com maiúscula, minúscula, número e símbolo
+                  {t("common.validation.minLength", { min: 6 })}
                 </p>
               )}
             </div>
@@ -75,12 +81,12 @@ export const LoginForm = () => {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Carregando...
+                  {t("common.status.loading")}
                 </>
               ) : isRegisterMode ? (
-                "Criar conta"
+                t("auth.register.submit")
               ) : (
-                "Entrar"
+                t("auth.login.submit")
               )}
             </Button>
 
@@ -102,26 +108,26 @@ export const LoginForm = () => {
             <div className="text-center text-sm">
               {isRegisterMode ? (
                 <>
-                  Já tem uma conta?{" "}
+                  {t("auth.register.hasAccount")}{" "}
                   <button
                     type="button"
                     onClick={toggleMode}
                     className="text-primary underline-offset-4 hover:underline"
                     disabled={isLoading}
                   >
-                    Entrar
+                    {t("auth.register.login")}
                   </button>
                 </>
               ) : (
                 <>
-                  Não tem uma conta?{" "}
+                  {t("auth.login.noAccount")}{" "}
                   <button
                     type="button"
                     onClick={toggleMode}
                     className="text-primary underline-offset-4 hover:underline"
                     disabled={isLoading}
                   >
-                    Criar conta
+                    {t("auth.login.createAccount")}
                   </button>
                 </>
               )}

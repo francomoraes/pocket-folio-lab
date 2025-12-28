@@ -23,8 +23,10 @@ import { usePagination } from "@/shared/hooks/usePagination";
 import { useEffect } from "react";
 import { useSummary } from "@/shared/hooks/useSummary";
 import { PaginationControls } from "@/shared/components/ui/pagination-control";
+import { useTranslation } from "react-i18next";
 
 export const Positions = () => {
+  const { t } = useTranslation();
   const pagination = usePagination();
 
   const {
@@ -70,10 +72,8 @@ export const Positions = () => {
     <div className="flex flex-col gap-3 h-[calc(100vh-61px)] p-3">
       <div className="flex items-center justify-between flex-shrink-0">
         <div>
-          <h2 className="text-2xl font-bold">Minhas Posições</h2>
-          <p className="text-muted-foreground">
-            Gerencie sua carteira de investimentos
-          </p>
+          <h2 className="text-2xl font-bold">{t("positions.title")}</h2>
+          <p className="text-muted-foreground">{t("positions.subtitle")}</p>
         </div>
         <div className="flex gap-2">
           <CsvUploadDialog />
@@ -84,7 +84,7 @@ export const Positions = () => {
             disabled={isRefreshingMarketPrices}
           >
             <RefreshCw className="h-4 w-4" />
-            Atualizar Cotações
+            {t("positions.actions.refreshPrices")}
           </Button>
           <TransactionDialog />
         </div>
@@ -94,7 +94,7 @@ export const Positions = () => {
         <div className="grid grid-cols-2 gap-8">
           <div>
             <p className="text-xs text-muted-foreground">
-              Patromônio (parte em dólares)
+              {t("positions.summary.patrimonyUSD")}
             </p>
             <p className="text-xl font-semibold">
               {formatCentsToCurrency(totalPatrimonyCents?.USD || 0, "USD")}
@@ -102,7 +102,7 @@ export const Positions = () => {
           </div>
           <div>
             <p className="text-xs text-muted-foreground">
-              Patromônio (parte em reais)
+              {t("positions.summary.patrimonyBRL")}
             </p>
             <p className="text-xl font-semibold">
               {formatCentsToCurrency(totalPatrimonyCents?.BRL || 0, "BRL")}
@@ -115,15 +115,17 @@ export const Positions = () => {
         <Table>
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
-              <TableHead>Ticker</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead>Quantidade</TableHead>
-              <TableHead>PM Compra</TableHead>
-              <TableHead>Cotação</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>L/P</TableHead>
-              <TableHead>Instituição</TableHead>
-              <TableHead>% Carteira</TableHead>
+              <TableHead>{t("positions.table.headers.ticker")}</TableHead>
+              <TableHead>{t("positions.table.headers.type")}</TableHead>
+              <TableHead>{t("positions.table.headers.quantity")}</TableHead>
+              <TableHead>{t("positions.table.headers.averagePrice")}</TableHead>
+              <TableHead>{t("positions.table.headers.currentPrice")}</TableHead>
+              <TableHead>{t("positions.table.headers.total")}</TableHead>
+              <TableHead>{t("positions.table.headers.profitLoss")}</TableHead>
+              <TableHead>{t("positions.table.headers.institution")}</TableHead>
+              <TableHead>
+                {t("positions.table.headers.portfolioPercentage")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -133,8 +135,7 @@ export const Positions = () => {
                   colSpan={7}
                   className="text-center text-muted-foreground py-8"
                 >
-                  Nenhuma posição encontrada. Adicione uma transação para
-                  começar.
+                  {t("positions.table.empty")}
                 </TableCell>
               </TableRow>
             ) : (

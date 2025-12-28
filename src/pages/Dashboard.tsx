@@ -27,6 +27,7 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
+import { useTranslation } from "react-i18next";
 
 const COLORS = [
   "hsl(var(--chart-1))",
@@ -57,6 +58,8 @@ export const Dashboard = () => {
   const { summary, isLoadingSummary } = useSummary();
   const { assetClasses } = useAssetClasses();
   const { assetTypes } = useAssetTypes();
+
+  const { t } = useTranslation();
 
   const allocationByClass: AllocationByClass[] = summary
     ? summary?.map((item) => ({
@@ -90,25 +93,31 @@ export const Dashboard = () => {
   }));
 
   if (isLoadingSummary) {
-    return <div>Carregando dashboard...</div>;
+    return <div>{t("dashboard.loading")}</div>;
   }
 
   if (!summary || summary.length === 0) {
-    return <div>Nenhum dado disponível</div>;
+    return <div>{t("dashboard.table.empty")}</div>;
   }
 
   return (
     <div className="flex flex-col gap-3 h-[calc(100vh-61px)] p-3">
-      <h2 className="text-2xl font-semibold mb-4">Alocação por Classe</h2>
+      <h2 className="text-2xl font-semibold mb-4">{t("dashboard.title")}</h2>
       <Card className="flex-1 flex flex-col min-h-0">
         {/* <div className="grid md:grid-cols-2 gap-8"> */}
         <Table>
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
-              <TableHead>Classe</TableHead>
-              <TableHead className="text-right">Tipo</TableHead>
-              <TableHead className="text-right">Valor</TableHead>
-              <TableHead className="text-right">%</TableHead>
+              <TableHead>{t("dashboard.table.headers.class")}</TableHead>
+              <TableHead className="text-right">
+                {t("dashboard.table.headers.type")}
+              </TableHead>
+              <TableHead className="text-right">
+                {t("dashboard.table.headers.value")}
+              </TableHead>
+              <TableHead className="text-right">
+                {t("dashboard.table.headers.percentage")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -118,7 +127,7 @@ export const Dashboard = () => {
                   colSpan={3}
                   className="text-center text-muted-foreground py-8"
                 >
-                  Nenhum dado disponível
+                  {t("dashboard.table.empty")}
                 </TableCell>
               </TableRow>
             ) : (

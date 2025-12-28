@@ -15,6 +15,8 @@ import {
   ErrorBoundary,
   ErrorFallback,
 } from "@/shared/components/ErrorBoundary";
+import "@/shared/i18n/config";
+import { UserProfile } from "@/pages/UserProfile";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +58,15 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Settings />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <UserProfile />
                   </ProtectedRoute>
                 }
               />

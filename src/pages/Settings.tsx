@@ -8,23 +8,30 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/shared/components/ui/tabs";
+import { useTranslation } from "react-i18next";
 
 export const Settings = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col gap-3 h-[calc(100vh-61px)] p-3">
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Configurações</h1>
-          <p className="text-muted-foreground">
-            Gerencie suas classes e tipos de ativos
-          </p>
+          <h1 className="text-3xl font-bold">{t("settings.title")}</h1>
+          <p className="text-muted-foreground">{t("settings.subtitle")}</p>
         </div>
 
         <Tabs defaultValue="classes">
           <TabsList>
-            <TabsTrigger value="classes">Classes de Ativos</TabsTrigger>
-            <TabsTrigger value="types">Tipos de Ativos</TabsTrigger>
-            <TabsTrigger value="institutions">Instituições</TabsTrigger>
+            <TabsTrigger value="classes">
+              {t("settings.tabs.assetClasses")}
+            </TabsTrigger>
+            <TabsTrigger value="types">
+              {t("settings.tabs.assetTypes")}
+            </TabsTrigger>
+            <TabsTrigger value="institutions">
+              {t("settings.tabs.institutions")}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="classes">

@@ -1,0 +1,33 @@
+export default {
+  buttons: {
+    save: "Salvar",
+    cancel: "Cancelar",
+    delete: "Excluir",
+    edit: "Editar",
+    add: "Adicionar",
+    close: "Fechar",
+    confirm: "Confirmar",
+    create: "Criar",
+    update: "Atualizar",
+    search: "Buscar",
+    filter: "Filtrar",
+    export: "Exportar",
+    import: "Importar",
+    refresh: "Atualizar",
+    next: "Próximo",
+    previous: "Anterior",
+  },
+  status: {
+    loading: "Carregando...",
+    saving: "Salvando...",
+    success: "Sucesso!",
+    error: "Erro",
+    noData: "Nenhum dado disponível",
+  },
+  validation: {
+    required: "Campo obrigatório",
+    invalidEmail: "E-mail inválido",
+    minLength: "Mínimo de {{min}} caracteres",
+    maxLength: "Máximo de {{max}} caracteres",
+  },
+};

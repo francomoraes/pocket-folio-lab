@@ -21,9 +21,11 @@ import {
 } from "@/shared/components/ui/select";
 import { useInstitutions } from "@/features/settings/hooks/useInstitutions";
 import { useTransactionForm } from "@/features/positions/components/TransactionDialog/useTransactionForm";
+import { useTranslation } from "react-i18next";
 
 export const TransactionDialog = () => {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   const { formData, updateField, handleSubmit, resetForm, isSubmitting } =
     useTransactionForm(() => setOpen(false));
@@ -42,16 +44,16 @@ export const TransactionDialog = () => {
       <DialogTrigger asChild>
         <Button className="gap-2">
           <Plus className="h-4 w-4" />
-          Nova Transação
+          {t("positions.actions.newTransaction")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Nova Transação</DialogTitle>
+          <DialogTitle>{t("transaction.dialog.title")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label>Operação</Label>
+            <Label>{t("transaction.fields.operation")}</Label>
             <RadioGroup
               value={formData.operation}
               onValueChange={(value) =>
@@ -62,13 +64,13 @@ export const TransactionDialog = () => {
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="buy" id="buy" />
                   <Label htmlFor="buy" className="cursor-pointer font-normal">
-                    Compra
+                    {t("transaction.operations.buy")}
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="sell" id="sell" />
                   <Label htmlFor="sell" className="cursor-pointer font-normal">
-                    Venda
+                    {t("transaction.operations.sell")}
                   </Label>
                 </div>
               </div>
@@ -76,10 +78,10 @@ export const TransactionDialog = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="ticker">Ticker</Label>
+            <Label htmlFor="ticker">{t("transaction.fields.ticker")}</Label>
             <Input
               id="ticker"
-              placeholder="PETR4"
+              placeholder={t("transaction.placeholders.ticker")}
               value={formData.ticker}
               onChange={(e) => updateField("ticker", e.target.value)}
               className="uppercase"
@@ -87,24 +89,24 @@ export const TransactionDialog = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="quantity">Quantidade</Label>
+            <Label htmlFor="quantity">{t("transaction.fields.quantity")}</Label>
             <Input
               id="quantity"
               type="number"
               step="0.01"
-              placeholder="100"
+              placeholder={t("transaction.placeholders.quantity")}
               value={formData.quantity}
               onChange={(e) => updateField("quantity", e.target.value)}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="price">Preço</Label>
+            <Label htmlFor="price">{t("transaction.fields.price")}</Label>
             <Input
               id="price"
               type="number"
               step="0.01"
-              placeholder="28.50"
+              placeholder={t("transaction.placeholders.price")}
               value={formData.price}
               onChange={(e) => updateField("price", e.target.value)}
             />
@@ -154,10 +156,12 @@ export const TransactionDialog = () => {
               variant="secondary"
               onClick={() => setOpen(false)}
             >
-              Cancelar
+              {t("common.buttons.cancel")}
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Salvando..." : "Salvar"}
+              {isSubmitting
+                ? t("common.status.saving")
+                : t("common.buttons.save")}
             </Button>
           </div>
         </form>

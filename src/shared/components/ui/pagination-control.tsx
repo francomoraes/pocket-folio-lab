@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
+import { useTranslation } from "react-i18next";
 
 interface PaginationControlsProps {
   pagination: {
@@ -75,6 +76,7 @@ export const PaginationControls = ({ pagination }: PaginationControlsProps) => {
     goToPage,
     changeItemsPerPage,
   } = pagination;
+  const { t } = useTranslation();
 
   if (!meta || meta.totalItems === 0) return null;
 
@@ -86,16 +88,17 @@ export const PaginationControls = ({ pagination }: PaginationControlsProps) => {
     <div className="flex flex-col gap-4 p-4 border-t sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-4 text-sm">
         <p className="min-w-max">
-          Mostrando{" "}
+          {t("pagination.showing")}{" "}
           <strong>
             {" "}
             {start}-{end}
           </strong>{" "}
-          de <strong> {meta.totalItems}</strong> itens
+          {t("pagination.of")} <strong> {meta.totalItems}</strong>{" "}
+          {t("pagination.total")}
         </p>
         |
         <div className="flex items-center gap-2">
-          <p className="whitespace-nowrap">Por página:</p>
+          <p className="whitespace-nowrap">{t("pagination.itemsPerPage")}</p>
           <Select
             value={String(itemsPerPage)}
             onValueChange={(value) => changeItemsPerPage(Number(value))}

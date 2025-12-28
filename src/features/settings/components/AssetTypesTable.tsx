@@ -14,18 +14,20 @@ import { AssetType } from "@/shared/types/assetType";
 import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Card } from "@/shared/components/ui/card";
+import { useTranslation } from "react-i18next";
 
 export const AssetTypesTable = () => {
   const { assetTypes, isLoading, deleteAssetType } = useAssetTypes();
   const [editingClass, setEditingClass] = useState<AssetType | null>(null);
   const [deletingClass, setDeletingClass] = useState<AssetType | null>(null);
+  const { t } = useTranslation();
 
-  if (isLoading) return <div>Carregando...</div>;
+  if (isLoading) return <div>{t("common.status.loading")}</div>;
 
   if (assetTypes.length === 0) {
     return (
       <div>
-        <p>Nenhuma classe de ativo encontrada.</p>
+        <p>{t("common.status.noData")}</p>
         <AssetTypesDialog mode="create" />
       </div>
     );
@@ -40,10 +42,12 @@ export const AssetTypesTable = () => {
         <Table>
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
-              <TableHead>Nome</TableHead>
+              <TableHead>{t("settings.assetTypes.table.name")}</TableHead>
               <TableHead>Percentual Meta (%)</TableHead>
-              <TableHead>Classe</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
+              <TableHead>{t("settings.assetTypes.table.class")}</TableHead>
+              <TableHead className="text-right">
+                {t("settings.assetTypes.table.actions")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

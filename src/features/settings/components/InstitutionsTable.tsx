@@ -14,6 +14,7 @@ import { Institution } from "@/shared/types/institution";
 import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Card } from "@/shared/components/ui/card";
+import { useTranslation } from "react-i18next";
 
 export const InstitutionsTable = () => {
   const { institutions, isLoading, deleteInstitution } = useInstitutions();
@@ -21,13 +22,14 @@ export const InstitutionsTable = () => {
     useState<Institution | null>(null);
   const [deletingInstitution, setDeletingInstitution] =
     useState<Institution | null>(null);
+  const { t } = useTranslation();
 
-  if (isLoading) return <div>Carregando...</div>;
+  if (isLoading) return <div>{t("common.status.loading")}</div>;
 
   if (institutions.length === 0) {
     return (
       <div>
-        <p>Nenhuma instituição encontrada.</p>
+        <p>{t("common.status.noData")}</p>
         <InstitutionDialog mode="create" />
       </div>
     );
@@ -42,8 +44,10 @@ export const InstitutionsTable = () => {
         <Table>
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
+              <TableHead>{t("settings.institutions.table.name")}</TableHead>
+              <TableHead className="text-right">
+                {t("settings.institutions.table.actions")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

@@ -1,6 +1,10 @@
 import { API_ENDPOINTS } from "@/config/api";
 import { api } from "@/lib/axios";
-import { AuthResponse, LoginRequest } from "@/features/auth/types/auth";
+import {
+  AuthResponse,
+  LoginRequest,
+  UpdateUserRequest,
+} from "@/features/auth/types/auth";
 
 class AuthService {
   async login(data: LoginRequest): Promise<AuthResponse> {
@@ -19,7 +23,7 @@ class AuthService {
     return response.data;
   }
 
-  async updateUser(data: Partial<AuthResponse> & { id: number }) {
+  async updateUser(data: UpdateUserRequest) {
     const response = await api.put<AuthResponse>(
       API_ENDPOINTS.auth.updateUser.replace(":id", data.id.toString()),
       data,

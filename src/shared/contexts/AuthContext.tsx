@@ -3,11 +3,13 @@ import {
   AuthResponse,
   LoginRequest,
   RegisterRequest,
+  UpdateUserRequest,
   User,
 } from "@/features/auth/types/auth";
 import { createContext, useEffect, useState } from "react";
 import { authService } from "@/features/auth/services/authService";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined,
@@ -20,16 +22,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     const storedToken = localStorage.getItem(TOKEN_KEY);
     const storedUser = localStorage.getItem(USER_KEY);
 
     if (storedToken && storedUser) {
+      const parsedUser = JSON.parse(storedUser);
       setToken(storedToken);
-      setUser(JSON.parse(storedUser));
+      setUser(parsedUser);
+
+      if (parsedUser.locale) {
+        i18n.changeLanguage(parsedUser.locale);
+      }
     }
   }, []);
+
+  useEffect(() => {
+    if (user?.locale) {
+      i18n.changeLanguage(user.locale);
+    }
+  }, [user?.locale]);
 
   const login = async (data: LoginRequest) => {
     setIsLoading(true);
@@ -72,7 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     toast.success("Logout successful");
   };
 
-  const updateUser = async (updatedUser: User) => {
+  const updateUser = async (updatedUser: UpdateUserRequest) => {
     setIsLoading(true);
 
     try {
