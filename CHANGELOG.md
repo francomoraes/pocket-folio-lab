@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 29-12-2025
+
+- Implement functional profile picture update (front and backend)
+
 ## 22-12-2025
 
 - Implement locale and profilePictureUrl to user;

@@ -40,8 +40,8 @@ This document contains the list of features, improvements, and tasks to be imple
   - Export charts as images
 
 - [ ] **User profile**
-  - User details page
-  - Change password
+  - [x] User details page
+  - [x] Change password
   - Recover password
 
 ### Bug Fixes
