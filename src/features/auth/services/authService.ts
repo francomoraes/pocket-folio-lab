@@ -30,6 +30,24 @@ class AuthService {
     );
     return response.data;
   }
+
+  async uploadProfilePicture(
+    file: File,
+  ): Promise<{ profilePictureUrl: string }> {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await api.post<{ profilePictureUrl: string }>(
+      API_ENDPOINTS.auth.uploadProfilePicture,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+    return response.data;
+  }
 }
 
 export const authService = new AuthService();

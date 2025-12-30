@@ -5,6 +5,7 @@ export const API_ENDPOINTS = {
     login: "auth/login",
     register: "auth/register",
     updateUser: "auth/users/:id",
+    uploadProfilePicture: "auth/upload-profile-picture",
   },
   assets: {
     list: "assets",

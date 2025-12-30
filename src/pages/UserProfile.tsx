@@ -24,6 +24,7 @@ import {
 import { useState } from "react";
 import { toast } from "sonner";
 import { Loader2, Upload, X as XIcon } from "lucide-react";
+import { authService } from "@/features/auth/services/authService";
 
 export const UserProfile = () => {
   const { t } = useTranslation();
@@ -112,6 +113,19 @@ export const UserProfile = () => {
       .slice(0, 2);
   };
 
+  const handleUploadProfilePicture = async (file: File) => {
+    setIsLoading(true);
+    try {
+      const response = await authService.uploadProfilePicture(file);
+      handleChange("profilePictureUrl", response.profilePictureUrl);
+      toast.success(t("auth.profile.messages.uploadSuccess"));
+    } catch (error) {
+      toast.error(t("auth.profile.messages.uploadError"));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6 h-[calc(100vh-61px)] p-6 max-w-4xl mx-auto">
       <div>
@@ -128,7 +142,15 @@ export const UserProfile = () => {
           </CardHeader>
           <CardContent className="flex flex-col items-center gap-4">
             <Avatar className="h-32 w-32">
-              <AvatarImage src={formData.profilePictureUrl} />
+              <AvatarImage
+                src={formData.profilePictureUrl}
+                alt={formData.name}
+                crossOrigin="anonymous"
+                onError={(e) => {
+                  console.error("Image load error:", e);
+                  console.log("URL:", formData.profilePictureUrl);
+                }}
+              />
               <AvatarFallback className="text-3xl">
                 {getInitials(formData.name)}
               </AvatarFallback>
@@ -139,8 +161,15 @@ export const UserProfile = () => {
                 variant="outline"
                 className="w-full"
                 onClick={() => {
-                  // TODO: Implementar upload de imagem
-                  toast.info("Upload de imagem - em desenvolvimento");
+                  const input = document.createElement("input");
+                  input.type = "file";
+                  input.accept = "image/*";
+                  input.onchange = () => {
+                    if (input.files && input.files[0]) {
+                      handleUploadProfilePicture(input.files[0]);
+                    }
+                  };
+                  input.click();
                 }}
               >
                 <Upload className="h-4 w-4 mr-2" />
