@@ -10,6 +10,7 @@ export default {
   summary: {
     patrimonyUSD: "Patromônio (parte em dólares)",
     patrimonyBRL: "Patromônio (parte em reais)",
+    consolidatedPatrimony: "Patrimônio Consolidado",
   },
   table: {
     headers: {

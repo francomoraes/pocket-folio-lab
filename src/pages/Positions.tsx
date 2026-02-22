@@ -46,7 +46,7 @@ export const Positions = () => {
       order,
     });
 
-  const { summary } = useSummary();
+  const { summary, exchangeRate } = useSummary();
 
   useEffect(() => {
     if (assets && assets.meta) {
@@ -54,11 +54,20 @@ export const Positions = () => {
     }
   }, [assets]);
 
-  const totalPatrimonyCents = summary?.reduce((acc, item) => {
-    const currency = item.currency;
-    acc[currency] = (acc[currency] || 0) + item.totalValueCents;
-    return acc;
-  }, {} as Record<string, number>);
+  const totalPatrimonyCents = summary?.reduce(
+    (acc, item) => {
+      const currency = item.currency;
+      acc[currency] = (acc[currency] || 0) + item.totalValueCents;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const usdToBrlRate = exchangeRate?.usdToBrl || 5.7;
+
+  const consolidatedPatrimonyBRL =
+    (totalPatrimonyCents?.BRL || 0) +
+    (totalPatrimonyCents?.USD || 0) * usdToBrlRate;
 
   if (isLoading) {
     return (
@@ -91,7 +100,7 @@ export const Positions = () => {
       </div>
 
       <Card className="p-3 flex-shrink-0">
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-3 gap-8">
           <div>
             <p className="text-xs text-muted-foreground">
               {t("positions.summary.patrimonyUSD")}
@@ -106,6 +115,14 @@ export const Positions = () => {
             </p>
             <p className="text-xl font-semibold">
               {formatCentsToCurrency(totalPatrimonyCents?.BRL || 0, "BRL")}
+            </p>
+          </div>
+          <div className="border-l pl-8">
+            <p className="text-xs text-muted-foreground font-semibold">
+              Patrimônio Consolidado
+            </p>
+            <p className="text-2xl font-bold text-primary">
+              {formatCentsToCurrency(consolidatedPatrimonyBRL, "BRL")}
             </p>
           </div>
         </div>

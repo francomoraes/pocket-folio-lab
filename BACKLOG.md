@@ -2,180 +2,176 @@
 
 This document contains the list of features, improvements, and tasks to be implemented in the project.
 
+**Project Goal:** Create a portfolio allocation tracker similar to MyProfit, allowing users to track their current positions and compare with target allocation percentages. Based on Google Sheets template.
+
 ## High Priority
 
-### Backend
+### Core Features
 
-- [x] Implement sorting and pagination (and frontend too)
-- [x] Implement institutions CRUD
+- [ ] **Fixed Income (Renda Fixa) Management**
 
-### Features
-
-- [ ] **Asset Details Page**
-
-  - View detailed information about a specific asset
-  - Transaction history for the asset
-  - Performance metrics and charts
-  - Edit/delete individual transactions
-
-- [ ] **Transaction Management**
-
-  - Edit existing transactions
-  - Delete transactions
-  - Transaction filtering and search
-  - Bulk transaction import (CSV/Excel)
-
-- [ ] **Quote Update System**
-
-  - [x] Implement the "Atualizar Cotações" button functionality
-  - Auto-refresh quotes at regular intervals
-  - Show last update timestamp
-  - Handle API rate limits
+  - Create dedicated table/page for fixed income assets
+  - Fields: initial value, maturity date, interest rate
+  - Calculate projected returns
+  - Show current value with accrued interest
+  - Integration with portfolio allocation
 
 - [ ] **Dashboard Enhancements**
 
-  - Add date range selector for patrimony evolution
-  - Show profit/loss metrics
-  - Add comparison with benchmarks (IBOV, CDI, etc.)
-  - Export charts as images
+  - Portfolio evolution chart over time (patrimony history)
+  - Actual vs Target allocation comparison (visual)
+  - Total portfolio value by currency (BRL/USD)
+  - Profit/Loss summary cards
+  - Asset class distribution pie charts
+  - Rebalancing suggestions (what to buy/sell to reach target)
 
-- [ ] **User profile**
-  - [x] User details page
-  - [x] Change password
-  - Recover password
+- [ ] **Position Management Improvements**
 
-### Bug Fixes
+  - Quick edit position values (inline editing)
+  - Bulk update positions
+  - Show position age/last update
+  - Mark positions as "inactive" instead of deleting
 
-- [ ] Review error handling in API calls
-- [ ] Add loading states for all async operations
-- [ ] Validate form inputs more thoroughly
-- [ ] Handle network errors gracefully
+- [ ] **Portfolio Summary View**
+  - Overview cards: Total invested, Current value, Total return
+  - Monthly performance metrics
+  - Currency breakdown
+  - Asset class breakdown with progress bars (actual vs target)
+
+### UX/UI Improvements
+
+- [ ] **Better Data Visualization**
+
+  - Interactive charts (click to drill down)
+  - Color coding for over/under-allocated assets
+  - Progress bars showing actual vs target allocation
+  - Responsive charts for mobile
+
+- [ ] **Quick Actions**
+  - Floating action button for quick position update
+  - Keyboard shortcuts for common actions
+  - Search/filter positions by ticker or type
+  - Sort by various metrics (value, allocation %, return %)
+
+### Backend
+
+- [x] Implement sorting and pagination
+- [x] Implement institutions CRUD
+- [ ] Add fixed income endpoints
+- [ ] Portfolio snapshot/history endpoint (for charts)
+- [ ] Calculation endpoint for rebalancing suggestions
 
 ## Medium Priority
 
 ### Features
 
-- [ ] **User Profile & Settings**
+- [ ] **User profile**
 
-  - Edit user profile information
-  - Change preferences (currency, language)
-  - Notification settings
-  - Theme customization (dark/light mode toggle)
+  - [x] User details page
+  - [x] Change password
+  - [x] Profile picture upload
+  - [ ] Recover password
 
 - [ ] **Portfolio Analytics**
 
   - Monthly/yearly performance reports
-  - Dividend tracking and projections
-  - Cost basis calculations
-  - Tax report generation (IR)
+  - Dividend tracking (for stocks that pay dividends)
+  - Tax report helper (IR)
+  - Export portfolio summary to PDF
 
-- [ ] **Asset Search & Discovery**
+- [ ] **Asset Information**
 
-  - Search for assets by ticker or name
-  - Asset information lookup
-  - Popular assets recommendations
-  - Watchlist functionality
+  - Asset details modal (show current price, daily change)
+  - Asset class/type descriptions
+  - Quick links to external sources (B3, Yahoo Finance)
 
-- [ ] **Multi-Portfolio Support**
-  - Create and manage multiple portfolios
-  - Switch between portfolios
-  - Compare portfolio performance
+- [ ] **Notifications & Alerts**
+  - Alert when allocation is too far from target
+  - Price movement notifications (optional)
+  - Monthly summary email
 
 ### Improvements
 
 - [ ] **Performance Optimization**
 
-  - Implement pagination for large asset lists
-  - Add virtualization for tables with many rows
+  - Cache calculations (allocation percentages)
   - Optimize chart rendering
   - Lazy load components
 
-- [ ] **UX Improvements**
+- [ ] **Data Import/Export**
 
-  - Add tooltips with explanations
-  - Improve mobile responsiveness
-  - Add keyboard shortcuts
-  - Improve accessibility (WCAG compliance)
-  - Add empty states with helpful CTAs
+  - [x] CSV import for positions
+  - [x] CSV template download
+  - [ ] Import from Google Sheets
+  - [ ] Export portfolio to Excel
+  - [ ] Import from broker statements
 
-- [ ] **Data Validation**
-  - Add more comprehensive Zod schemas
-  - Client-side validation for all forms
-  - Better error messages
+- [ ] **Mobile Experience**
+  - Improve responsive design
+  - Touch-friendly interactions
+  - PWA capabilities (install as app)
 
 ## Low Priority
 
 ### Features
 
-- [ ] **Notifications System**
+- [ ] **Multi-Portfolio Support**
 
-  - Price alerts
-  - Portfolio milestone notifications
-  - Dividend payment reminders
+  - Create separate portfolios (e.g., personal, retirement)
+  - Switch between portfolios
+  - Compare portfolio performance
 
-- [ ] **Social Features**
+- [ ] **Benchmark Comparison**
 
-  - Share portfolio performance (optional)
-  - Community benchmarks
-  - Educational content
-
-- [ ] **Advanced Analytics**
-
-  - Risk metrics (Sharpe ratio, Beta, etc.)
+  - Compare returns with IBOV, CDI, S&P 500
+  - Relative performance metrics
   - Correlation analysis
-  - Asset allocation suggestions
-  - Rebalancing recommendations
 
-- [ ] **Export & Reporting**
+- [ ] **Goal Tracking**
 
-  - PDF reports generation
-  - Excel export with detailed data
-  - Email reports scheduling
+  - Set financial goals
+  - Track progress towards goals
+  - Projections based on contributions
 
-- [ ] **Integration Features**
-  - Integration with broker APIs
-  - Automatic transaction sync
-  - Bank account connections
+- [ ] **Advanced Features**
+  - Currency conversion with real-time rates
+  - Automatic price updates from APIs
+  - Integration with broker APIs (future)
 
-### Technical Debt
+### Technical Improvements
 
 - [ ] Add comprehensive unit tests
-- [ ] Add integration tests
-- [ ] Add E2E tests with Playwright or Cypress
-- [ ] Improve TypeScript strict mode compliance
+- [ ] Add E2E tests
+- [ ] Improve error handling
 - [ ] Add API documentation
 - [ ] Set up CI/CD pipeline
-- [ ] Add code coverage reporting
-- [ ] Implement proper logging system
-- [ ] Add performance monitoring (Sentry, etc.)
+- [ ] Performance monitoring
 
-### Documentation
+## Removed/Not Applicable
 
-- [ ] Add JSDoc comments to complex functions
-- [ ] Create component documentation
-- [ ] Add API integration guide
-- [ ] Create deployment guide
-- [ ] Add contributing guidelines
-- [ ] Create architecture documentation
+~~Transaction history~~ - Not needed, we only track current positions
+~~Edit/delete transactions~~ - Positions are updated, not transaction-based
+~~Transaction filtering~~ - No transaction history to filter
 
 ## Future Ideas (Icebox)
 
+- [ ] Dark/light theme toggle
 - [ ] Mobile app (React Native)
-- [ ] Browser extension for quick portfolio check
-- [ ] AI-powered investment suggestions
-- [ ] News feed integration
+- [ ] AI-powered rebalancing suggestions
+- [ ] News feed integration for assets
 - [ ] Portfolio simulation/backtesting
 - [ ] Cryptocurrency support
 - [ ] International stocks support (multiple exchanges)
 - [ ] Real-time quotes (WebSocket integration)
-- [ ] Voice commands integration
-- [ ] Gamification features (achievements, badges)
+- [ ] Collaborative portfolios (family accounts)
 
 ---
 
 ## Notes
 
-- Items marked with ✅ are completed
-- Items marked with 🚧 are in progress
-- Priorities may change based on user feedback
+- ✅ Completed items
+- 🚧 In progress items
+- This is a **position tracker**, not a transaction tracker
+- Focus on current portfolio state vs target allocation
+- Based on Google Sheets portfolio template
 - Review and update this backlog regularly

@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useSummary = () => {
   const {
-    data: summary,
+    data: summaryResponse,
     isLoading: isLoadingSummary,
     error: errorSummary,
     refetch: refetchSummary,
@@ -28,7 +28,8 @@ export const useSummary = () => {
   });
 
   return {
-    summary,
+    summary: summaryResponse?.data,
+    exchangeRate: summaryResponse?.exchangeRate,
     isLoadingSummary,
     errorSummary,
     refetchSummary,
