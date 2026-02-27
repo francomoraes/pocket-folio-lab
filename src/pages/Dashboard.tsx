@@ -7,25 +7,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/ui/table";
-import { useAssetClasses } from "@/features/settings/hooks/useAssetClasses";
-import { useAssetTypes } from "@/features/settings/hooks/useAssetTypes";
 import { useSummary } from "@/shared/hooks/useSummary";
-import {
-  AllocationByClass,
-  AllocationByTicker,
-} from "@/shared/types/investment";
+import { AllocationByClass } from "@/shared/types/investment";
 import {
   PieChart,
   Pie,
   Cell,
   ResponsiveContainer,
+  Tooltip,
   BarChart,
   Bar,
   XAxis,
   YAxis,
-  Tooltip,
-  CartesianGrid,
   Legend,
+  CartesianGrid,
 } from "recharts";
 import { useTranslation } from "react-i18next";
 
@@ -34,6 +29,11 @@ const COLORS = [
   "hsl(var(--chart-2))",
   "hsl(var(--chart-3))",
   "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+  "#8b5cf6",
+  "#f59e0b",
+  "#10b981",
+  "#06b6d4",
 ];
 
 const formatCurrency = (value: number) => {
@@ -56,9 +56,6 @@ const getClassLabel = (className: string) => {
 
 export const Dashboard = () => {
   const { summary, isLoadingSummary } = useSummary();
-  const { assetClasses } = useAssetClasses();
-  const { assetTypes } = useAssetTypes();
-
   const { t } = useTranslation();
 
   const allocationByClass: AllocationByClass[] = summary
@@ -74,22 +71,46 @@ export const Dashboard = () => {
       }))
     : [];
 
-  const classSummaryBarChartData = allocationByClass?.map((item) => ({
-    name: getClassLabel(item.class),
-    actualValue: item.actualValue,
-    targetValue: item.targetValue,
-    actualPercentage: item.actualPercentage * 100,
-    targetPercentage: item.targetPercentage * 100,
-  }));
+  // Group by class for pie charts
+  const classGroups = allocationByClass.reduce(
+    (acc, item) => {
+      const className = item.class;
+      if (!acc[className]) {
+        acc[className] = {
+          actualPercentage: 0,
+          targetPercentage: 0,
+        };
+      }
+      acc[className].actualPercentage += item.actualPercentage;
+      acc[className].targetPercentage += item.targetPercentage;
+      return acc;
+    },
+    {} as Record<
+      string,
+      { actualPercentage: number; targetPercentage: number }
+    >,
+  );
 
-  const pieDataActual = summary?.map((item) => ({
-    name: getClassLabel(item.assetClassName),
-    value: item.actualPercentage,
-  }));
+  const pieDataActual = Object.entries(classGroups).map(
+    ([className, data]) => ({
+      name: getClassLabel(className),
+      value: data.actualPercentage,
+      className: className,
+    }),
+  );
 
-  const pieDataTarget = summary?.map((item) => ({
-    name: getClassLabel(item.assetClassName),
-    value: item.targetPercentage,
+  const pieDataTarget = Object.entries(classGroups).map(
+    ([className, data]) => ({
+      name: getClassLabel(className),
+      value: data.targetPercentage,
+      className: className,
+    }),
+  );
+
+  const barChartData = Object.entries(classGroups).map(([className, data]) => ({
+    name: getClassLabel(className),
+    atual: data.actualPercentage * 100,
+    meta: data.targetPercentage * 100,
   }));
 
   if (isLoadingSummary) {
@@ -115,9 +136,8 @@ export const Dashboard = () => {
               <TableHead className="text-right">
                 {t("dashboard.table.headers.value")}
               </TableHead>
-              <TableHead className="text-right">
-                {t("dashboard.table.headers.percentage")}
-              </TableHead>
+              <TableHead className="text-right">% Atual</TableHead>
+              <TableHead className="text-right">% Meta</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -149,121 +169,125 @@ export const Dashboard = () => {
                     {formatCurrency(item.actualValue)}
                   </TableCell>
                   <TableCell className="text-right font-medium">
-                    {item.actualPercentage.toFixed(1)}%
+                    {(item.actualPercentage * 100).toFixed(1)}%
+                  </TableCell>
+                  <TableCell className="text-right font-medium">
+                    {(item.targetPercentage * 100).toFixed(1)}%
                   </TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
-        {/* <div className="flex items-center justify-center">
-              {classSummaryBarChartData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={250}>
-                  <BarChart
-                    data={classSummaryBarChartData}
-                    margin={{
-                      top: 5,
-                      right: 0,
-                      left: 0,
-                      bottom: 5,
-                    }}
-                  >
-                    <CartesianGrid />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar
-                      dataKey="actualPercentage"
-                      fill="hsl(var(--chart-1))"
-                    />
-                    <Bar
-                      dataKey="targetPercentage"
-                      fill="hsl(var(--chart-2))"
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <p className="text-muted-foreground">Sem dados para exibir</p>
-              )}
-            </div> */}
-        {/* </div> */}
       </Card>
-      {/* <div>
-        <h2 className="text-2xl font-semibold mb-4">Alocação por Classe</h2>
-        <Card className="p-6">
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="flex items-center justify-center flex-col">
-              <h5>Actual Percentage Allocation</h5>
-              {pieDataActual.length > 0 ? (
-                <ResponsiveContainer width="100%" height={250}>
-                  <PieChart
-                    margin={{
-                      top: 5,
-                      right: 0,
-                      left: 0,
-                      bottom: 5,
-                    }}
+
+      <Card className="p-6">
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="flex items-center justify-center flex-col">
+            <h3 className="text-lg font-semibold mb-4">Alocação Atual</h3>
+            {pieDataActual && pieDataActual.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={pieDataActual}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={2}
+                    dataKey="value"
+                    label={({ name, value }) =>
+                      `${name}: ${(value * 100).toFixed(1)}%`
+                    }
                   >
-                    <Pie
-                      data={pieDataActual}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={90}
-                      paddingAngle={2}
-                      dataKey="value"
-                    >
-                      {pieDataActual?.map((entry, index) => (
+                    {pieDataActual?.map((entry, index) => {
+                      // Find the index in allocationByClass to get consistent color
+                      const colorIndex = allocationByClass.findIndex(
+                        (item) => item.class === entry.className,
+                      );
+                      return (
                         <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
+                          key={`cell-actual-${entry.className}`}
+                          fill={COLORS[colorIndex % COLORS.length]}
                         />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : (
-                <p className="text-muted-foreground">Sem dados para exibir</p>
-              )}
-            </div>
-            <div className="flex items-center justify-center flex-col">
-              <h5>Actual Percentage Allocation</h5>
-              {pieDataTarget.length > 0 ? (
-                <ResponsiveContainer width="100%" height={250}>
-                  <PieChart
-                    margin={{
-                      top: 5,
-                      right: 0,
-                      left: 0,
-                      bottom: 5,
-                    }}
-                  >
-                    <Pie
-                      data={pieDataTarget}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={90}
-                      paddingAngle={2}
-                      dataKey="value"
-                    >
-                      {pieDataTarget?.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : (
-                <p className="text-muted-foreground">Sem dados para exibir</p>
-              )}
-            </div>
+                      );
+                    })}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value: number) =>
+                      `${(value * 100).toFixed(1)}%`
+                    }
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-muted-foreground">Sem dados para exibir</p>
+            )}
           </div>
-        </Card>
-      </div> */}
+          <div className="flex items-center justify-center flex-col">
+            <h3 className="text-lg font-semibold mb-4">Alocação Meta</h3>
+            {pieDataTarget && pieDataTarget.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={pieDataTarget}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={2}
+                    dataKey="value"
+                    label={({ name, value }) =>
+                      `${name}: ${(value * 100).toFixed(1)}%`
+                    }
+                  >
+                    {pieDataTarget?.map((entry, index) => {
+                      // Find the index in allocationByClass to get consistent color
+                      const colorIndex = allocationByClass.findIndex(
+                        (item) => item.class === entry.className,
+                      );
+                      return (
+                        <Cell
+                          key={`cell-target-${entry.className}`}
+                          fill={COLORS[colorIndex % COLORS.length]}
+                        />
+                      );
+                    })}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value: number) =>
+                      `${(value * 100).toFixed(1)}%`
+                    }
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-muted-foreground">Sem dados para exibir</p>
+            )}
+          </div>
+        </div>
+      </Card>
+
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold mb-4">Comparação Atual vs Meta</h3>
+        {barChartData && barChartData.length > 0 ? (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={barChartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis
+                label={{ value: "%", angle: -90, position: "insideLeft" }}
+              />
+              <Tooltip formatter={(value: number) => `${value.toFixed(1)}%`} />
+              <Legend />
+              <Bar dataKey="atual" fill="hsl(var(--chart-1))" name="Atual" />
+              <Bar dataKey="meta" fill="hsl(var(--chart-2))" name="Meta" />
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <p className="text-muted-foreground">Sem dados para exibir</p>
+        )}
+      </Card>
     </div>
   );
 };

@@ -27,6 +27,13 @@ export default {
       class: "Classe",
       actions: "Ações",
     },
+    filters: {
+      name: "Filtrar por nome",
+      namePlaceholder: "Digite o nome...",
+      class: "Filtrar por classe",
+      allClasses: "Todas as classes",
+      clear: "Limpar filtros",
+    },
   },
   institutions: {
     title: "Instituições",

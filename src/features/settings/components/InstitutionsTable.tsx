@@ -17,7 +17,8 @@ import { Card } from "@/shared/components/ui/card";
 import { useTranslation } from "react-i18next";
 
 export const InstitutionsTable = () => {
-  const { institutions, isLoading, deleteInstitution } = useInstitutions();
+  const { institutions, isLoading, deleteInstitution, isDeleting } =
+    useInstitutions();
   const [editingInstitution, setEditingInstitution] =
     useState<Institution | null>(null);
   const [deletingInstitution, setDeletingInstitution] =
@@ -86,20 +87,19 @@ export const InstitutionsTable = () => {
         />
       )}
 
-      {deletingInstitution && (
-        <ConfirmDeleteDialog
-          open={!!deletingInstitution}
-          onOpenChange={(open) => {
-            if (!open) setDeletingInstitution(null);
-          }}
-          onConfirm={() => {
-            if (deletingInstitution) {
-              deleteInstitution(deletingInstitution.id);
-              setDeletingInstitution(null);
-            }
-          }}
-        />
-      )}
+      <ConfirmDeleteDialog
+        open={!!deletingInstitution}
+        onOpenChange={(open) => {
+          if (!open) setDeletingInstitution(null);
+        }}
+        onConfirm={async () => {
+          if (deletingInstitution) {
+            await deleteInstitution(deletingInstitution.id);
+            setDeletingInstitution(null);
+          }
+        }}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

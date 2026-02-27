@@ -45,6 +45,7 @@ const VariableIncome = () => {
     refreshMarketPrices,
     isRefreshingMarketPrices,
     deleteAsset,
+    isDeleting,
   } = usePositions({
     page,
     itemsPerPage,
@@ -105,20 +106,19 @@ const VariableIncome = () => {
         onOpenChange={handleCloseDialog}
       />
 
-      {assetToDelete && (
-        <ConfirmDeleteDialog
-          open={!!assetToDelete}
-          onOpenChange={(open) => {
-            if (!open) setAssetToDelete(null);
-          }}
-          onConfirm={() => {
-            if (assetToDelete) {
-              deleteAsset(assetToDelete.id);
-              setAssetToDelete(null);
-            }
-          }}
-        />
-      )}
+      <ConfirmDeleteDialog
+        open={!!assetToDelete}
+        onOpenChange={(open) => {
+          if (!open) setAssetToDelete(undefined);
+        }}
+        onConfirm={async () => {
+          if (assetToDelete) {
+            await deleteAsset(assetToDelete.id);
+            setAssetToDelete(undefined);
+          }
+        }}
+        isLoading={isDeleting}
+      />
 
       <Card className="flex-1 flex flex-col min-h-0 h-full">
         <Table>

@@ -17,7 +17,8 @@ import { Card } from "@/shared/components/ui/card";
 import { useTranslation } from "react-i18next";
 
 export const AssetClassTable = () => {
-  const { assetClasses, isLoading, deleteAssetClass } = useAssetClasses();
+  const { assetClasses, isLoading, deleteAssetClass, isDeleting } =
+    useAssetClasses();
   const [editingClass, setEditingClass] = useState<AssetClass | null>(null);
   const [deletingClass, setDeletingClass] = useState<AssetClass | null>(null);
   const { t } = useTranslation();
@@ -84,20 +85,19 @@ export const AssetClassTable = () => {
         />
       )}
 
-      {deletingClass && (
-        <ConfirmDeleteDialog
-          open={!!deletingClass}
-          onOpenChange={(open) => {
-            if (!open) setDeletingClass(null);
-          }}
-          onConfirm={() => {
-            if (deletingClass) {
-              deleteAssetClass(deletingClass.id);
-              setDeletingClass(null);
-            }
-          }}
-        />
-      )}
+      <ConfirmDeleteDialog
+        open={!!deletingClass}
+        onOpenChange={(open) => {
+          if (!open) setDeletingClass(null);
+        }}
+        onConfirm={async () => {
+          if (deletingClass) {
+            await deleteAssetClass(deletingClass.id);
+            setDeletingClass(null);
+          }
+        }}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

@@ -24,6 +24,8 @@ export const useAssetTypes = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_TYPES });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
     },
     onError: (error: Error) => {
       console.error(error.message || "Error creating asset type");
@@ -36,6 +38,8 @@ export const useAssetTypes = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_TYPES });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
     },
     onError: (error: Error) => {
       console.error(error.message || "Error updating asset type");
@@ -48,6 +52,8 @@ export const useAssetTypes = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_TYPES });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
     },
     onError: (error: Error) => {
       console.error(error.message || "Error deleting asset type");

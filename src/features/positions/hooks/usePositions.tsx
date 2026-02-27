@@ -46,6 +46,8 @@ export const usePositions = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       toast.success("Ativo adicionado com sucesso!");
     },
     onError: (error: Error) => {
@@ -59,6 +61,8 @@ export const usePositions = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       toast.success("Ativo atualizado com sucesso!");
     },
     onError: (error: Error) => {
@@ -72,6 +76,8 @@ export const usePositions = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       toast.success("Ativo excluído com sucesso!");
     },
     onError: (error: Error) => {
@@ -85,6 +91,8 @@ export const usePositions = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       toast.success("Preços de mercado atualizados com sucesso!");
     },
     onError: (error: Error) => {
