@@ -7,6 +7,7 @@ import transaction from "./transaction";
 import auth from "./auth";
 import pagination from "./pagination";
 import csv from "./csv";
+import global from "./global";
 
 export default {
   common,
@@ -18,4 +19,5 @@ export default {
   auth,
   pagination,
   csv,
+  global,
 };

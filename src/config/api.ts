@@ -9,12 +9,17 @@ export const API_ENDPOINTS = {
   },
   assets: {
     list: "assets",
-    buy: "assets/:ticker/buy",
-    sell: "assets/:ticker/sell",
+    create: "assets",
     update: "assets/:id",
     delete: "assets/:id",
     export: "assets/export",
     refreshMarketPrices: "assets/refresh-market-prices",
+  },
+  fixedIncomeAssets: {
+    list: "fixed-income-assets",
+    create: "fixed-income-assets",
+    update: "fixed-income-assets/:id",
+    delete: "fixed-income-assets/:id",
   },
   summary: {
     get: "summary",

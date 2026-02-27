@@ -1,14 +1,14 @@
 import { AssetType } from "@/shared/types/assetType";
 import { Institution } from "@/shared/types/institution";
 
-export interface Asset {
+export interface FixedIncomeAsset {
   id: number;
   userId: number;
   type: AssetType;
-  ticker: string;
-  quantity: number;
-  averagePriceCents: number;
-  currentPriceCents: number;
+  description: string;
+  startDate: Date;
+  maturityDate: Date;
+  interestRate: number;
   investedValueCents: number;
   currentValueCents: number;
   resultCents: number;
@@ -20,22 +20,32 @@ export interface Asset {
   updatedAt: string;
 }
 
-export interface CreateAssetRequest {
-  ticker: string;
-  quantity: number;
-  averagePriceCents: number;
-  type: string;
+export interface CreateFixedIncomeAsset {
+  id: number;
+  description: string;
+  startDate: Date;
+  maturityDate: Date;
+  interestRate: number;
+  investedValueCents: number;
   institutionId: number;
+  typeId: number;
   currency: string;
 }
 
-export interface UpdateAssetRequest {
-  type?: string;
-  ticker?: string;
-  quantity?: number;
-  averagePriceCents?: number;
+export interface UpdateFixedIncomeAsset {
+  id: number;
+  description?: string;
+  startDate?: Date;
+  maturityDate?: Date;
+  interestRate?: number;
+  investedValueCents?: number;
   institutionId?: number;
+  typeId?: number;
   currency?: string;
+}
+
+export interface DeleteFixedIncomeAsset {
+  id: number;
 }
 
 export interface PaginatedResponse<T> {

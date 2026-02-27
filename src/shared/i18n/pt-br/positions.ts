@@ -2,7 +2,7 @@ export default {
   title: "Minhas Posições",
   subtitle: "Gerencie sua carteira de investimentos",
   actions: {
-    newTransaction: "Nova Transação",
+    addAsset: "Adicionar Ativo",
     refreshPrices: "Atualizar Cotações",
     uploadCsv: "Importar CSV",
     downloadCsv: "Baixar CSV",
@@ -23,7 +23,8 @@ export default {
       profitLoss: "L/P",
       institution: "Instituição",
       portfolioPercentage: "% Carteira",
+      description: "Descrição",
     },
-    empty: "Nenhuma posição encontrada. Adicione uma transação para começar.",
+    empty: "Nenhuma posição encontrada. Adicione um ativo para começar.",
   },
 };

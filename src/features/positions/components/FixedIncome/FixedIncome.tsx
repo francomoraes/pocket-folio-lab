@@ -1,0 +1,191 @@
+import { useTranslation } from "react-i18next";
+import { RefreshCw, Pencil } from "lucide-react";
+import { Button } from "@/shared/components/ui/button";
+import { Card } from "@/shared/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/shared/components/ui/table";
+import { FixedIncomeFormDialog } from "@/features/positions/components";
+import CircularProgress from "@/shared/components/ui/circular-progress";
+import {
+  formatCentsToCurrency,
+  formatPercentage,
+} from "@/shared/utils/formatters";
+import { usePagination } from "@/shared/hooks/usePagination";
+import { useEffect, useState } from "react";
+import { PaginationControls } from "@/shared/components/ui/pagination-control";
+import { useFixedIncomePositions } from "@/features/positions/hooks/useFixedIncomePositions";
+import { FixedIncomeAsset } from "@/shared/types/fixedIncomeAsset";
+
+const FixedIncome = () => {
+  const { t } = useTranslation();
+  const pagination = usePagination();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingAsset, setEditingAsset] = useState<FixedIncomeAsset | undefined>(undefined);
+
+  const { page, itemsPerPage, sortBy, order, setMeta } = pagination;
+
+  const { fixedIncomeAssets, isLoading } = useFixedIncomePositions({
+    page,
+    itemsPerPage,
+    sortBy: "description",
+    order,
+  });
+
+  useEffect(() => {
+    if (fixedIncomeAssets && fixedIncomeAssets.meta) {
+      setMeta(fixedIncomeAssets.meta);
+    }
+  }, [fixedIncomeAssets]);
+
+  const handleEditAsset = (asset: FixedIncomeAsset) => {
+    setEditingAsset(asset);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setEditingAsset(undefined);
+  };
+
+  const handleCreateAsset = () => {
+    setEditingAsset(undefined);
+    setDialogOpen(true);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <CircularProgress size="xl" />
+      </div>
+    );
+  }
+  return (
+    <div>
+      <div className="flex gap-2 justify-end">
+        <Button onClick={handleCreateAsset}>
+          {t("positions.actions.addAsset")}
+        </Button>
+      </div>
+
+      <FixedIncomeFormDialog
+        asset={editingAsset}
+        open={dialogOpen}
+        onOpenChange={handleCloseDialog}
+      />
+
+      <Card className="flex-1 flex flex-col min-h-0 h-full">
+        <Table>
+          <TableHeader className="sticky top-0 bg-background z-10">
+            <TableRow>
+              <TableHead>{t("positions.table.headers.description")}</TableHead>
+              <TableHead>{t("positions.table.headers.type")}</TableHead>
+              <TableHead>{t("positions.table.headers.quantity")}</TableHead>
+              <TableHead>{t("positions.table.headers.averagePrice")}</TableHead>
+              <TableHead>{t("positions.table.headers.currentPrice")}</TableHead>
+              <TableHead>{t("positions.table.headers.total")}</TableHead>
+              <TableHead>{t("positions.table.headers.profitLoss")}</TableHead>
+              <TableHead>{t("positions.table.headers.institution")}</TableHead>
+              <TableHead>
+                {t("positions.table.headers.portfolioPercentage")}
+              </TableHead>
+              <TableHead className="w-[80px]">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {!fixedIncomeAssets || fixedIncomeAssets?.data?.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={7}
+                  className="text-center text-muted-foreground py-8"
+                >
+                  {t("positions.table.empty")}
+                </TableCell>
+              </TableRow>
+            ) : (
+              fixedIncomeAssets?.data?.map((fixedIncomeAsset) => (
+                <TableRow key={fixedIncomeAsset.description}>
+                  <TableCell className="font-medium">
+                    {fixedIncomeAsset.description}
+                  </TableCell>
+                  <TableCell>{fixedIncomeAsset.type.assetClass.name}</TableCell>
+                  <TableCell>
+                    {Intl.DateTimeFormat("pt-BR").format(
+                      new Date(fixedIncomeAsset.startDate),
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {Intl.DateTimeFormat("pt-BR").format(
+                      new Date(fixedIncomeAsset.maturityDate),
+                    )}
+                  </TableCell>
+                  <TableCell>{fixedIncomeAsset.interestRate}</TableCell>
+                  <TableCell>
+                    {formatCentsToCurrency(
+                      fixedIncomeAsset.investedValueCents,
+                      fixedIncomeAsset.currency,
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {formatCentsToCurrency(
+                      fixedIncomeAsset.currentValueCents,
+                      fixedIncomeAsset.currency,
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {formatCentsToCurrency(
+                      fixedIncomeAsset.resultCents,
+                      fixedIncomeAsset.currency,
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      className={
+                        +fixedIncomeAsset.returnPercentage >= 0
+                          ? "text-success"
+                          : "text-destructive"
+                      }
+                    >
+                      {formatPercentage(
+                        Number(fixedIncomeAsset.returnPercentage),
+                      )}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    {fixedIncomeAsset.institution
+                      ? fixedIncomeAsset.institution.name
+                      : "-"}
+                  </TableCell>
+                  <TableCell>
+                    {formatPercentage(
+                      Number(fixedIncomeAsset.portfolioPercentage),
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleEditAsset(fixedIncomeAsset)}
+                      className="h-8 w-8"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+        {/* simple pagination */}
+        <PaginationControls pagination={pagination} />
+      </Card>
+    </div>
+  );
+};
+
+export default FixedIncome;

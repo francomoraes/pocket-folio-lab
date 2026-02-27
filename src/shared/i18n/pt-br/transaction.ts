@@ -1,7 +1,7 @@
 export default {
   dialog: {
-    title: "Nova Transação",
-    titleEdit: "Editar Transação",
+    title: "Adicionar Ativo",
+    titleEdit: "Editar Ativo",
   },
   fields: {
     operation: "Operação",
@@ -23,7 +23,7 @@ export default {
     selectInstitution: "Selecione uma instituição",
   },
   messages: {
-    success: "Transação realizada com sucesso",
-    error: "Erro ao processar transação",
+    success: "Ativo adicionado com sucesso",
+    error: "Erro ao processar ativo. Por favor, tente novamente.",
   },
 };

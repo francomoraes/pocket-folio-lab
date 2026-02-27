@@ -3,6 +3,7 @@ import { api } from "@/lib/axios";
 import {
   AuthResponse,
   LoginRequest,
+  RegisterRequest,
   UpdateUserRequest,
 } from "@/features/auth/types/auth";
 
@@ -15,7 +16,7 @@ class AuthService {
     return response.data;
   }
 
-  async register(data: LoginRequest): Promise<AuthResponse> {
+  async register(data: RegisterRequest): Promise<AuthResponse> {
     const response = await api.post<AuthResponse>(
       API_ENDPOINTS.auth.register,
       data,

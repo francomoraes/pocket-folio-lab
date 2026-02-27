@@ -40,6 +40,24 @@ export const LoginForm = () => {
 
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {isRegisterMode && (
+              <div className="space-y-2">
+                <Label htmlFor="name">{t("auth.register.name")}</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Seu nome"
+                  {...register("name")}
+                  disabled={isLoading}
+                />
+                {errors.name && (
+                  <p className="text-sm text-destructive">
+                    {errors.name.message}
+                  </p>
+                )}
+              </div>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="email">{t("auth.login.email")}</Label>
               <Input
@@ -100,10 +118,6 @@ export const LoginForm = () => {
                 </span>
               </div>
             </div>
-
-            <Button type="button" variant="outline" className="w-full" disabled>
-              Entrar com Google (em breve)
-            </Button>
 
             <div className="text-center text-sm">
               {isRegisterMode ? (

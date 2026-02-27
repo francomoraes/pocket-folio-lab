@@ -1,7 +1,7 @@
 export default {
   dialog: {
-    title: "New Transaction",
-    titleEdit: "Edit Transaction",
+    title: "Add Asset",
+    titleEdit: "Edit Asset",
   },
   fields: {
     operation: "Operation",
@@ -23,7 +23,7 @@ export default {
     selectInstitution: "Select an institution",
   },
   messages: {
-    success: "Transaction completed successfully",
-    error: "Error processing transaction",
+    success: "Asset added successfully",
+    error: "Error processing asset. Please try again.",
   },
 };

@@ -1,15 +1,12 @@
-import { useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/shared/components/ui/dialog";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
-import { Plus } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -19,18 +16,34 @@ import {
 } from "@/shared/components/ui/select";
 import { useInstitutions } from "@/features/settings/hooks/useInstitutions";
 import { useAssetTypes } from "@/features/settings/hooks/useAssetTypes";
-import { useTransactionForm } from "@/features/positions/components/TransactionDialog/useTransactionForm";
+import { useAssetForm } from "@/features/positions/components/AssetFormDialog/useAssetForm";
 import { useTranslation } from "react-i18next";
+import { Asset } from "@/shared/types/asset";
 
-export const TransactionDialog = () => {
-  const [open, setOpen] = useState(false);
+interface AssetFormDialogProps {
+  asset?: Asset | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export const AssetFormDialog = ({
+  asset,
+  open,
+  onOpenChange,
+}: AssetFormDialogProps) => {
   const { t } = useTranslation();
 
-  const { formData, updateField, handleSubmit, resetForm, isSubmitting } =
-    useTransactionForm(() => setOpen(false));
+  const {
+    formData,
+    updateField,
+    handleSubmit,
+    resetForm,
+    isSubmitting,
+    isEditMode,
+  } = useAssetForm(asset, () => onOpenChange(false));
 
   const handleOpenChange = (isOpen: boolean) => {
-    setOpen(isOpen);
+    onOpenChange(isOpen);
     if (!isOpen) {
       resetForm();
     }
@@ -41,15 +54,11 @@ export const TransactionDialog = () => {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          {t("positions.actions.addAsset")}
-        </Button>
-      </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] max-h-[calc(100%-2rem)] overflow-auto">
         <DialogHeader>
-          <DialogTitle>{t("transaction.dialog.title")}</DialogTitle>
+          <DialogTitle>
+            {isEditMode ? "Editar Ativo" : t("transaction.dialog.title")}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -60,6 +69,7 @@ export const TransactionDialog = () => {
               value={formData.ticker}
               onChange={(e) => updateField("ticker", e.target.value)}
               className="uppercase"
+              disabled={isEditMode}
             />
           </div>
 
@@ -95,7 +105,7 @@ export const TransactionDialog = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="price">{t("transaction.fields.price")}</Label>
+            <Label htmlFor="price">Preço Médio</Label>
             <Input
               id="price"
               type="number"
@@ -113,6 +123,7 @@ export const TransactionDialog = () => {
                 formData.institutionId ? formData.institutionId.toString() : ""
               }
               onValueChange={(v) => updateField("institutionId", v)}
+              disabled={isEditMode}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione a instituição" />
@@ -150,7 +161,7 @@ export const TransactionDialog = () => {
             <Button
               type="button"
               variant="secondary"
-              onClick={() => setOpen(false)}
+              onClick={() => onOpenChange(false)}
             >
               {t("common.buttons.cancel")}
             </Button>

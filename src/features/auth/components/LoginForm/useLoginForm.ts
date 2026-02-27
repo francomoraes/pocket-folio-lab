@@ -19,14 +19,18 @@ export const useLoginForm = () => {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<LoginFormData | RegisterFormData>({
+  } = useForm<RegisterFormData>({
     resolver: zodResolver(isRegisterMode ? registerSchema : loginSchema),
   });
 
-  const onSubmit = async (data: LoginFormData | RegisterFormData) => {
+  const onSubmit = async (data: RegisterFormData) => {
     try {
       if (isRegisterMode) {
-        await registerUser({ email: data.email, password: data.password });
+        await registerUser({
+          name: data.name,
+          email: data.email,
+          password: data.password,
+        });
         toast.success("Cadastro realizado com sucesso!");
       } else {
         await login({ email: data.email, password: data.password });

@@ -2,9 +2,8 @@ import { API_ENDPOINTS } from "@/config/api";
 import { api } from "@/lib/axios";
 import {
   Asset,
-  BuyAssetRequest,
+  CreateAssetRequest,
   PaginatedResponse,
-  SellAssetRequest,
   UpdateAssetRequest,
 } from "@/shared/types/asset";
 
@@ -30,15 +29,10 @@ class AssetService {
     return response.data;
   }
 
-  async buyAsset(ticker: string, data: BuyAssetRequest): Promise<Asset> {
-    const url = API_ENDPOINTS.assets.buy.replace(":ticker", ticker);
-    const response = await api.post<Asset>(url, data);
-    return response.data;
-  }
-
-  async sellAsset(ticker: string, data: SellAssetRequest): Promise<void> {
-    const url = API_ENDPOINTS.assets.sell.replace(":ticker", ticker);
-    const response = await api.put<void>(url, data);
+  async createAsset(data: CreateAssetRequest): Promise<Asset> {
+    console.log({ data });
+    const response = await api.post<Asset>(API_ENDPOINTS.assets.create, data);
+    console.log({ response });
     return response.data;
   }
 

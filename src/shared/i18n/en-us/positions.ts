@@ -2,7 +2,7 @@ export default {
   title: "My Positions",
   subtitle: "Manage your investment portfolio",
   actions: {
-    newTransaction: "New Transaction",
+    addAsset: "Add Asset",
     refreshPrices: "Refresh Prices",
     uploadCsv: "Import CSV",
     downloadCsv: "Download CSV",
@@ -22,7 +22,8 @@ export default {
       profitLoss: "P/L",
       institution: "Institution",
       portfolioPercentage: "% Portfolio",
+      description: "Description",
     },
-    empty: "No positions found. Add a transaction to get started.",
+    empty: "No positions found. Add an asset to get started.",
   },
 };
