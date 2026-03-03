@@ -1,6 +1,13 @@
 import { AssetType } from "@/shared/types/assetType";
 import { Institution } from "@/shared/types/institution";
 
+export enum IndexationMode {
+  PRE = "PRE",
+  CDI = "CDI",
+  IPCA = "IPCA",
+  SELIC = "SELIC",
+}
+
 export interface FixedIncomeAsset {
   id: number;
   userId: number;
@@ -8,6 +15,7 @@ export interface FixedIncomeAsset {
   description: string;
   startDate: Date;
   maturityDate: Date;
+  indexationMode: IndexationMode;
   interestRate: number;
   investedValueCents: number;
   currentValueCents: number;
@@ -21,10 +29,10 @@ export interface FixedIncomeAsset {
 }
 
 export interface CreateFixedIncomeAsset {
-  id: number;
   description: string;
-  startDate: Date;
-  maturityDate: Date;
+  startDate: string;
+  maturityDate: string;
+  indexationMode?: IndexationMode;
   interestRate: number;
   investedValueCents: number;
   institutionId: number;
@@ -33,10 +41,11 @@ export interface CreateFixedIncomeAsset {
 }
 
 export interface UpdateFixedIncomeAsset {
-  id: number;
+  id?: number;
   description?: string;
-  startDate?: Date;
-  maturityDate?: Date;
+  startDate?: string;
+  maturityDate?: string;
+  indexationMode?: IndexationMode;
   interestRate?: number;
   investedValueCents?: number;
   institutionId?: number;

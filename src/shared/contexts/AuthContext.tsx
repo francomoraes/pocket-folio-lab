@@ -22,21 +22,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isInitializing, setIsInitializing] = useState<boolean>(true);
   const { i18n } = useTranslation();
+
+  // Helper function to check if JWT token is expired
+  const isTokenExpired = (token: string): boolean => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      const expirationTime = payload.exp * 1000; // Convert to milliseconds
+      return Date.now() >= expirationTime;
+    } catch (error) {
+      return true; // If we can't decode, consider it expired
+    }
+  };
 
   useEffect(() => {
     const storedToken = localStorage.getItem(TOKEN_KEY);
     const storedUser = localStorage.getItem(USER_KEY);
 
     if (storedToken && storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setToken(storedToken);
-      setUser(parsedUser);
+      // Check if token is expired
+      if (isTokenExpired(storedToken)) {
+        // Token is expired, clear storage
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(USER_KEY);
+      } else {
+        // Token is valid, restore session
+        const parsedUser = JSON.parse(storedUser);
+        setToken(storedToken);
+        setUser(parsedUser);
 
-      if (parsedUser.locale) {
-        i18n.changeLanguage(parsedUser.locale);
+        if (parsedUser.locale) {
+          i18n.changeLanguage(parsedUser.locale);
+        }
       }
     }
+
+    setIsInitializing(false);
   }, []);
 
   useEffect(() => {
@@ -113,6 +135,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
     updateUser,
     isLoading,
+    isInitializing,
     isAuthenticated: !!user && !!token,
   };
 

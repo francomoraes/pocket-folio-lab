@@ -69,7 +69,9 @@ export const useFixedIncomePositions = ({
       return fixedIncomeAssetService.updateAsset(id, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.FIXED_INCOME_ASSETS,
+      });
       toast.success("Ativo atualizado com sucesso!");
     },
     onError: (error: Error) => {
@@ -82,7 +84,9 @@ export const useFixedIncomePositions = ({
       return fixedIncomeAssetService.deleteAsset(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.FIXED_INCOME_ASSETS,
+      });
       toast.success("Ativo excluído com sucesso!");
     },
     onError: (error: Error) => {

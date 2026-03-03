@@ -114,9 +114,31 @@ export const FixedIncomeFormDialog = ({
             </div>
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="indexationMode">Tipo de Indexação</Label>
+            <Select
+              value={formData.indexationMode}
+              onValueChange={(v) => updateField("indexationMode", v)}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="PRE">Pré-fixado</SelectItem>
+                <SelectItem value="CDI">CDI +</SelectItem>
+                <SelectItem value="IPCA">IPCA +</SelectItem>
+                <SelectItem value="SELIC">Selic +</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="interestRate">Taxa de Juros (%)</Label>
+              <Label htmlFor="interestRate">
+                {formData.indexationMode === "PRE"
+                  ? "Taxa (% a.a.)"
+                  : "Taxa Adicional (%)"}
+              </Label>
               <Input
                 id="interestRate"
                 type="number"

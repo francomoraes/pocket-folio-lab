@@ -20,13 +20,40 @@ import { usePagination } from "@/shared/hooks/usePagination";
 import { useEffect, useState } from "react";
 import { PaginationControls } from "@/shared/components/ui/pagination-control";
 import { useFixedIncomePositions } from "@/features/positions/hooks/useFixedIncomePositions";
-import { FixedIncomeAsset } from "@/shared/types/fixedIncomeAsset";
+import {
+  FixedIncomeAsset,
+  IndexationMode,
+} from "@/shared/types/fixedIncomeAsset";
+
+const getIndexationLabel = (mode: IndexationMode, rate: number) => {
+  switch (mode) {
+    case IndexationMode.PRE:
+      return `${rate}% a.a.`;
+    case IndexationMode.CDI:
+      return `CDI + ${rate}%`;
+    case IndexationMode.IPCA:
+      return `IPCA + ${rate}%`;
+    case IndexationMode.SELIC:
+      return `Selic + ${rate}%`;
+    default:
+      return `${rate}%`;
+  }
+};
+
+const formatDateOnly = (value: string | Date) => {
+  const raw = typeof value === "string" ? value : value.toISOString();
+  const dateOnly = raw.split("T")[0];
+  const [year, month, day] = dateOnly.split("-");
+  return `${day}/${month}/${year}`;
+};
 
 const FixedIncome = () => {
   const { t } = useTranslation();
   const pagination = usePagination();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingAsset, setEditingAsset] = useState<FixedIncomeAsset | undefined>(undefined);
+  const [editingAsset, setEditingAsset] = useState<
+    FixedIncomeAsset | undefined
+  >(undefined);
 
   const { page, itemsPerPage, sortBy, order, setMeta } = pagination;
 
@@ -85,11 +112,13 @@ const FixedIncome = () => {
             <TableRow>
               <TableHead>{t("positions.table.headers.description")}</TableHead>
               <TableHead>{t("positions.table.headers.type")}</TableHead>
-              <TableHead>{t("positions.table.headers.quantity")}</TableHead>
-              <TableHead>{t("positions.table.headers.averagePrice")}</TableHead>
-              <TableHead>{t("positions.table.headers.currentPrice")}</TableHead>
-              <TableHead>{t("positions.table.headers.total")}</TableHead>
-              <TableHead>{t("positions.table.headers.profitLoss")}</TableHead>
+              <TableHead>Data Início</TableHead>
+              <TableHead>Vencimento</TableHead>
+              <TableHead>Indexação</TableHead>
+              <TableHead>Investido</TableHead>
+              <TableHead>Valor Atual</TableHead>
+              <TableHead>Resultado</TableHead>
+              <TableHead>Retorno</TableHead>
               <TableHead>{t("positions.table.headers.institution")}</TableHead>
               <TableHead>
                 {t("positions.table.headers.portfolioPercentage")}
@@ -115,16 +144,17 @@ const FixedIncome = () => {
                   </TableCell>
                   <TableCell>{fixedIncomeAsset.type.assetClass.name}</TableCell>
                   <TableCell>
-                    {Intl.DateTimeFormat("pt-BR").format(
-                      new Date(fixedIncomeAsset.startDate),
-                    )}
+                    {formatDateOnly(fixedIncomeAsset.startDate)}
                   </TableCell>
                   <TableCell>
-                    {Intl.DateTimeFormat("pt-BR").format(
-                      new Date(fixedIncomeAsset.maturityDate),
+                    {formatDateOnly(fixedIncomeAsset.maturityDate)}
+                  </TableCell>
+                  <TableCell>
+                    {getIndexationLabel(
+                      fixedIncomeAsset.indexationMode || IndexationMode.PRE,
+                      fixedIncomeAsset.interestRate,
                     )}
                   </TableCell>
-                  <TableCell>{fixedIncomeAsset.interestRate}</TableCell>
                   <TableCell>
                     {formatCentsToCurrency(
                       fixedIncomeAsset.investedValueCents,

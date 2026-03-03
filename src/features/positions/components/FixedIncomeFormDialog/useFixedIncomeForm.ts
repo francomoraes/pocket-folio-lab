@@ -1,6 +1,9 @@
 import { useFixedIncomePositions } from "@/features/positions/hooks/useFixedIncomePositions";
 import { formatCurrencyToCents } from "@/shared/utils/formatters";
-import { FixedIncomeAsset } from "@/shared/types/fixedIncomeAsset";
+import {
+  FixedIncomeAsset,
+  IndexationMode,
+} from "@/shared/types/fixedIncomeAsset";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -8,6 +11,7 @@ type FixedIncomeFormData = {
   description: string;
   startDate: string;
   maturityDate: string;
+  indexationMode: IndexationMode;
   interestRate: string;
   investedValue: string;
   institutionId: number | null;
@@ -19,6 +23,7 @@ const initialState: FixedIncomeFormData = {
   description: "",
   startDate: "",
   maturityDate: "",
+  indexationMode: IndexationMode.PRE,
   interestRate: "",
   investedValue: "",
   institutionId: null,
@@ -26,9 +31,14 @@ const initialState: FixedIncomeFormData = {
   currency: "BRL",
 };
 
+const toInputDate = (value: string | Date): string => {
+  const stringValue = typeof value === "string" ? value : value.toISOString();
+  return stringValue.split("T")[0];
+};
+
 export const useFixedIncomeForm = (
   asset?: FixedIncomeAsset | null,
-  onSuccess?: () => void
+  onSuccess?: () => void,
 ) => {
   const [formData, setFormData] = useState<FixedIncomeFormData>(initialState);
   const isEditMode = !!asset;
@@ -47,8 +57,9 @@ export const useFixedIncomeForm = (
     if (asset) {
       setFormData({
         description: asset.description,
-        startDate: new Date(asset.startDate).toISOString().split("T")[0],
-        maturityDate: new Date(asset.maturityDate).toISOString().split("T")[0],
+        startDate: toInputDate(asset.startDate),
+        maturityDate: toInputDate(asset.maturityDate),
+        indexationMode: asset.indexationMode || IndexationMode.PRE,
         interestRate: asset.interestRate.toString(),
         investedValue: (asset.investedValueCents / 100).toString(),
         institutionId: asset.institution.id,
@@ -60,7 +71,10 @@ export const useFixedIncomeForm = (
     }
   }, [asset]);
 
-  const updateField = (field: keyof FixedIncomeFormData, value: string | number) => {
+  const updateField = (
+    field: keyof FixedIncomeFormData,
+    value: string | number,
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -80,11 +94,17 @@ export const useFixedIncomeForm = (
       toast.error("A data de vencimento é obrigatória.");
       return false;
     }
-    if (!formData.interestRate.trim() || parseFloat(formData.interestRate) < 0) {
+    if (
+      !formData.interestRate.trim() ||
+      parseFloat(formData.interestRate) < 0
+    ) {
       toast.error("A taxa de juros deve ser maior ou igual a zero");
       return false;
     }
-    if (!formData.investedValue.trim() || parseFloat(formData.investedValue) <= 0) {
+    if (
+      !formData.investedValue.trim() ||
+      parseFloat(formData.investedValue) <= 0
+    ) {
       toast.error("O valor investido deve ser maior que zero");
       return false;
     }
@@ -104,7 +124,7 @@ export const useFixedIncomeForm = (
     // Validar datas
     const startDate = new Date(formData.startDate);
     const maturityDate = new Date(formData.maturityDate);
-    
+
     if (maturityDate <= startDate) {
       toast.error("A data de vencimento deve ser posterior à data de início.");
       return false;
@@ -134,10 +154,10 @@ export const useFixedIncomeForm = (
         await updateFixedIncomeAsset({
           id: asset.id,
           data: {
-            id: asset.id,
             description: formData.description,
-            startDate: new Date(formData.startDate),
-            maturityDate: new Date(formData.maturityDate),
+            startDate: formData.startDate,
+            maturityDate: formData.maturityDate,
+            indexationMode: formData.indexationMode,
             interestRate,
             investedValueCents,
             institutionId,
@@ -149,10 +169,10 @@ export const useFixedIncomeForm = (
         // Modo criação
         await createFixedIncomeAsset({
           data: {
-            id: 0, // Backend vai gerar o ID
             description: formData.description,
-            startDate: new Date(formData.startDate),
-            maturityDate: new Date(formData.maturityDate),
+            startDate: formData.startDate,
+            maturityDate: formData.maturityDate,
+            indexationMode: formData.indexationMode,
             interestRate,
             investedValueCents,
             institutionId,
