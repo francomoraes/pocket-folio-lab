@@ -23,6 +23,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
+import {
+  getPercentageBgColor,
+  getPercentageColor,
+} from "@/shared/utils/formatters";
 
 export const AssetTypesTable = () => {
   const { assetTypes, isLoading, deleteAssetType, isDeleting } =
@@ -33,14 +37,13 @@ export const AssetTypesTable = () => {
   const [classFilter, setClassFilter] = useState<string>("all");
   const { t } = useTranslation();
 
-  // Get unique asset classes for the filter
   const uniqueClasses = useMemo(() => {
+    if (!assetTypes || assetTypes.length === 0) return [];
     const classes = assetTypes.map((at) => at.assetClass);
     const uniqueMap = new Map(classes.map((c) => [c.id, c]));
     return Array.from(uniqueMap.values());
   }, [assetTypes]);
 
-  // Filter asset types based on the filters
   const filteredAssetTypes = useMemo(() => {
     return assetTypes.filter((assetType) => {
       const matchesName = assetType.name
@@ -52,6 +55,13 @@ export const AssetTypesTable = () => {
       return matchesName && matchesClass;
     });
   }, [assetTypes, nameFilter, classFilter]);
+
+  const totalPercentage = useMemo(() => {
+    return filteredAssetTypes.reduce(
+      (sum, assetType) => sum + (Number(assetType.targetPercentage) || 0),
+      0,
+    );
+  }, [filteredAssetTypes]);
 
   const hasActiveFilters = nameFilter !== "" || classFilter !== "all";
 
@@ -72,7 +82,19 @@ export const AssetTypesTable = () => {
   }
 
   return (
-    <div className="flex flex-col gap-3 h-[calc(100vh-216px)] p-3">
+    <div className="flex flex-col gap-3 h-[calc(100vh-216px)] p-3 relative">
+      <Card
+        className={`p-4 border-2 flex items-center gap-2 w-min absolute top-[-80px] right-0 ${getPercentageBgColor(totalPercentage)}`}
+      >
+        <div className="text-sm font-medium">
+          {t("settings.assetTypes.summary.totalAllocated")}
+        </div>
+        <div
+          className={`text-2xl font-bold ${getPercentageColor(totalPercentage)}`}
+        >
+          {(totalPercentage * 100).toFixed(1)}%
+        </div>
+      </Card>
       <div className="flex flex-col gap-3">
         <div className="flex gap-3 items-end">
           <div className="flex-1">
@@ -123,12 +145,15 @@ export const AssetTypesTable = () => {
           </div>
         </div>
       </div>
+
       <Card className="flex-1 flex flex-col min-h-0">
         <Table>
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
               <TableHead>{t("settings.assetTypes.table.name")}</TableHead>
-              <TableHead>Percentual Meta (%)</TableHead>
+              <TableHead>
+                {t("settings.assetTypes.table.targetPercentage")}
+              </TableHead>
               <TableHead>{t("settings.assetTypes.table.class")}</TableHead>
               <TableHead className="text-right">
                 {t("settings.assetTypes.table.actions")}

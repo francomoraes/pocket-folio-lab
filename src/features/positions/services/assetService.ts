@@ -30,9 +30,7 @@ class AssetService {
   }
 
   async createAsset(data: CreateAssetRequest): Promise<Asset> {
-    console.log({ data });
     const response = await api.post<Asset>(API_ENDPOINTS.assets.create, data);
-    console.log({ response });
     return response.data;
   }
 

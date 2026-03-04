@@ -2,9 +2,11 @@ import { UserMenu } from "@/shared/components/Layout";
 import { TrendingUp } from "lucide-react";
 import { NavLink, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/shared/hooks/useAuth";
 
 export const Navbar = () => {
   const { t } = useTranslation();
+  const { isAuthenticated, isInitializing } = useAuth();
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -20,38 +22,42 @@ export const Navbar = () => {
         </Link>
 
         <nav className="flex items-center gap-4">
-          <NavLink
-            to="/positions"
-            className={({ isActive }) =>
-              `flex items-center gap-2 text-sm font-medium hover:text-accent transition-colors ${
-                isActive ? "text-accent" : ""
-              }`
-            }
-          >
-            {t("navbar.links.positions")}
-          </NavLink>
-          <NavLink
-            to="/dashboard"
-            className={({ isActive }) =>
-              `flex items-center gap-2 text-sm font-medium hover:text-accent transition-colors ${
-                isActive ? "text-accent" : ""
-              }`
-            }
-          >
-            {t("navbar.links.dashboard")}
-          </NavLink>
-          <NavLink
-            to="/settings"
-            className={({ isActive }) =>
-              `flex items-center gap-2 text-sm font-medium hover:text-accent transition-colors ${
-                isActive ? "text-accent" : ""
-              }`
-            }
-          >
-            <span className="hidden sm:inline">
-              {t("navbar.links.settings")}
-            </span>
-          </NavLink>
+          {isAuthenticated && !isInitializing && (
+            <>
+              <NavLink
+                to="/positions"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 text-sm font-medium hover:text-accent transition-colors ${
+                    isActive ? "text-accent" : ""
+                  }`
+                }
+              >
+                {t("navbar.links.positions")}
+              </NavLink>
+              <NavLink
+                to="/dashboard"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 text-sm font-medium hover:text-accent transition-colors ${
+                    isActive ? "text-accent" : ""
+                  }`
+                }
+              >
+                {t("navbar.links.dashboard")}
+              </NavLink>
+              <NavLink
+                to="/settings"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 text-sm font-medium hover:text-accent transition-colors ${
+                    isActive ? "text-accent" : ""
+                  }`
+                }
+              >
+                <span className="hidden sm:inline">
+                  {t("navbar.links.settings")}
+                </span>
+              </NavLink>
+            </>
+          )}
           <UserMenu />
         </nav>
       </div>

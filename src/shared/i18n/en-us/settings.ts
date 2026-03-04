@@ -14,7 +14,13 @@ export default {
     table: {
       name: "Name",
       description: "Description",
+      classPercentage: "Class (%)",
+      classPercentageTooltip:
+        "Total percentage of asset types in this class. Change in the Asset Types table.",
       actions: "Actions",
+    },
+    summary: {
+      totalAllocated: "Total Allocated",
     },
   },
   assetTypes: {
@@ -24,6 +30,7 @@ export default {
     delete: "Delete Asset Type",
     table: {
       name: "Name",
+      targetPercentage: "Target Percentage (%)",
       class: "Class",
       actions: "Actions",
     },
@@ -33,6 +40,9 @@ export default {
       class: "Filter by class",
       allClasses: "All classes",
       clear: "Clear filters",
+    },
+    summary: {
+      totalAllocated: "Total Allocated",
     },
   },
   institutions: {

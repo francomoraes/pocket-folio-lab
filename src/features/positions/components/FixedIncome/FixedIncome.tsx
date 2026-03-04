@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { RefreshCw, Pencil } from "lucide-react";
+import { Pencil, Trash } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Card } from "@/shared/components/ui/card";
 import {
@@ -24,6 +24,7 @@ import {
   FixedIncomeAsset,
   IndexationMode,
 } from "@/shared/types/fixedIncomeAsset";
+import { ConfirmDeleteDialog } from "@/shared/components/ConfirmDeleteDialog";
 
 const getIndexationLabel = (mode: IndexationMode, rate: number) => {
   switch (mode) {
@@ -54,10 +55,18 @@ const FixedIncome = () => {
   const [editingAsset, setEditingAsset] = useState<
     FixedIncomeAsset | undefined
   >(undefined);
+  const [assetToDelete, setAssetToDelete] = useState<
+    FixedIncomeAsset | undefined
+  >(undefined);
 
   const { page, itemsPerPage, sortBy, order, setMeta } = pagination;
 
-  const { fixedIncomeAssets, isLoading } = useFixedIncomePositions({
+  const {
+    fixedIncomeAssets,
+    isLoading,
+    deleteFixedIncomeAsset,
+    isDeletingFixedIncomeAsset,
+  } = useFixedIncomePositions({
     page,
     itemsPerPage,
     sortBy: "description",
@@ -94,7 +103,7 @@ const FixedIncome = () => {
   }
   return (
     <div>
-      <div className="flex gap-2 justify-end">
+      <div className="flex gap-2 justify-start mb-2">
         <Button onClick={handleCreateAsset}>
           {t("positions.actions.addAsset")}
         </Button>
@@ -104,6 +113,20 @@ const FixedIncome = () => {
         asset={editingAsset}
         open={dialogOpen}
         onOpenChange={handleCloseDialog}
+      />
+
+      <ConfirmDeleteDialog
+        open={!!assetToDelete}
+        onOpenChange={(open) => {
+          if (!open) setAssetToDelete(undefined);
+        }}
+        onConfirm={async () => {
+          if (assetToDelete) {
+            await deleteFixedIncomeAsset(assetToDelete.id);
+            setAssetToDelete(undefined);
+          }
+        }}
+        isLoading={isDeletingFixedIncomeAsset}
       />
 
       <Card className="flex-1 flex flex-col min-h-0 h-full">
@@ -186,7 +209,7 @@ const FixedIncome = () => {
                       )}
                     </span>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="max-w-[110px] truncate">
                     {fixedIncomeAsset.institution
                       ? fixedIncomeAsset.institution.name
                       : "-"}
@@ -197,14 +220,26 @@ const FixedIncome = () => {
                     )}
                   </TableCell>
                   <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEditAsset(fixedIncomeAsset)}
-                      className="h-8 w-8"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
+                    <div className="flex">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEditAsset(fixedIncomeAsset)}
+                        className="h-8 w-8"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setAssetToDelete(fixedIncomeAsset);
+                        }}
+                        className="h-8 w-8"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

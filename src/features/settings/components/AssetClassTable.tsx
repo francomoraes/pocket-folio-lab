@@ -9,19 +9,47 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/shared/components/ui/tooltip";
 import { useAssetClasses } from "@/features/settings/hooks/useAssetClasses";
 import { AssetClass } from "@/shared/types/assetClass";
-import { Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Pencil, Trash2, Info } from "lucide-react";
+import { useState, useMemo } from "react";
 import { Card } from "@/shared/components/ui/card";
 import { useTranslation } from "react-i18next";
+import { useAssetTypes } from "@/features/settings/hooks/useAssetTypes";
+import {
+  getPercentageBgColor,
+  getPercentageColor,
+} from "@/shared/utils/formatters";
 
 export const AssetClassTable = () => {
   const { assetClasses, isLoading, deleteAssetClass, isDeleting } =
     useAssetClasses();
+  const { assetTypes } = useAssetTypes();
   const [editingClass, setEditingClass] = useState<AssetClass | null>(null);
   const [deletingClass, setDeletingClass] = useState<AssetClass | null>(null);
   const { t } = useTranslation();
+
+  const classPercentages = useMemo(() => {
+    const classMap = new Map<number, number>();
+    assetTypes?.forEach((assetType) => {
+      const classId = assetType.assetClass.id;
+      const current = classMap.get(classId) || 0;
+      classMap.set(classId, current + Number(assetType.targetPercentage || 0));
+    });
+    return classMap;
+  }, [assetTypes]);
+
+  const totalPercentage = useMemo(() => {
+    return assetTypes?.reduce(
+      (sum, assetType) => sum + (Number(assetType.targetPercentage) || 0),
+      0,
+    );
+  }, [assetTypes]);
 
   if (isLoading) return <div>{t("common.status.loading")}</div>;
 
@@ -35,15 +63,40 @@ export const AssetClassTable = () => {
   }
 
   return (
-    <div className="flex flex-col gap-3 h-[calc(100vh-216px)] p-3">
+    <div className="flex flex-col gap-3 h-[calc(100vh-216px)] p-3 relative">
       <div className="flex justify-end">
         <AssetClassDialog mode="create" />
       </div>
+      <Card
+        className={`p-4 border-2 flex items-center gap-2 w-min absolute top-[-80px] right-0 ${getPercentageBgColor(totalPercentage)}`}
+      >
+        <div className="text-sm font-medium">
+          {t("settings.assetClasses.summary.totalAllocated")}
+        </div>
+        <div
+          className={`text-2xl font-bold ${getPercentageColor(totalPercentage)}`}
+        >
+          {(totalPercentage * 100).toFixed(1)}%
+        </div>
+      </Card>
       <Card className="flex-1 flex flex-col min-h-0">
         <Table>
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
               <TableHead>{t("settings.assetClasses.table.name")}</TableHead>
+              <TableHead>
+                <div className="flex items-center gap-2">
+                  {t("settings.assetClasses.table.classPercentage")}
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-4 w-4 cursor-help text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {t("settings.assetClasses.table.classPercentageTooltip")}
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </TableHead>
               <TableHead className="text-right">
                 {t("settings.assetClasses.table.actions")}
               </TableHead>
@@ -53,6 +106,12 @@ export const AssetClassTable = () => {
             {assetClasses.map((assetClass) => (
               <TableRow key={assetClass.id}>
                 <TableCell>{assetClass.name}</TableCell>
+                <TableCell>
+                  {((classPercentages.get(assetClass.id) || 0) * 100).toFixed(
+                    1,
+                  )}
+                  %
+                </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
                     <Button

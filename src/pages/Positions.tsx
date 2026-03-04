@@ -33,47 +33,58 @@ export const Positions = () => {
 
   return (
     <div className="flex flex-col gap-3 h-[calc(100vh-61px)] p-3">
-      <div className="flex items-center justify-between flex-shrink-0">
-        <div>
-          <h2 className="text-2xl font-bold">{t("positions.title")}</h2>
-          <p className="text-muted-foreground">{t("positions.subtitle")}</p>
-        </div>
-      </div>
-
-      <Card className="p-3 flex-shrink-0">
-        <div className="grid grid-cols-3 gap-8">
-          <div>
-            <p className="text-xs text-muted-foreground">
-              {t("positions.summary.patrimonyUSD")}
-            </p>
-            <p className="text-xl font-semibold">
-              {formatCentsToCurrency(totalPatrimonyCents?.USD || 0, "USD")}
-            </p>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">
-              {t("positions.summary.patrimonyBRL")}
-            </p>
-            <p className="text-xl font-semibold">
-              {formatCentsToCurrency(totalPatrimonyCents?.BRL || 0, "BRL")}
-            </p>
-          </div>
-          <div className="border-l pl-8">
-            <p className="text-xs text-muted-foreground font-semibold">
-              Patrimônio Consolidado
-            </p>
-            <p className="text-2xl font-bold text-primary">
-              {formatCentsToCurrency(consolidatedPatrimonyBRL, "BRL")}
-            </p>
-          </div>
-        </div>
-      </Card>
-
       <Tabs defaultValue="positions" className="h-[calc(100%-142px)]">
-        <TabsList>
-          <TabsTrigger value="positions">Renda Variável</TabsTrigger>
-          <TabsTrigger value="allocation">Renda fixa</TabsTrigger>
-        </TabsList>
+        <div className="flex justify-between">
+          <TabsList>
+            <TabsTrigger className="" value="positions">
+              Renda Variável
+            </TabsTrigger>
+            <TabsTrigger className="" value="allocation">
+              Renda fixa
+            </TabsTrigger>
+          </TabsList>
+
+          <Card className="p-3 flex-shrink-0">
+            <div className="grid grid-cols-3 gap-8">
+              <div>
+                <p className="text-xs text-muted-foreground flex gap-1">
+                  {t("positions.summary.patrimonyUSD")}
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/555/555526.png"
+                    width="18"
+                  />
+                </p>
+                <p className="text-xl font-semibold">
+                  {formatCentsToCurrency(totalPatrimonyCents?.USD || 0, "USD")}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground flex gap-1">
+                  {t("positions.summary.patrimonyBRL")}
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/3022/3022546.png"
+                    width="18"
+                  />
+                </p>
+                <p className="text-xl font-semibold">
+                  {formatCentsToCurrency(totalPatrimonyCents?.BRL || 0, "BRL")}
+                </p>
+              </div>
+              <div className="border-l pl-8">
+                <p className="text-xs text-muted-foreground font-semibold flex gap-1">
+                  Patrimônio Consolidado
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/3022/3022546.png"
+                    width="18"
+                  />
+                </p>
+                <p className="text-2xl font-bold text-primary">
+                  {formatCentsToCurrency(consolidatedPatrimonyBRL, "BRL")}
+                </p>
+              </div>
+            </div>
+          </Card>
+        </div>
 
         <TabsContent value="positions" className="h-[calc(100%-48px)]">
           <VariableIncome />

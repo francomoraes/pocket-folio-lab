@@ -24,9 +24,12 @@ export const UserMenu = () => {
   if (!user) {
     return (
       <div className="flex items-center gap-4">
-        <span className="text-sm text-gray-500 dark:text-gray-400">
-          {t("auth.userMenu.pleaseLogin")}
-        </span>
+        <Button
+          onClick={() => navigate("/login")}
+          className="px-4 py-2 text-sm font-medium"
+        >
+          {t("auth.userMenu.login")}
+        </Button>
       </div>
     );
   }

@@ -84,7 +84,7 @@ const VariableIncome = () => {
 
   return (
     <div>
-      <div className="flex gap-2 justify-end">
+      <div className="flex gap-2 justify-start mb-2">
         <CsvUploadDialog />
         <Button
           onClick={() => refreshMarketPrices()}
@@ -190,24 +190,26 @@ const VariableIncome = () => {
                     {formatPercentage(Number(asset.portfolioPercentage))}
                   </TableCell>
                   <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEditAsset(asset)}
-                      className="h-8 w-8"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        setAssetToDelete(asset);
-                      }}
-                      className="h-8 w-8"
-                    >
-                      <Trash className="h-4 w-4" />
-                    </Button>
+                    <div className="flex">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEditAsset(asset)}
+                        className="h-8 w-8"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setAssetToDelete(asset);
+                        }}
+                        className="h-8 w-8"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

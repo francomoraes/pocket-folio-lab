@@ -148,7 +148,6 @@ export const UserProfile = () => {
                 crossOrigin="anonymous"
                 onError={(e) => {
                   console.error("Image load error:", e);
-                  console.log("URL:", formData.profilePictureUrl);
                 }}
               />
               <AvatarFallback className="text-3xl">

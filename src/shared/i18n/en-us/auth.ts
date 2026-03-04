@@ -23,6 +23,7 @@ export default {
     welcome: "Welcome",
     pleaseLogin: "Please log in.",
     selectLanguage: "Select Language",
+    login: "Login",
     logout: "Logout",
     profile: "Profile",
   },

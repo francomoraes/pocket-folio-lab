@@ -14,7 +14,13 @@ export default {
     table: {
       name: "Nome",
       description: "Descrição",
+      classPercentage: "Class (%)",
+      classPercentageTooltip:
+        "Porcentagem total dos tipos de ativos dessa classe. Altere na tabela de Tipos de Ativos.",
       actions: "Ações",
+    },
+    summary: {
+      totalAllocated: "Total Alocado",
     },
   },
   assetTypes: {
@@ -24,6 +30,7 @@ export default {
     delete: "Excluir Tipo de Ativo",
     table: {
       name: "Nome",
+      targetPercentage: "Percentual Meta (%)",
       class: "Classe",
       actions: "Ações",
     },
@@ -33,6 +40,9 @@ export default {
       class: "Filtrar por classe",
       allClasses: "Todas as classes",
       clear: "Limpar filtros",
+    },
+    summary: {
+      totalAllocated: "Total Alocado",
     },
   },
   institutions: {

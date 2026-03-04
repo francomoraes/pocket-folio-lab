@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 03-03-2026
+
+- Add indexation mode support and enhance fixed income asset management
+
+## 26-02-2026
+
+- Enhance asset management with improved delete confirmation and loading states
+- Refactor transaction handling and add fixed income asset management
+
+## 21-02-2026
+
+- Enhance positions summary with consolidated patrimony and exchange rate integration
+
 ## 29-12-2025
 
 - Implement functional profile picture update (front and backend)
