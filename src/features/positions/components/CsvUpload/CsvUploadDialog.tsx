@@ -28,7 +28,7 @@ export const CsvUploadDialog = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" className="gap-2 w-full sm:w-min">
           <Plus className="h-4 w-4" />
           {t("csv.upload.title")}
         </Button>

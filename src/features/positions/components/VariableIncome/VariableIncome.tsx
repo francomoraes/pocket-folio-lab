@@ -84,18 +84,18 @@ const VariableIncome = () => {
 
   return (
     <div>
-      <div className="flex gap-2 justify-start mb-2">
+      <div className="flex flex-col sm:flex-row gap-2 justify-start mb-2">
         <CsvUploadDialog />
         <Button
           onClick={() => refreshMarketPrices()}
           variant="secondary"
-          className="gap-2"
+          className="w-full sm:w-min gap-2"
           disabled={isRefreshingMarketPrices}
         >
           <RefreshCw className="h-4 w-4" />
           {t("positions.actions.refreshPrices")}
         </Button>
-        <Button onClick={handleCreateAsset}>
+        <Button className="w-full sm:w-min" onClick={handleCreateAsset}>
           {t("positions.actions.addAsset")}
         </Button>
       </div>

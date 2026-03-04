@@ -32,53 +32,59 @@ export const Positions = () => {
     (totalPatrimonyCents?.USD || 0) * usdToBrlRate;
 
   return (
-    <div className="flex flex-col gap-3 h-[calc(100vh-61px)] p-3">
-      <Tabs defaultValue="positions" className="h-[calc(100%-142px)]">
-        <div className="flex justify-between">
-          <TabsList>
-            <TabsTrigger className="" value="positions">
+    <div className="flex flex-col gap-3 h-auto min-h-[calc(100vh-61px)] p-3">
+      <Tabs defaultValue="positions" className="w-full">
+        <div className="flex flex-col sm:flex-row gap-3 sm:justify-between items-start sm:items-center mb-4">
+          <TabsList className="w-full sm:w-auto">
+            <TabsTrigger className="flex-1 sm:flex-none" value="positions">
               Renda Variável
             </TabsTrigger>
-            <TabsTrigger className="" value="allocation">
-              Renda fixa
+            <TabsTrigger className="flex-1 sm:flex-none" value="allocation">
+              Renda Fixa
             </TabsTrigger>
           </TabsList>
 
-          <Card className="p-3 flex-shrink-0">
-            <div className="grid grid-cols-3 gap-8">
+          <Card className="w-full sm:w-auto p-3 sm:p-4 flex-shrink-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               <div>
-                <p className="text-xs text-muted-foreground flex gap-1">
+                <p className="text-xs sm:text-sm text-muted-foreground flex gap-1 items-center mb-1">
                   {t("positions.summary.patrimonyUSD")}
                   <img
                     src="https://cdn-icons-png.flaticon.com/512/555/555526.png"
-                    width="18"
+                    width="16"
+                    alt="USD"
+                    className="inline"
                   />
                 </p>
-                <p className="text-xl font-semibold">
+                <p className="text-lg sm:text-xl font-semibold truncate">
                   {formatCentsToCurrency(totalPatrimonyCents?.USD || 0, "USD")}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground flex gap-1">
+                <p className="text-xs sm:text-sm text-muted-foreground flex gap-1 items-center mb-1">
                   {t("positions.summary.patrimonyBRL")}
                   <img
                     src="https://cdn-icons-png.flaticon.com/512/3022/3022546.png"
-                    width="18"
+                    width="16"
+                    alt="BRL"
+                    className="inline"
                   />
                 </p>
-                <p className="text-xl font-semibold">
+                <p className="text-lg sm:text-xl font-semibold truncate">
                   {formatCentsToCurrency(totalPatrimonyCents?.BRL || 0, "BRL")}
                 </p>
               </div>
-              <div className="border-l pl-8">
-                <p className="text-xs text-muted-foreground font-semibold flex gap-1">
-                  Patrimônio Consolidado
+              <div className="sm:border-l sm:pl-6 col-span-1 sm:col-span-1 lg:col-span-1">
+                <p className="text-xs sm:text-sm text-muted-foreground font-semibold flex gap-1 items-center mb-1">
+                  Patrimônio
                   <img
                     src="https://cdn-icons-png.flaticon.com/512/3022/3022546.png"
-                    width="18"
+                    width="16"
+                    alt="Total"
+                    className="inline"
                   />
                 </p>
-                <p className="text-2xl font-bold text-primary">
+                <p className="text-xl sm:text-2xl font-bold text-primary truncate">
                   {formatCentsToCurrency(consolidatedPatrimonyBRL, "BRL")}
                 </p>
               </div>
@@ -86,10 +92,10 @@ export const Positions = () => {
           </Card>
         </div>
 
-        <TabsContent value="positions" className="h-[calc(100%-48px)]">
+        <TabsContent value="positions" className="w-full">
           <VariableIncome />
         </TabsContent>
-        <TabsContent value="allocation">
+        <TabsContent value="allocation" className="w-full">
           <FixedIncome />
         </TabsContent>
       </Tabs>

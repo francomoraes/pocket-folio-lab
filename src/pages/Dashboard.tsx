@@ -23,17 +23,24 @@ import {
   CartesianGrid,
 } from "recharts";
 import { useTranslation } from "react-i18next";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/shared/components/ui/accordion";
 
+// Cores pastel profissionais
 const COLORS = [
-  "hsl(var(--chart-1))",
-  "hsl(var(--chart-2))",
-  "hsl(var(--chart-3))",
-  "hsl(var(--chart-4))",
-  "hsl(var(--chart-5))",
-  "#8b5cf6",
-  "#f59e0b",
-  "#10b981",
-  "#06b6d4",
+  "#A8D5BA", // Verde pastel
+  "#B4A7D6", // Roxo pastel
+  "#A0C4FF", // Azul pastel
+  "#FFB4A2", // Rosa/Coral pastel
+  "#E5B8F4", // Magenta pastel
+  "#C5E1A5", // Lima pastel
+  "#FFCCB2", // Pêssego pastel
+  "#A8DADC", // Cyan pastel
+  "#DDA0DD", // Plum pastel
 ];
 
 const formatCurrency = (value: number) => {
@@ -122,172 +129,242 @@ export const Dashboard = () => {
   }
 
   return (
-    <div className="flex flex-col gap-3 h-[calc(100vh-61px)] p-3">
-      <h2 className="text-2xl font-semibold mb-4">{t("dashboard.title")}</h2>
-      <Card className="flex-1 flex flex-col min-h-0">
-        {/* <div className="grid md:grid-cols-2 gap-8"> */}
-        <Table>
-          <TableHeader className="sticky top-0 bg-background z-10">
-            <TableRow>
-              <TableHead>{t("dashboard.table.headers.class")}</TableHead>
-              <TableHead className="text-right">
-                {t("dashboard.table.headers.type")}
-              </TableHead>
-              <TableHead className="text-right">
-                {t("dashboard.table.headers.value")}
-              </TableHead>
-              <TableHead className="text-right">% Atual</TableHead>
-              <TableHead className="text-right">% Meta</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {allocationByClass.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={3}
-                  className="text-center text-muted-foreground py-8"
-                >
-                  {t("dashboard.table.empty")}
-                </TableCell>
-              </TableRow>
-            ) : (
-              allocationByClass?.map((item, index) => (
-                <TableRow key={item.class + index}>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-3 h-3 rounded-full"
-                        style={{
-                          backgroundColor: COLORS[index % COLORS.length],
+    <div className="flex flex-col gap-3 h-auto min-h-[calc(100vh-61px)] p-3">
+      <h2 className="text-2xl font-semibold mb-2">{t("dashboard.title")}</h2>
+
+      <Accordion
+        type="single"
+        collapsible
+        defaultValue="table"
+        className="w-full"
+      >
+        {/* Tabela */}
+        <AccordionItem value="table" className="border rounded-lg">
+          <AccordionTrigger className="px-4 hover:no-underline">
+            <span className="text-lg font-semibold">
+              {t("dashboard.table.headers.class")}
+            </span>
+          </AccordionTrigger>
+          <AccordionContent className="p-0">
+            <Card className="rounded-none border-t">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>
+                        {t("dashboard.table.headers.class")}
+                      </TableHead>
+                      <TableHead className="text-right">
+                        {t("dashboard.table.headers.type")}
+                      </TableHead>
+                      <TableHead className="text-right">
+                        {t("dashboard.table.headers.value")}
+                      </TableHead>
+                      <TableHead className="text-right">% Atual</TableHead>
+                      <TableHead className="text-right">% Meta</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {allocationByClass.length === 0 ? (
+                      <TableRow>
+                        <TableCell
+                          colSpan={5}
+                          className="text-center text-muted-foreground py-8"
+                        >
+                          {t("dashboard.table.empty")}
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      allocationByClass?.map((item, index) => (
+                        <TableRow key={item.class + index}>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <div
+                                className="w-3 h-3 rounded-full flex-shrink-0"
+                                style={{
+                                  backgroundColor:
+                                    COLORS[index % COLORS.length],
+                                }}
+                              />
+                              <span className="hidden sm:inline">
+                                {getClassLabel(item.class)}
+                              </span>
+                              <span className="sm:hidden text-xs">
+                                {getClassLabel(item.class).substring(0, 3)}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right text-sm sm:text-base">
+                            {item.type}
+                          </TableCell>
+                          <TableCell className="text-right text-sm sm:text-base">
+                            {formatCurrency(item.actualValue)}
+                          </TableCell>
+                          <TableCell className="text-right font-medium text-sm sm:text-base">
+                            {(item.actualPercentage * 100).toFixed(1)}%
+                          </TableCell>
+                          <TableCell className="text-right font-medium text-sm sm:text-base">
+                            {(item.targetPercentage * 100).toFixed(1)}%
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            </Card>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Gráficos de Pizza */}
+        <AccordionItem value="pie" className="border rounded-lg">
+          <AccordionTrigger className="px-4 hover:no-underline">
+            <span className="text-lg font-semibold">Gráficos de Alocação</span>
+          </AccordionTrigger>
+          <AccordionContent className="p-0">
+            <Card className="p-4 sm:p-6 rounded-none border-t">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+                <div className="flex flex-col items-center justify-center">
+                  <h3 className="text-base sm:text-lg font-semibold mb-4">
+                    Alocação Atual
+                  </h3>
+                  {pieDataActual && pieDataActual.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={pieDataActual}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={100}
+                          paddingAngle={2}
+                          dataKey="value"
+                          label={({ name, value }) =>
+                            `${name}: ${(value * 100).toFixed(0)}%`
+                          }
+                        >
+                          {pieDataActual?.map((entry, index) => {
+                            const colorIndex = allocationByClass.findIndex(
+                              (item) => item.class === entry.className,
+                            );
+                            return (
+                              <Cell
+                                key={`cell-actual-${entry.className}`}
+                                fill={COLORS[colorIndex % COLORS.length]}
+                              />
+                            );
+                          })}
+                        </Pie>
+                        <Tooltip
+                          formatter={(value: number) =>
+                            `${(value * 100).toFixed(1)}%`
+                          }
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <p className="text-muted-foreground">
+                      Sem dados para exibir
+                    </p>
+                  )}
+                </div>
+                <div className="flex flex-col items-center justify-center">
+                  <h3 className="text-base sm:text-lg font-semibold mb-4">
+                    Alocação Meta
+                  </h3>
+                  {pieDataTarget && pieDataTarget.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={pieDataTarget}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={100}
+                          paddingAngle={2}
+                          dataKey="value"
+                          label={({ name, value }) =>
+                            `${name}: ${(value * 100).toFixed(0)}%`
+                          }
+                        >
+                          {pieDataTarget?.map((entry, index) => {
+                            const colorIndex = allocationByClass.findIndex(
+                              (item) => item.class === entry.className,
+                            );
+                            return (
+                              <Cell
+                                key={`cell-target-${entry.className}`}
+                                fill={COLORS[colorIndex % COLORS.length]}
+                              />
+                            );
+                          })}
+                        </Pie>
+                        <Tooltip
+                          formatter={(value: number) =>
+                            `${(value * 100).toFixed(1)}%`
+                          }
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <p className="text-muted-foreground">
+                      Sem dados para exibir
+                    </p>
+                  )}
+                </div>
+              </div>
+            </Card>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Gráfico de Barras */}
+        <AccordionItem value="bar" className="border rounded-lg">
+          <AccordionTrigger className="px-4 hover:no-underline">
+            <span className="text-lg font-semibold">
+              Comparação Atual vs Meta
+            </span>
+          </AccordionTrigger>
+          <AccordionContent className="p-0">
+            <Card className="p-4 sm:p-6 rounded-none border-t">
+              {barChartData && barChartData.length > 0 ? (
+                <div className="w-full overflow-x-auto">
+                  <ResponsiveContainer width="100%" height={300} minWidth={300}>
+                    <BarChart data={barChartData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis
+                        label={{
+                          value: "%",
+                          angle: -90,
+                          position: "insideLeft",
                         }}
                       />
-                      {getClassLabel(item.class)}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">{item.type}</TableCell>
-                  <TableCell className="text-right">
-                    {formatCurrency(item.actualValue)}
-                  </TableCell>
-                  <TableCell className="text-right font-medium">
-                    {(item.actualPercentage * 100).toFixed(1)}%
-                  </TableCell>
-                  <TableCell className="text-right font-medium">
-                    {(item.targetPercentage * 100).toFixed(1)}%
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </Card>
-
-      <Card className="p-6">
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="flex items-center justify-center flex-col">
-            <h3 className="text-lg font-semibold mb-4">Alocação Atual</h3>
-            {pieDataActual && pieDataActual.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={pieDataActual}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
-                    paddingAngle={2}
-                    dataKey="value"
-                    label={({ name, value }) =>
-                      `${name}: ${(value * 100).toFixed(1)}%`
-                    }
-                  >
-                    {pieDataActual?.map((entry, index) => {
-                      // Find the index in allocationByClass to get consistent color
-                      const colorIndex = allocationByClass.findIndex(
-                        (item) => item.class === entry.className,
-                      );
-                      return (
-                        <Cell
-                          key={`cell-actual-${entry.className}`}
-                          fill={COLORS[colorIndex % COLORS.length]}
-                        />
-                      );
-                    })}
-                  </Pie>
-                  <Tooltip
-                    formatter={(value: number) =>
-                      `${(value * 100).toFixed(1)}%`
-                    }
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <p className="text-muted-foreground">Sem dados para exibir</p>
-            )}
-          </div>
-          <div className="flex items-center justify-center flex-col">
-            <h3 className="text-lg font-semibold mb-4">Alocação Meta</h3>
-            {pieDataTarget && pieDataTarget.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={pieDataTarget}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
-                    paddingAngle={2}
-                    dataKey="value"
-                    label={({ name, value }) =>
-                      `${name}: ${(value * 100).toFixed(1)}%`
-                    }
-                  >
-                    {pieDataTarget?.map((entry, index) => {
-                      // Find the index in allocationByClass to get consistent color
-                      const colorIndex = allocationByClass.findIndex(
-                        (item) => item.class === entry.className,
-                      );
-                      return (
-                        <Cell
-                          key={`cell-target-${entry.className}`}
-                          fill={COLORS[colorIndex % COLORS.length]}
-                        />
-                      );
-                    })}
-                  </Pie>
-                  <Tooltip
-                    formatter={(value: number) =>
-                      `${(value * 100).toFixed(1)}%`
-                    }
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <p className="text-muted-foreground">Sem dados para exibir</p>
-            )}
-          </div>
-        </div>
-      </Card>
-
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4">Comparação Atual vs Meta</h3>
-        {barChartData && barChartData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={barChartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis
-                label={{ value: "%", angle: -90, position: "insideLeft" }}
-              />
-              <Tooltip formatter={(value: number) => `${value.toFixed(1)}%`} />
-              <Legend />
-              <Bar dataKey="atual" fill="hsl(var(--chart-1))" name="Atual" />
-              <Bar dataKey="meta" fill="hsl(var(--chart-2))" name="Meta" />
-            </BarChart>
-          </ResponsiveContainer>
-        ) : (
-          <p className="text-muted-foreground">Sem dados para exibir</p>
-        )}
-      </Card>
+                      <Tooltip
+                        formatter={(value: number) => `${value.toFixed(1)}%`}
+                      />
+                      <Legend />
+                      <Bar
+                        dataKey="atual"
+                        fill={COLORS[0]}
+                        name="Atual"
+                        radius={[8, 8, 0, 0]}
+                      />
+                      <Bar
+                        dataKey="meta"
+                        fill={COLORS[1]}
+                        name="Meta"
+                        radius={[8, 8, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <p className="text-muted-foreground">Sem dados para exibir</p>
+              )}
+            </Card>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 };
