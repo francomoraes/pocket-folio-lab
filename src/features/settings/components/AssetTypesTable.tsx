@@ -11,7 +11,7 @@ import {
 } from "@/shared/components/ui/table";
 import { useAssetTypes } from "@/features/settings/hooks/useAssetTypes";
 import { AssetType } from "@/shared/types/assetType";
-import { Pencil, Trash2, X } from "lucide-react";
+import { Filter, Pencil, Trash2, X } from "lucide-react";
 import { useState, useMemo } from "react";
 import { Card } from "@/shared/components/ui/card";
 import { useTranslation } from "react-i18next";
@@ -27,12 +27,20 @@ import {
   getPercentageBgColor,
   getPercentageColor,
 } from "@/shared/utils/formatters";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/shared/components/ui/sheet";
 
 export const AssetTypesTable = () => {
   const { assetTypes, isLoading, deleteAssetType, isDeleting } =
     useAssetTypes();
   const [editingClass, setEditingClass] = useState<AssetType | null>(null);
   const [deletingClass, setDeletingClass] = useState<AssetType | null>(null);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [nameFilter, setNameFilter] = useState("");
   const [classFilter, setClassFilter] = useState<string>("all");
   const { t } = useTranslation();
@@ -82,55 +90,129 @@ export const AssetTypesTable = () => {
   }
 
   return (
-    <div className="flex flex-col gap-3 h-[calc(100vh-216px)] p-3 relative">
-      <Card
-        className={`p-4 border-2 flex items-center gap-2 w-min absolute top-[-80px] right-0 ${getPercentageBgColor(totalPercentage)}`}
-      >
-        <div className="text-sm font-medium">
-          {t("settings.assetTypes.summary.totalAllocated")}
-        </div>
-        <div
-          className={`text-2xl font-bold ${getPercentageColor(totalPercentage)}`}
-        >
-          {(totalPercentage * 100).toFixed(1)}%
-        </div>
-      </Card>
-      <div className="flex flex-col gap-3">
-        <div className="flex gap-3 items-end">
-          <div className="flex-1">
-            <label className="text-sm font-medium mb-1.5 block">
-              {t("settings.assetTypes.filters.name")}
-            </label>
-            <Input
-              placeholder={t("settings.assetTypes.filters.namePlaceholder")}
-              value={nameFilter}
-              onChange={(e) => setNameFilter(e.target.value)}
-            />
+    <div className="flex flex-col gap-3 h-[calc(100vh-216px)] p-3">
+      <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
+        <div className="w-full sm:w-auto">
+          <div className="flex items-center gap-2 sm:hidden">
+            <Sheet open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant={hasActiveFilters ? "default" : "outline"}
+                  size="icon"
+                  title={t("settings.assetTypes.filters.open")}
+                >
+                  <Filter className="h-4 w-4" />
+                  <span className="sr-only">
+                    {t("settings.assetTypes.filters.open")}
+                  </span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[320px] sm:w-[420px]">
+                <SheetHeader>
+                  <SheetTitle>
+                    {t("settings.assetTypes.filters.title")}
+                  </SheetTitle>
+                </SheetHeader>
+
+                <div className="mt-6 space-y-4">
+                  <div>
+                    <label className="text-sm font-medium mb-1.5 block">
+                      {t("settings.assetTypes.filters.name")}
+                    </label>
+                    <Input
+                      placeholder={t(
+                        "settings.assetTypes.filters.namePlaceholder",
+                      )}
+                      value={nameFilter}
+                      onChange={(e) => setNameFilter(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium mb-1.5 block">
+                      {t("settings.assetTypes.filters.class")}
+                    </label>
+                    <Select value={classFilter} onValueChange={setClassFilter}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">
+                          {t("settings.assetTypes.filters.allClasses")}
+                        </SelectItem>
+                        {uniqueClasses.map((assetClass) => (
+                          <SelectItem
+                            key={assetClass.id}
+                            value={assetClass.id.toString()}
+                          >
+                            {assetClass.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {hasActiveFilters && (
+                    <Button
+                      variant="outline"
+                      onClick={clearFilters}
+                      className="w-full"
+                    >
+                      {t("settings.assetTypes.filters.clear")}
+                    </Button>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+
+            {hasActiveFilters && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={clearFilters}
+                title={t("settings.assetTypes.filters.clear")}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+
+            <AssetTypesDialog mode="create" />
           </div>
-          <div className="flex-1">
-            <label className="text-sm font-medium mb-1.5 block">
-              {t("settings.assetTypes.filters.class")}
-            </label>
-            <Select value={classFilter} onValueChange={setClassFilter}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">
-                  {t("settings.assetTypes.filters.allClasses")}
-                </SelectItem>
-                {uniqueClasses.map((assetClass) => (
-                  <SelectItem
-                    key={assetClass.id}
-                    value={assetClass.id.toString()}
-                  >
-                    {assetClass.name}
+
+          <div className="hidden sm:flex items-end gap-3">
+            <div className="w-64">
+              <label className="text-sm font-medium mb-1.5 block">
+                {t("settings.assetTypes.filters.name")}
+              </label>
+              <Input
+                placeholder={t("settings.assetTypes.filters.namePlaceholder")}
+                value={nameFilter}
+                onChange={(e) => setNameFilter(e.target.value)}
+              />
+            </div>
+            <div className="w-56">
+              <label className="text-sm font-medium mb-1.5 block">
+                {t("settings.assetTypes.filters.class")}
+              </label>
+              <Select value={classFilter} onValueChange={setClassFilter}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">
+                    {t("settings.assetTypes.filters.allClasses")}
                   </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex gap-2">
+                  {uniqueClasses.map((assetClass) => (
+                    <SelectItem
+                      key={assetClass.id}
+                      value={assetClass.id.toString()}
+                    >
+                      {assetClass.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             {hasActiveFilters && (
               <Button
                 variant="outline"
@@ -144,6 +226,19 @@ export const AssetTypesTable = () => {
             <AssetTypesDialog mode="create" />
           </div>
         </div>
+
+        <Card
+          className={`p-3 sm:p-4 border-2 flex justify-between sm:flex-col flex-row items-center gap-2 w-full sm:w-auto ${getPercentageBgColor(totalPercentage)}`}
+        >
+          <div className="text-xs sm:text-sm font-medium whitespace-nowrap">
+            {t("settings.assetTypes.summary.totalAllocated")}
+          </div>
+          <div
+            className={`text-xl sm:text-2xl font-bold ${getPercentageColor(totalPercentage)}`}
+          >
+            {(totalPercentage * 100).toFixed(1)}%
+          </div>
+        </Card>
       </div>
 
       <Card className="flex-1 flex flex-col min-h-0">

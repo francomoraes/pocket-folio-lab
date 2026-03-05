@@ -35,6 +35,8 @@ export default {
       actions: "Ações",
     },
     filters: {
+      title: "Filtros",
+      open: "Abrir filtros",
       name: "Filtrar por nome",
       namePlaceholder: "Digite o nome...",
       class: "Filtrar por classe",

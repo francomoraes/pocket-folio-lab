@@ -63,22 +63,22 @@ export const AssetClassTable = () => {
   }
 
   return (
-    <div className="flex flex-col gap-3 h-[calc(100vh-216px)] p-3 relative">
-      <div className="flex justify-end">
+    <div className="flex flex-col gap-3 h-[calc(100vh-216px)] p-3">
+      <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
         <AssetClassDialog mode="create" />
-      </div>
-      <Card
-        className={`p-4 border-2 flex items-center gap-2 w-min absolute top-[-80px] right-0 ${getPercentageBgColor(totalPercentage)}`}
-      >
-        <div className="text-sm font-medium">
-          {t("settings.assetClasses.summary.totalAllocated")}
-        </div>
-        <div
-          className={`text-2xl font-bold ${getPercentageColor(totalPercentage)}`}
+        <Card
+          className={`p-3 sm:p-4 border-2 flex justify-between sm:flex-col flex-row items-center gap-2 w-full sm:w-auto ${getPercentageBgColor(totalPercentage)}`}
         >
-          {(totalPercentage * 100).toFixed(1)}%
-        </div>
-      </Card>
+          <div className="text-xs sm:text-sm font-medium whitespace-nowrap">
+            {t("settings.assetClasses.summary.totalAllocated")}
+          </div>
+          <div
+            className={`text-xl sm:text-2xl font-bold ${getPercentageColor(totalPercentage)}`}
+          >
+            {(totalPercentage * 100).toFixed(1)}%
+          </div>
+        </Card>
+      </div>
       <Card className="flex-1 flex flex-col min-h-0">
         <Table>
           <TableHeader className="sticky top-0 bg-background z-10">

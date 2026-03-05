@@ -64,7 +64,7 @@ export const Navbar = () => {
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-[280px] sm:w-[350px]">
+                <SheetContent side="right" className="w-[280px] sm:w-[350px]">
                   <SheetHeader>
                     <SheetTitle className="flex items-center gap-2">
                       <TrendingUp className="h-5 w-5 text-accent" />

@@ -35,6 +35,8 @@ export default {
       actions: "Actions",
     },
     filters: {
+      title: "Filters",
+      open: "Open filters",
       name: "Filter by name",
       namePlaceholder: "Type the name...",
       class: "Filter by class",
