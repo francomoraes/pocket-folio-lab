@@ -50,4 +50,10 @@ export const API_ENDPOINTS = {
     upload: "csv/upload-csv",
     downloadTemplate: "csv/csv-template",
   },
+  wealthHistory: {
+    list: "wealth-history",
+    create: "wealth-history",
+    update: "wealth-history/:id",
+    delete: "wealth-history/:id",
+  },
 } as const;

@@ -8,8 +8,7 @@ This document contains the list of features, improvements, and tasks to be imple
 
 ### Core Features
 
-- [ ] **Fixed Income (Renda Fixa) Management**
-
+- [x] **Fixed Income (Renda Fixa) Management**
   - Create dedicated table/page for fixed income assets
   - Fields: initial value, maturity date, interest rate
   - Calculate projected returns
@@ -17,7 +16,6 @@ This document contains the list of features, improvements, and tasks to be imple
   - Integration with portfolio allocation
 
 - [ ] **Dashboard Enhancements**
-
   - Portfolio evolution chart over time (patrimony history)
   - Actual vs Target allocation comparison (visual)
   - Total portfolio value by currency (BRL/USD)
@@ -26,7 +24,6 @@ This document contains the list of features, improvements, and tasks to be imple
   - Rebalancing suggestions (what to buy/sell to reach target)
 
 - [ ] **Position Management Improvements**
-
   - Quick edit position values (inline editing)
   - Bulk update positions
   - Show position age/last update
@@ -41,7 +38,6 @@ This document contains the list of features, improvements, and tasks to be imple
 ### UX/UI Improvements
 
 - [ ] **Better Data Visualization**
-
   - Interactive charts (click to drill down)
   - Color coding for over/under-allocated assets
   - Progress bars showing actual vs target allocation
@@ -57,7 +53,7 @@ This document contains the list of features, improvements, and tasks to be imple
 
 - [x] Implement sorting and pagination
 - [x] Implement institutions CRUD
-- [ ] Add fixed income endpoints
+- [x] Add fixed income endpoints
 - [ ] Portfolio snapshot/history endpoint (for charts)
 - [ ] Calculation endpoint for rebalancing suggestions
 
@@ -66,21 +62,18 @@ This document contains the list of features, improvements, and tasks to be imple
 ### Features
 
 - [ ] **User profile**
-
   - [x] User details page
   - [x] Change password
   - [x] Profile picture upload
   - [ ] Recover password
 
 - [ ] **Portfolio Analytics**
-
   - Monthly/yearly performance reports
   - Dividend tracking (for stocks that pay dividends)
   - Tax report helper (IR)
   - Export portfolio summary to PDF
 
 - [ ] **Asset Information**
-
   - Asset details modal (show current price, daily change)
   - Asset class/type descriptions
   - Quick links to external sources (B3, Yahoo Finance)
@@ -93,13 +86,11 @@ This document contains the list of features, improvements, and tasks to be imple
 ### Improvements
 
 - [ ] **Performance Optimization**
-
   - Cache calculations (allocation percentages)
   - Optimize chart rendering
   - Lazy load components
 
 - [ ] **Data Import/Export**
-
   - [x] CSV import for positions
   - [x] CSV template download
   - [ ] Import from Google Sheets
@@ -116,19 +107,16 @@ This document contains the list of features, improvements, and tasks to be imple
 ### Features
 
 - [ ] **Multi-Portfolio Support**
-
   - Create separate portfolios (e.g., personal, retirement)
   - Switch between portfolios
   - Compare portfolio performance
 
 - [ ] **Benchmark Comparison**
-
   - Compare returns with IBOV, CDI, S&P 500
   - Relative performance metrics
   - Correlation analysis
 
 - [ ] **Goal Tracking**
-
   - Set financial goals
   - Track progress towards goals
   - Projections based on contributions

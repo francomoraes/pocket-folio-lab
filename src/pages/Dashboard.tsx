@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/shared/components/ui/table";
 import { useSummary } from "@/shared/hooks/useSummary";
+import { useWealthHistory } from "@/shared/hooks/useWealthHistory";
 import { AllocationByClass } from "@/shared/types/investment";
 import {
   PieChart,
@@ -29,6 +30,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/shared/components/ui/accordion";
+import { Button } from "@/shared/components/ui/button";
+import { WealthEvolutionChart } from "@/shared/components/WealthEvolutionChart";
+import { WealthHistoryFormDialog } from "@/shared/components/WealthHistoryFormDialog";
+import { WealthHistoryList } from "@/shared/components/WealthHistoryList";
+import { WealthHistory } from "@/shared/types/wealthHistory";
+import { useState } from "react";
 
 // Cores pastel profissionais
 const COLORS = [
@@ -63,7 +70,28 @@ const getClassLabel = (className: string) => {
 
 export const Dashboard = () => {
   const { summary, isLoadingSummary } = useSummary();
+  const { wealthHistory, isLoading: isLoadingWealthHistory } =
+    useWealthHistory();
   const { t } = useTranslation();
+  const [isWealthHistoryDialogOpen, setIsWealthHistoryDialogOpen] =
+    useState(false);
+  const [editingWealthHistory, setEditingWealthHistory] =
+    useState<WealthHistory | null>(null);
+
+  const handleOpenDialog = () => {
+    setEditingWealthHistory(null);
+    setIsWealthHistoryDialogOpen(true);
+  };
+
+  const handleEditWealthHistory = (item: WealthHistory) => {
+    setEditingWealthHistory(item);
+    setIsWealthHistoryDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsWealthHistoryDialogOpen(false);
+    setEditingWealthHistory(null);
+  };
 
   const allocationByClass: AllocationByClass[] = summary
     ? summary?.map((item) => ({
@@ -364,7 +392,54 @@ export const Dashboard = () => {
             </Card>
           </AccordionContent>
         </AccordionItem>
+
+        {/* Gráfico de Evolução Patrimonial */}
+        <AccordionItem value="wealth-evolution" className="border rounded-lg">
+          <AccordionTrigger className="px-4 hover:no-underline">
+            <span className="text-lg font-semibold">Evolução Patrimonial</span>
+          </AccordionTrigger>
+          <AccordionContent className="p-0">
+            <Card className="p-4 sm:p-6 rounded-none border-t">
+              <div className="space-y-4">
+                <div className="flex justify-end">
+                  <Button size="sm" onClick={handleOpenDialog}>
+                    + Adicionar Histórico
+                  </Button>
+                </div>
+                {isLoadingWealthHistory ? (
+                  <p className="text-center text-muted-foreground">
+                    Carregando histórico...
+                  </p>
+                ) : wealthHistory && wealthHistory.length > 0 ? (
+                  <>
+                    <WealthEvolutionChart wealthHistory={wealthHistory} />
+                    <div className="mt-6">
+                      <h3 className="text-lg font-semibold mb-4">
+                        Histórico de Registros
+                      </h3>
+                      <WealthHistoryList
+                        wealthHistory={wealthHistory}
+                        onEdit={handleEditWealthHistory}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-center text-muted-foreground">
+                    Nenhum histórico registrado. Adicione valores para ver a
+                    evolução.
+                  </p>
+                )}
+              </div>
+            </Card>
+          </AccordionContent>
+        </AccordionItem>
       </Accordion>
+
+      <WealthHistoryFormDialog
+        item={editingWealthHistory}
+        open={isWealthHistoryDialogOpen}
+        onOpenChange={handleCloseDialog}
+      />
     </div>
   );
 };
