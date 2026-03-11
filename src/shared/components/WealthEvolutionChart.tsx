@@ -51,6 +51,7 @@ const buildNormalizedPriceSeries = (
   points: MarketIndexPoint[],
   periodOrder: string[],
   granularity: Granularity,
+  initialValue: number,
 ): Map<string, number> => {
   const byPeriod = new Map<string, { date: Date; value: number }>();
 
@@ -67,24 +68,19 @@ const buildNormalizedPriceSeries = (
   const result = new Map<string, number>();
   if (!periodOrder.length) return result;
 
-  // A série sempre começa em 0% no primeiro ponto exibido do gráfico.
-  result.set(periodOrder[0], 0);
-
   let base: number | null = null;
-  let lastValue: number | null = null;
 
-  periodOrder.slice(1).forEach((key) => {
+  periodOrder.forEach((key) => {
     const current = byPeriod.get(key)?.value;
 
     if (current !== undefined) {
-      if (base === null) base = current;
-      if (base && base !== 0) {
-        lastValue = Number(((current / base - 1) * 100).toFixed(2));
+      if (base === null) {
+        base = current;
+        result.set(key, initialValue);
+      } else if (base !== 0) {
+        const valueInReais = initialValue * (current / base);
+        result.set(key, Number(valueInReais.toFixed(2)));
       }
-    }
-
-    if (lastValue !== null) {
-      result.set(key, lastValue);
     }
   });
 
@@ -95,6 +91,7 @@ const buildNormalizedRateSeries = (
   points: MarketIndexPoint[],
   periodOrder: string[],
   granularity: Granularity,
+  initialValue: number,
 ): Map<string, number> => {
   const periodFactors = new Map<string, number>();
 
@@ -108,48 +105,21 @@ const buildNormalizedRateSeries = (
   const result = new Map<string, number>();
   if (!periodOrder.length) return result;
 
-  // A série sempre começa em 0% no primeiro ponto exibido do gráfico.
-  result.set(periodOrder[0], 0);
-
   let cumulative = 1;
-  let hasAnyData = false;
+  let started = false;
 
-  periodOrder.slice(1).forEach((key) => {
+  periodOrder.forEach((key) => {
     const factor = periodFactors.get(key);
 
     if (factor !== undefined) {
       cumulative *= factor;
-      hasAnyData = true;
+      started = true;
     }
 
-    if (hasAnyData) {
-      result.set(key, Number(((cumulative - 1) * 100).toFixed(2)));
-    } else {
-      result.set(key, 0);
+    if (started) {
+      const valueInReais = initialValue * cumulative;
+      result.set(key, Number(valueInReais.toFixed(2)));
     }
-  });
-
-  return result;
-};
-
-const buildPortfolioPerformanceSeries = (
-  chartData: Array<{ periodKey: string; value: number }>,
-): Map<string, number> => {
-  const result = new Map<string, number>();
-
-  if (!chartData.length) return result;
-
-  const base = chartData[0].value;
-  if (!base) return result;
-
-  chartData.forEach((point, index) => {
-    if (index === 0) {
-      result.set(point.periodKey, 0);
-      return;
-    }
-
-    const pct = ((point.value / base - 1) * 100).toFixed(2);
-    result.set(point.periodKey, Number(pct));
   });
 
   return result;
@@ -340,27 +310,30 @@ export const WealthEvolutionChart = ({
     if (!indicesData || chartData.length === 0) return chartData;
 
     const periodOrder = chartData.map((point) => point.periodKey);
+    const initialValue = chartData[0].value;
+
     const sp500Series = buildNormalizedPriceSeries(
       indicesData.sp500,
       periodOrder,
       granularity,
+      initialValue,
     );
     const cdiSeries = buildNormalizedRateSeries(
       indicesData.cdi,
       periodOrder,
       granularity,
+      initialValue,
     );
     const ipcaSeries = buildNormalizedRateSeries(
       indicesData.ipca,
       periodOrder,
       granularity,
+      initialValue,
     );
-    const portfolioSeries = buildPortfolioPerformanceSeries(chartData);
 
     return chartData.map((point) => {
       const enriched: Record<string, string | number | Date | null> = {
         ...point,
-        portfolioPct: portfolioSeries.get(point.periodKey) ?? null,
       };
 
       if (showIndices.sp500) {
@@ -379,10 +352,7 @@ export const WealthEvolutionChart = ({
     });
   }, [chartData, indicesData, showIndices, granularity]);
 
-  const hasAnyIndexSelected =
-    showIndices.sp500 || showIndices.cdi || showIndices.ipca;
-
-  const rightAxisTicks = [-20, 0, 20, 40, 60, 80, 100];
+  const initialValue = chartData.length > 0 ? chartData[0].value : 0;
 
   if (!wealthHistory || wealthHistory.length === 0) {
     return (
@@ -463,60 +433,39 @@ export const WealthEvolutionChart = ({
               tick={{ fontSize: 12 }}
             />
             <YAxis
-              yAxisId="left"
               label={{
-                value: "Patrimônio (R$)",
+                value: "Valor (R$)",
                 angle: -90,
                 position: "insideLeft",
               }}
               tickFormatter={formatCurrency}
             />
-            {hasAnyIndexSelected && (
-              <YAxis
-                yAxisId="right"
-                orientation="right"
-                tickFormatter={(value: number) => `${value.toFixed(0)}%`}
-                domain={[-20, 100]}
-                ticks={rightAxisTicks}
-                label={{
-                  value: "Performance (% acumulada)",
-                  angle: 90,
-                  position: "insideRight",
-                }}
-              />
-            )}
             <Tooltip
               formatter={(value: number, name: string) => {
                 if (name === "Patrimônio") {
-                  return [formatCurrency(value), name];
+                  const pct =
+                    initialValue > 0
+                      ? ((value / initialValue - 1) * 100).toFixed(0)
+                      : "0";
+                  return `${formatCurrency(value)} (${pct}%)`;
                 }
-                return [`${(value as number).toFixed(2)}%`, name];
+                // Para índices, mostrar apenas a porcentagem
+                const pct =
+                  initialValue > 0
+                    ? ((value / initialValue - 1) * 100).toFixed(0)
+                    : "0";
+                return `${pct}%`;
               }}
             />
             <Legend />
             <Bar
-              yAxisId="left"
               dataKey="value"
               fill="#A8D5BA"
-              name="Patrimônio (R$)"
+              name="Patrimônio"
               radius={[8, 8, 0, 0]}
             />
-            {hasAnyIndexSelected && (
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="portfolioPct"
-                stroke="#0f172a"
-                name="Carteira (%)"
-                dot={false}
-                strokeWidth={2}
-                strokeDasharray="5 5"
-                isAnimationActive={false}
-              />
-            )}
             {showIndices.sp500 && (
               <Line
-                yAxisId="right"
                 type="monotone"
                 dataKey="sp500"
                 stroke="#ff7300"
@@ -528,7 +477,6 @@ export const WealthEvolutionChart = ({
             )}
             {showIndices.cdi && (
               <Line
-                yAxisId="right"
                 type="monotone"
                 dataKey="cdi"
                 stroke="#8884d8"
@@ -540,7 +488,6 @@ export const WealthEvolutionChart = ({
             )}
             {showIndices.ipca && (
               <Line
-                yAxisId="right"
                 type="monotone"
                 dataKey="ipca"
                 stroke="#82ca9d"

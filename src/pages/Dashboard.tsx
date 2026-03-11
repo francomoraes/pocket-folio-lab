@@ -160,14 +160,9 @@ export const Dashboard = () => {
     <div className="flex flex-col gap-3 h-auto min-h-[calc(100vh-61px)] p-3">
       <h2 className="text-2xl font-semibold mb-2">{t("dashboard.title")}</h2>
 
-      <Accordion
-        type="single"
-        collapsible
-        defaultValue="table"
-        className="w-full"
-      >
+      <Accordion type="single" collapsible defaultValue="table">
         {/* Tabela */}
-        <AccordionItem value="table" className="border rounded-lg">
+        <AccordionItem value="table" className="border rounded-lg mt-2">
           <AccordionTrigger className="px-4 hover:no-underline">
             <span className="text-lg font-semibold">
               {t("dashboard.table.headers.class")}
@@ -245,7 +240,7 @@ export const Dashboard = () => {
         </AccordionItem>
 
         {/* Gráficos de Pizza */}
-        <AccordionItem value="pie" className="border rounded-lg">
+        <AccordionItem value="pie" className="border rounded-lg mt-2">
           <AccordionTrigger className="px-4 hover:no-underline">
             <span className="text-lg font-semibold">Gráficos de Alocação</span>
           </AccordionTrigger>
@@ -346,7 +341,7 @@ export const Dashboard = () => {
         </AccordionItem>
 
         {/* Gráfico de Barras */}
-        <AccordionItem value="bar" className="border rounded-lg">
+        <AccordionItem value="bar" className="border rounded-lg mt-2">
           <AccordionTrigger className="px-4 hover:no-underline">
             <span className="text-lg font-semibold">
               Comparação Atual vs Meta
@@ -394,7 +389,10 @@ export const Dashboard = () => {
         </AccordionItem>
 
         {/* Gráfico de Evolução Patrimonial */}
-        <AccordionItem value="wealth-evolution" className="border rounded-lg">
+        <AccordionItem
+          value="wealth-evolution"
+          className="border rounded-lg mt-2"
+        >
           <AccordionTrigger className="px-4 hover:no-underline">
             <span className="text-lg font-semibold">Evolução Patrimonial</span>
           </AccordionTrigger>
