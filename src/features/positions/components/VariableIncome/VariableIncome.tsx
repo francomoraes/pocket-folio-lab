@@ -25,6 +25,7 @@ import { useEffect, useState } from "react";
 import { PaginationControls } from "@/shared/components/ui/pagination-control";
 import { Asset } from "@/shared/types/asset";
 import { ConfirmDeleteDialog } from "@/shared/components/ConfirmDeleteDialog";
+import { SortableTableHead } from "@/shared/components/ui/sortable-table-head";
 
 const VariableIncome = () => {
   const { t } = useTranslation();
@@ -37,7 +38,7 @@ const VariableIncome = () => {
     undefined,
   );
 
-  const { page, itemsPerPage, sortBy, order, setMeta } = pagination;
+  const { page, itemsPerPage, sortBy, order, setMeta, toggleSort } = pagination;
 
   const {
     assets,
@@ -57,7 +58,7 @@ const VariableIncome = () => {
     if (assets && assets.meta) {
       setMeta(assets.meta);
     }
-  }, [assets]);
+  }, [assets, setMeta]);
 
   const handleEditAsset = (asset: Asset) => {
     setEditingAsset(asset);
@@ -124,17 +125,69 @@ const VariableIncome = () => {
         <Table>
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
-              <TableHead>{t("positions.table.headers.ticker")}</TableHead>
-              <TableHead>{t("positions.table.headers.type")}</TableHead>
-              <TableHead>{t("positions.table.headers.quantity")}</TableHead>
-              <TableHead>{t("positions.table.headers.averagePrice")}</TableHead>
-              <TableHead>{t("positions.table.headers.currentPrice")}</TableHead>
-              <TableHead>{t("positions.table.headers.total")}</TableHead>
-              <TableHead>{t("positions.table.headers.profitLoss")}</TableHead>
-              <TableHead>{t("positions.table.headers.institution")}</TableHead>
-              <TableHead>
-                {t("positions.table.headers.portfolioPercentage")}
-              </TableHead>
+              <SortableTableHead
+                label={t("positions.table.headers.ticker")}
+                sortKey="ticker"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label={t("positions.table.headers.type")}
+                sortKey="type"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label={t("positions.table.headers.quantity")}
+                sortKey="quantity"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label={t("positions.table.headers.averagePrice")}
+                sortKey="averagePriceCents"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label={t("positions.table.headers.currentPrice")}
+                sortKey="currentPriceCents"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label={t("positions.table.headers.total")}
+                sortKey="currentValueCents"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label={t("positions.table.headers.profitLoss")}
+                sortKey="resultCents"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label={t("positions.table.headers.institution")}
+                sortKey="institution"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label={t("positions.table.headers.portfolioPercentage")}
+                sortKey="portfolioPercentage"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
               <TableHead className="w-[80px]">Ações</TableHead>
             </TableRow>
           </TableHeader>

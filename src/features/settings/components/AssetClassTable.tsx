@@ -16,7 +16,14 @@ import {
 } from "@/shared/components/ui/tooltip";
 import { useAssetClasses } from "@/features/settings/hooks/useAssetClasses";
 import { AssetClass } from "@/shared/types/assetClass";
-import { Pencil, Trash2, Info } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  Info,
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+} from "lucide-react";
 import { useState, useMemo } from "react";
 import { Card } from "@/shared/components/ui/card";
 import { useTranslation } from "react-i18next";
@@ -25,6 +32,10 @@ import {
   getPercentageBgColor,
   getPercentageColor,
 } from "@/shared/utils/formatters";
+import { SortableTableHead } from "@/shared/components/ui/sortable-table-head";
+
+type SortBy = "name" | "classPercentage";
+type SortOrder = "ASC" | "DESC";
 
 export const AssetClassTable = () => {
   const { assetClasses, isLoading, deleteAssetClass, isDeleting } =
@@ -32,11 +43,13 @@ export const AssetClassTable = () => {
   const { assetTypes } = useAssetTypes();
   const [editingClass, setEditingClass] = useState<AssetClass | null>(null);
   const [deletingClass, setDeletingClass] = useState<AssetClass | null>(null);
+  const [sortBy, setSortBy] = useState<SortBy>("name");
+  const [order, setOrder] = useState<SortOrder>("ASC");
   const { t } = useTranslation();
 
   const classPercentages = useMemo(() => {
     const classMap = new Map<number, number>();
-    assetTypes?.forEach((assetType) => {
+    assetTypes.forEach((assetType) => {
       const classId = assetType.assetClass.id;
       const current = classMap.get(classId) || 0;
       classMap.set(classId, current + Number(assetType.targetPercentage || 0));
@@ -45,11 +58,37 @@ export const AssetClassTable = () => {
   }, [assetTypes]);
 
   const totalPercentage = useMemo(() => {
-    return assetTypes?.reduce(
+    return assetTypes.reduce(
       (sum, assetType) => sum + (Number(assetType.targetPercentage) || 0),
       0,
     );
   }, [assetTypes]);
+
+  const toggleSort = (column: string) => {
+    const nextColumn = column as SortBy;
+    if (sortBy === nextColumn) {
+      setOrder((prev) => (prev === "ASC" ? "DESC" : "ASC"));
+      return;
+    }
+
+    setSortBy(nextColumn);
+    setOrder("ASC");
+  };
+
+  const sortedAssetClasses = useMemo(() => {
+    const collator = new Intl.Collator("pt-BR", { sensitivity: "base" });
+    const factor = order === "ASC" ? 1 : -1;
+
+    return [...assetClasses].sort((a, b) => {
+      if (sortBy === "name") {
+        return collator.compare(a.name, b.name) * factor;
+      }
+
+      const aPercentage = classPercentages.get(a.id) || 0;
+      const bPercentage = classPercentages.get(b.id) || 0;
+      return (aPercentage - bPercentage) * factor;
+    });
+  }, [assetClasses, classPercentages, order, sortBy]);
 
   if (isLoading) return <div>{t("common.status.loading")}</div>;
 
@@ -83,10 +122,40 @@ export const AssetClassTable = () => {
         <Table>
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
-              <TableHead>{t("settings.assetClasses.table.name")}</TableHead>
+              <SortableTableHead
+                label={t("settings.assetClasses.table.name")}
+                sortKey="name"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
               <TableHead>
                 <div className="flex items-center gap-2">
-                  {t("settings.assetClasses.table.classPercentage")}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="h-auto p-0 font-medium text-muted-foreground hover:bg-transparent hover:text-foreground"
+                    onClick={() => toggleSort("classPercentage")}
+                  >
+                    <span>
+                      {t("settings.assetClasses.table.classPercentage")}
+                    </span>
+                    {sortBy === "classPercentage" ? (
+                      order === "ASC" ? (
+                        <ArrowUp className="ml-1 h-4 w-4" aria-hidden="true" />
+                      ) : (
+                        <ArrowDown
+                          className="ml-1 h-4 w-4"
+                          aria-hidden="true"
+                        />
+                      )
+                    ) : (
+                      <ArrowUpDown
+                        className="ml-1 h-4 w-4 opacity-50"
+                        aria-hidden="true"
+                      />
+                    )}
+                  </Button>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Info className="h-4 w-4 cursor-help text-muted-foreground" />
@@ -103,7 +172,7 @@ export const AssetClassTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {assetClasses.map((assetClass) => (
+            {sortedAssetClasses.map((assetClass) => (
               <TableRow key={assetClass.id}>
                 <TableCell>{assetClass.name}</TableCell>
                 <TableCell>

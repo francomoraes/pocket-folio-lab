@@ -7,7 +7,7 @@ export const useAssetTypes = () => {
   const queryClient = useQueryClient();
 
   const {
-    data: assetTypes,
+    data: rawAssetTypes,
     isLoading,
     error,
     refetch,
@@ -17,6 +17,8 @@ export const useAssetTypes = () => {
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
   });
+
+  const assetTypes = rawAssetTypes ?? [];
 
   const createAssetTypeMutation = useMutation({
     mutationFn: (data: CreateAssetType) => {

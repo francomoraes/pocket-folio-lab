@@ -25,6 +25,7 @@ import {
   IndexationMode,
 } from "@/shared/types/fixedIncomeAsset";
 import { ConfirmDeleteDialog } from "@/shared/components/ConfirmDeleteDialog";
+import { SortableTableHead } from "@/shared/components/ui/sortable-table-head";
 
 const getIndexationLabel = (mode: IndexationMode, rate: number) => {
   switch (mode) {
@@ -50,7 +51,7 @@ const formatDateOnly = (value: string | Date) => {
 
 const FixedIncome = () => {
   const { t } = useTranslation();
-  const pagination = usePagination();
+  const pagination = usePagination({ initialSortBy: "description" });
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAsset, setEditingAsset] = useState<
     FixedIncomeAsset | undefined
@@ -59,7 +60,7 @@ const FixedIncome = () => {
     FixedIncomeAsset | undefined
   >(undefined);
 
-  const { page, itemsPerPage, sortBy, order, setMeta } = pagination;
+  const { page, itemsPerPage, sortBy, order, setMeta, toggleSort } = pagination;
 
   const {
     fixedIncomeAssets,
@@ -69,7 +70,7 @@ const FixedIncome = () => {
   } = useFixedIncomePositions({
     page,
     itemsPerPage,
-    sortBy: "description",
+    sortBy,
     order,
   });
 
@@ -77,7 +78,7 @@ const FixedIncome = () => {
     if (fixedIncomeAssets && fixedIncomeAssets.meta) {
       setMeta(fixedIncomeAssets.meta);
     }
-  }, [fixedIncomeAssets]);
+  }, [fixedIncomeAssets, setMeta]);
 
   const handleEditAsset = (asset: FixedIncomeAsset) => {
     setEditingAsset(asset);
@@ -133,19 +134,83 @@ const FixedIncome = () => {
         <Table>
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
-              <TableHead>{t("positions.table.headers.description")}</TableHead>
-              <TableHead>{t("positions.table.headers.type")}</TableHead>
-              <TableHead>Data Início</TableHead>
-              <TableHead>Vencimento</TableHead>
-              <TableHead>Indexação</TableHead>
-              <TableHead>Investido</TableHead>
-              <TableHead>Valor Atual</TableHead>
-              <TableHead>Resultado</TableHead>
-              <TableHead>Retorno</TableHead>
-              <TableHead>{t("positions.table.headers.institution")}</TableHead>
-              <TableHead>
-                {t("positions.table.headers.portfolioPercentage")}
-              </TableHead>
+              <SortableTableHead
+                label={t("positions.table.headers.description")}
+                sortKey="description"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label={t("positions.table.headers.type")}
+                sortKey="type"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label="Data Início"
+                sortKey="startDate"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label="Vencimento"
+                sortKey="maturityDate"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label="Indexação"
+                sortKey="interestRate"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label="Investido"
+                sortKey="investedValueCents"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label="Valor Atual"
+                sortKey="currentValueCents"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label="Resultado"
+                sortKey="resultCents"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label="Retorno"
+                sortKey="returnPercentage"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label={t("positions.table.headers.institution")}
+                sortKey="institution"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label={t("positions.table.headers.portfolioPercentage")}
+                sortKey="portfolioPercentage"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
               <TableHead className="w-[80px]">Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -153,7 +218,7 @@ const FixedIncome = () => {
             {!fixedIncomeAssets || fixedIncomeAssets?.data?.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={12}
                   className="text-center text-muted-foreground py-8"
                 >
                   {t("positions.table.empty")}

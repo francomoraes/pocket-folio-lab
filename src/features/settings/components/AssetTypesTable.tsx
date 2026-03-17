@@ -34,6 +34,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/shared/components/ui/sheet";
+import { SortableTableHead } from "@/shared/components/ui/sortable-table-head";
+
+type SortBy = "name" | "targetPercentage" | "class";
+type SortOrder = "ASC" | "DESC";
 
 export const AssetTypesTable = () => {
   const { assetTypes, isLoading, deleteAssetType, isDeleting } =
@@ -43,6 +47,8 @@ export const AssetTypesTable = () => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [nameFilter, setNameFilter] = useState("");
   const [classFilter, setClassFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<SortBy>("name");
+  const [order, setOrder] = useState<SortOrder>("ASC");
   const { t } = useTranslation();
 
   const uniqueClasses = useMemo(() => {
@@ -70,6 +76,34 @@ export const AssetTypesTable = () => {
       0,
     );
   }, [filteredAssetTypes]);
+
+  const sortedAssetTypes = useMemo(() => {
+    const collator = new Intl.Collator("pt-BR", { sensitivity: "base" });
+    const factor = order === "ASC" ? 1 : -1;
+
+    return [...filteredAssetTypes].sort((a, b) => {
+      if (sortBy === "name") {
+        return collator.compare(a.name, b.name) * factor;
+      }
+
+      if (sortBy === "class") {
+        return collator.compare(a.assetClass.name, b.assetClass.name) * factor;
+      }
+
+      return (a.targetPercentage - b.targetPercentage) * factor;
+    });
+  }, [filteredAssetTypes, order, sortBy]);
+
+  const toggleSort = (column: string) => {
+    const nextColumn = column as SortBy;
+    if (sortBy === nextColumn) {
+      setOrder((prev) => (prev === "ASC" ? "DESC" : "ASC"));
+      return;
+    }
+
+    setSortBy(nextColumn);
+    setOrder("ASC");
+  };
 
   const hasActiveFilters = nameFilter !== "" || classFilter !== "all";
 
@@ -245,18 +279,34 @@ export const AssetTypesTable = () => {
         <Table>
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
-              <TableHead>{t("settings.assetTypes.table.name")}</TableHead>
-              <TableHead>
-                {t("settings.assetTypes.table.targetPercentage")}
-              </TableHead>
-              <TableHead>{t("settings.assetTypes.table.class")}</TableHead>
+              <SortableTableHead
+                label={t("settings.assetTypes.table.name")}
+                sortKey="name"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label={t("settings.assetTypes.table.targetPercentage")}
+                sortKey="targetPercentage"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
+              <SortableTableHead
+                label={t("settings.assetTypes.table.class")}
+                sortKey="class"
+                currentSortBy={sortBy}
+                currentOrder={order}
+                onSort={toggleSort}
+              />
               <TableHead className="text-right">
                 {t("settings.assetTypes.table.actions")}
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredAssetTypes.map((assetType) => (
+            {sortedAssetTypes.map((assetType) => (
               <TableRow key={assetType.id}>
                 <TableCell>{assetType.name}</TableCell>
                 <TableCell>{assetType.targetPercentage * 100 + "%"}</TableCell>
