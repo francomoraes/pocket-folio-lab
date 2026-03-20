@@ -1,4 +1,5 @@
 import { Button } from "@/shared/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface ErrorFallbackProps {
   error?: Error;
@@ -6,12 +7,14 @@ interface ErrorFallbackProps {
 }
 
 export const ErrorFallback = ({ error, resetError }: ErrorFallbackProps) => {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
       <div className="text-center space-y-4 max-w-md">
         <div className="text-6xl">😵</div>
 
-        <h2 className="text-2xl font-bold">Ops! Algo deu errado</h2>
+        <h2 className="text-2xl font-bold">{t("common.status.error")}</h2>
 
         <p className="text-muted-foreground">
           Ocorreu um erro inesperado. Tente recarregar a página.

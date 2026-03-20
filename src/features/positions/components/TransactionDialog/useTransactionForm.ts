@@ -3,29 +3,29 @@ import { formatCurrencyToCents } from "@/shared/utils/formatters";
 import { useState } from "react";
 import { toast } from "sonner";
 
-type OperationType = "buy" | "sell";
-
 type TransactionFormData = {
   ticker: string;
   quantity: string;
   price: string;
-  operation: OperationType;
   institutionId: number | null;
   currency: string;
+  type: string;
 };
 
-const initialState = {
+const initialState: TransactionFormData = {
   ticker: "",
   quantity: "",
   price: "",
-  operation: "buy" as OperationType,
   institutionId: null,
   currency: "BRL",
+  type: "Ação",
 };
 
 export const useTransactionForm = (onSuccess?: () => void) => {
   const [formData, setFormData] = useState<TransactionFormData>(initialState);
-  const { buyAsset, sellAsset, isBuying, isSelling } = usePositions();
+  const { createAsset, isCreating, assets } = usePositions({
+    skipPagination: true,
+  });
 
   const updateField = (field: keyof TransactionFormData, value: string) => {
     setFormData((prev) => ({
@@ -51,10 +51,31 @@ export const useTransactionForm = (onSuccess?: () => void) => {
       toast.error("A moeda é obrigatória.");
       return false;
     }
-    if (!formData.institutionId && formData.operation === "buy") {
-      toast.error("A instituição é obrigatória para compras.");
+    if (!formData.institutionId) {
+      toast.error("A instituição é obrigatória.");
       return false;
     }
+    if (!formData.type.trim()) {
+      toast.error("O tipo de ativo é obrigatório.");
+      return false;
+    }
+
+    // Validação de duplicidade
+    const ticker = formData.ticker.toUpperCase();
+    const institutionId = Number(formData.institutionId);
+
+    const existingAsset = assets?.data.find(
+      (asset) =>
+        asset.ticker === ticker && asset.institution.id === institutionId,
+    );
+
+    if (existingAsset) {
+      toast.error(
+        `O ativo ${ticker} já existe na instituição ${existingAsset.institution.name}. Para alterar, edite o ativo existente.`,
+      );
+      return false;
+    }
+
     return true;
   };
 
@@ -69,34 +90,23 @@ export const useTransactionForm = (onSuccess?: () => void) => {
 
     const quantity = parseFloat(formData.quantity);
     const price = parseFloat(formData.price);
-    const priceCents = formatCurrencyToCents(price);
+    const averagePriceCents = formatCurrencyToCents(price);
     const ticker = formData.ticker.toUpperCase();
     const institutionId = Number(formData.institutionId);
 
     try {
-      if (formData.operation === "buy") {
-        await buyAsset({
-          ticker,
-          data: {
-            quantity,
-            priceCents,
-            institutionId,
-            currency: formData.currency,
-          },
-        });
-      } else {
-        await sellAsset({
-          ticker,
-          data: {
-            quantity,
-            priceCents,
-          },
-        });
-      }
+      await createAsset({
+        ticker,
+        quantity,
+        averagePriceCents,
+        type: formData.type,
+        institutionId,
+        currency: formData.currency,
+      });
       resetForm();
       onSuccess?.();
     } catch (error) {
-      toast.error("Erro ao processar transação.");
+      // Error já é tratado no hook usePositions
     }
   };
 
@@ -105,6 +115,6 @@ export const useTransactionForm = (onSuccess?: () => void) => {
     updateField,
     handleSubmit,
     resetForm,
-    isSubmitting: isBuying || isSelling,
+    isSubmitting: isCreating,
   };
 };

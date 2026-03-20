@@ -1,10 +1,6 @@
 import { assetService } from "@/features/positions/services/assetService";
 import { QUERY_KEYS } from "@/shared/constants/queryKeys";
-import {
-  BuyAssetRequest,
-  SellAssetRequest,
-  UpdateAssetRequest,
-} from "@/shared/types/asset";
+import { CreateAssetRequest, UpdateAssetRequest } from "@/shared/types/asset";
 import { PaginationQuery } from "@/shared/types/pagination";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -44,41 +40,18 @@ export const usePositions = ({
     retry: 2,
   });
 
-  const buyAssetMutation = useMutation({
-    mutationFn: ({
-      ticker,
-      data,
-    }: {
-      ticker: string;
-      data: BuyAssetRequest;
-    }) => {
-      return assetService.buyAsset(ticker, data);
+  const createAssetMutation = useMutation({
+    mutationFn: (data: CreateAssetRequest) => {
+      return assetService.createAsset(data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
-      toast.success("Ativo comprado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
+      toast.success("Ativo adicionado com sucesso!");
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Erro ao comprar ativo.");
-    },
-  });
-
-  const sellAssetMutation = useMutation({
-    mutationFn: ({
-      ticker,
-      data,
-    }: {
-      ticker: string;
-      data: SellAssetRequest;
-    }) => {
-      return assetService.sellAsset(ticker, data);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
-      toast.success("Ativo vendido com sucesso!");
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || "Erro ao vender ativo.");
+      toast.error(error.message || "Erro ao adicionar ativo.");
     },
   });
 
@@ -88,6 +61,8 @@ export const usePositions = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       toast.success("Ativo atualizado com sucesso!");
     },
     onError: (error: Error) => {
@@ -101,6 +76,8 @@ export const usePositions = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       toast.success("Ativo excluído com sucesso!");
     },
     onError: (error: Error) => {
@@ -112,9 +89,19 @@ export const usePositions = ({
     mutationFn: () => {
       return assetService.refreshMarketPrices();
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
-      toast.success("Preços de mercado atualizados com sucesso!");
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
+
+      if (result.usedCacheOnly) {
+        toast.info(result.message);
+        return;
+      }
+
+      toast.success(
+        result.message || "Preços de mercado atualizados com sucesso!",
+      );
     },
     onError: (error: Error) => {
       toast.error(error.message || "Erro ao atualizar preços de mercado.");
@@ -126,14 +113,12 @@ export const usePositions = ({
     isLoading,
     error,
 
-    buyAsset: buyAssetMutation.mutateAsync,
-    sellAsset: sellAssetMutation.mutateAsync,
+    createAsset: createAssetMutation.mutateAsync,
     updateAsset: updateAssetMutation.mutateAsync,
     deleteAsset: deleteAssetMutation.mutateAsync,
     refreshMarketPrices: refreshMarketPricesMutation.mutateAsync,
 
-    isBuying: buyAssetMutation.isPending,
-    isSelling: sellAssetMutation.isPending,
+    isCreating: createAssetMutation.isPending,
     isUpdating: updateAssetMutation.isPending,
     isDeleting: deleteAssetMutation.isPending,
     isRefreshingMarketPrices: refreshMarketPricesMutation.isPending,

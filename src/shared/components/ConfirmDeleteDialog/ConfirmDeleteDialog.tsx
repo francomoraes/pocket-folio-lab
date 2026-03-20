@@ -13,10 +13,12 @@ export const ConfirmDeleteDialog = ({
   open,
   onOpenChange,
   onConfirm,
+  isLoading = false,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
+  isLoading?: boolean;
 }) => {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -28,13 +30,15 @@ export const ConfirmDeleteDialog = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel disabled={isLoading}>Cancelar</AlertDialogCancel>
           <AlertDialogAction
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
               onConfirm();
             }}
+            disabled={isLoading}
           >
-            Excluir
+            {isLoading ? "Excluindo..." : "Excluir"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

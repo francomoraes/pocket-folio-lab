@@ -7,7 +7,7 @@ export const useAssetTypes = () => {
   const queryClient = useQueryClient();
 
   const {
-    data: assetTypes,
+    data: rawAssetTypes,
     isLoading,
     error,
     refetch,
@@ -18,12 +18,16 @@ export const useAssetTypes = () => {
     retry: 2,
   });
 
+  const assetTypes = rawAssetTypes ?? [];
+
   const createAssetTypeMutation = useMutation({
     mutationFn: (data: CreateAssetType) => {
       return assetTypeService.create(data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_TYPES });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
     },
     onError: (error: Error) => {
       console.error(error.message || "Error creating asset type");
@@ -36,6 +40,8 @@ export const useAssetTypes = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_TYPES });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
     },
     onError: (error: Error) => {
       console.error(error.message || "Error updating asset type");
@@ -48,6 +54,8 @@ export const useAssetTypes = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_TYPES });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
     },
     onError: (error: Error) => {
       console.error(error.message || "Error deleting asset type");

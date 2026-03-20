@@ -10,6 +10,7 @@ import {
 } from "@/shared/components/ui/dialog";
 import { Input } from "@/shared/components/ui/input";
 import { Plus } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export const CsvUploadDialog = () => {
   const {
@@ -22,38 +23,39 @@ export const CsvUploadDialog = () => {
     isUploading,
     isDownloading,
   } = useCsvUpload();
+  const { t } = useTranslation();
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" className="gap-2 w-full sm:w-min">
           <Plus className="h-4 w-4" />
-          Importar Dados CSV
+          {t("csv.upload.title")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Importar Carteira via CSV</DialogTitle>
-          <DialogDescription>
-            Faça upload de um arquivo CSV com suas posições
-          </DialogDescription>
+          <DialogTitle>{t("csv.upload.title")}</DialogTitle>
+          <DialogDescription>{t("csv.upload.description")}</DialogDescription>
         </DialogHeader>
         <div className="space-y-2">
           <p className="text-sm text-muted-foreground">
-            Não tem o arquivo? Baixe o template:
+            {t("csv.upload.dragDrop")}
           </p>
           <Button
             variant="outline"
             onClick={handleDownloadTemplate}
             disabled={isDownloading}
           >
-            {isDownloading ? "Baixando..." : "Baixar Template CSV"}
+            {isDownloading
+              ? t("common.status.loading")
+              : t("csv.upload.downloadTemplate")}
           </Button>
         </div>
 
         <div className="space-y-2">
           <label className="text-sm font-medium">
-            Selecione o arquivo CSV:
+            {t("csv.upload.selectFile")}
           </label>
           <Input
             type="file"
@@ -74,10 +76,12 @@ export const CsvUploadDialog = () => {
 
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={() => setIsOpen(false)}>
-            Cancelar
+            {t("common.buttons.cancel")}
           </Button>
           <Button onClick={handleUpload} disabled={!file || isUploading}>
-            {isUploading ? "Enviando..." : "Fazer Upload"}
+            {isUploading
+              ? t("csv.upload.uploading")
+              : t("common.buttons.import")}
           </Button>
         </div>
       </DialogContent>

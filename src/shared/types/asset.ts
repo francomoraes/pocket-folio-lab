@@ -20,17 +20,13 @@ export interface Asset {
   updatedAt: string;
 }
 
-export interface BuyAssetRequest {
+export interface CreateAssetRequest {
+  ticker: string;
   quantity: number;
-  priceCents: number;
-  type?: string;
-  institutionId?: number;
-  currency?: string;
-}
-
-export interface SellAssetRequest {
-  quantity: number;
-  priceCents: number;
+  averagePriceCents: number;
+  type: string;
+  institutionId: number;
+  currency: string;
 }
 
 export interface UpdateAssetRequest {

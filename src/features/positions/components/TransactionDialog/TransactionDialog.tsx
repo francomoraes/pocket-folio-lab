@@ -9,9 +9,7 @@ import {
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group";
 import { Plus } from "lucide-react";
-import { OperationType } from "@/shared/types/investment";
 import {
   Select,
   SelectContent,
@@ -19,12 +17,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
-import { usePositions } from "@/features/positions/hooks/usePositions";
 import { useInstitutions } from "@/features/settings/hooks/useInstitutions";
+import { useAssetTypes } from "@/features/settings/hooks/useAssetTypes";
 import { useTransactionForm } from "@/features/positions/components/TransactionDialog/useTransactionForm";
+import { useTranslation } from "react-i18next";
 
 export const TransactionDialog = () => {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   const { formData, updateField, handleSubmit, resetForm, isSubmitting } =
     useTransactionForm(() => setOpen(false));
@@ -37,50 +37,26 @@ export const TransactionDialog = () => {
   };
 
   const { institutions } = useInstitutions();
+  const { assetTypes } = useAssetTypes();
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button className="gap-2">
           <Plus className="h-4 w-4" />
-          Nova Transação
+          {t("positions.actions.addAsset")}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[calc(100%-2rem)] overflow-auto">
         <DialogHeader>
-          <DialogTitle>Nova Transação</DialogTitle>
+          <DialogTitle>{t("transaction.dialog.title")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label>Operação</Label>
-            <RadioGroup
-              value={formData.operation}
-              onValueChange={(value) =>
-                updateField("operation", value as OperationType)
-              }
-            >
-              <div className="flex gap-4">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="buy" id="buy" />
-                  <Label htmlFor="buy" className="cursor-pointer font-normal">
-                    Compra
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="sell" id="sell" />
-                  <Label htmlFor="sell" className="cursor-pointer font-normal">
-                    Venda
-                  </Label>
-                </div>
-              </div>
-            </RadioGroup>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="ticker">Ticker</Label>
+            <Label htmlFor="ticker">{t("transaction.fields.ticker")}</Label>
             <Input
               id="ticker"
-              placeholder="PETR4"
+              placeholder={t("transaction.placeholders.ticker")}
               value={formData.ticker}
               onChange={(e) => updateField("ticker", e.target.value)}
               className="uppercase"
@@ -88,30 +64,50 @@ export const TransactionDialog = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="quantity">Quantidade</Label>
+            <Label htmlFor="type">Tipo de Ativo</Label>
+            <Select
+              value={formData.type}
+              onValueChange={(v) => updateField("type", v)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione o tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                {assetTypes?.map((type) => (
+                  <SelectItem key={type.id} value={type.name}>
+                    {type.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="quantity">{t("transaction.fields.quantity")}</Label>
             <Input
               id="quantity"
               type="number"
               step="0.01"
-              placeholder="100"
+              placeholder={t("transaction.placeholders.quantity")}
               value={formData.quantity}
               onChange={(e) => updateField("quantity", e.target.value)}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="price">Preço</Label>
+            <Label htmlFor="price">{t("transaction.fields.price")}</Label>
             <Input
               id="price"
               type="number"
               step="0.01"
-              placeholder="28.50"
+              placeholder={t("transaction.placeholders.price")}
               value={formData.price}
               onChange={(e) => updateField("price", e.target.value)}
             />
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="institution">Instituição</Label>
             <Select
               value={
                 formData.institutionId ? formData.institutionId.toString() : ""
@@ -119,7 +115,7 @@ export const TransactionDialog = () => {
               onValueChange={(v) => updateField("institutionId", v)}
             >
               <SelectTrigger>
-                <SelectValue />
+                <SelectValue placeholder="Selecione a instituição" />
               </SelectTrigger>
               <SelectContent>
                 {institutions?.map((institution) => (
@@ -135,6 +131,7 @@ export const TransactionDialog = () => {
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="currency">Moeda</Label>
             <Select
               value={formData.currency}
               onValueChange={(v) => updateField("currency", v)}
@@ -149,16 +146,18 @@ export const TransactionDialog = () => {
             </Select>
           </div>
 
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2 sticky bottom-0 bg-background pt-4 mt-4">
             <Button
               type="button"
               variant="secondary"
               onClick={() => setOpen(false)}
             >
-              Cancelar
+              {t("common.buttons.cancel")}
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Salvando..." : "Salvar"}
+              {isSubmitting
+                ? t("common.status.saving")
+                : t("common.buttons.save")}
             </Button>
           </div>
         </form>

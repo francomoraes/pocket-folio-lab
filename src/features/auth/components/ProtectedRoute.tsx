@@ -7,10 +7,10 @@ type ProtectedRoutesProps = {
 };
 
 export const ProtectedRoute = ({ children }: ProtectedRoutesProps) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, isInitializing } = useAuth();
   const navigate = useNavigate();
 
-  if (isLoading) {
+  if (isInitializing || isLoading) {
     return (
       <div>
         <CircularProgress />
