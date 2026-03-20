@@ -7,6 +7,60 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 03-03-2026
+
+- Add indexation mode support and enhance fixed income asset management
+
+## 26-02-2026
+
+- Enhance asset management with improved delete confirmation and loading states
+- Refactor transaction handling and add fixed income asset management
+
+## 21-02-2026
+
+- Enhance positions summary with consolidated patrimony and exchange rate integration
+
+## 29-12-2025
+
+- Implement functional profile picture update (front and backend)
+
+## 22-12-2025
+
+- Implement locale and profilePictureUrl to user;
+- Implement updateUser function to backend;
+- Implement user dropdown menu and locale change;
+
+## 18-12-2025
+
+- Refactor query keys
+- Set Error Boundary
+- Changed file structure to vertical slicing
+
+## 15-12-2025
+
+- Implement sorting and pagination to positions table
+
+## 12-12-2025
+
+- Restructure app layout and navigation, enhance settings and dashboard components
+- Increase auth rate limit from 5 to 10 requests per window for production
+
+## 11-12-2025
+
+- Implement pagination controls and hooks for asset management
+
+## 26-11-2025
+
+- Implement update prices by user with update prices batch function
+- Reorganized header of positions screen
+- Fix error on buyAsset operation
+
+## 24-11-2025
+
+- Created Institution entity
+- Created CRUDs for institution (BE and FE)
+- Update transaction dialog to use institution
+
 ## 21-11-2025
 
 - Add crud and page for asset types

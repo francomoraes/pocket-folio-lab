@@ -1,0 +1,33 @@
+export default {
+  buttons: {
+    save: "Save",
+    cancel: "Cancel",
+    delete: "Delete",
+    edit: "Edit",
+    add: "Add",
+    close: "Close",
+    confirm: "Confirm",
+    create: "Create",
+    update: "Update",
+    search: "Search",
+    filter: "Filter",
+    export: "Export",
+    import: "Import",
+    refresh: "Refresh",
+    next: "Next",
+    previous: "Previous",
+  },
+  status: {
+    loading: "Loading...",
+    saving: "Saving...",
+    success: "Success!",
+    error: "Error",
+    noData: "No data available",
+  },
+  validation: {
+    required: "Required field",
+    invalidEmail: "Invalid email",
+    minLength: "Minimum {{min}} characters",
+    maxLength: "Maximum {{max}} characters",
+  },
+};

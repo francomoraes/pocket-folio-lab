@@ -1,129 +1,146 @@
-import { RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/shared/components/ui/card";
+import { formatCentsToCurrency } from "@/shared/utils/formatters";
+import { useSummary } from "@/shared/hooks/useSummary";
+import { useTranslation } from "react-i18next";
+import { useState } from "react";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { TransactionDialog } from "@/components/TransactionDialog";
-import { usePositions } from "@/hooks/usePositions";
-import CircularProgress from "@/components/ui/circular-progress";
-import { formatCentsToCurrency, formatPercentage } from "@/utils/formatters";
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/components/ui/tabs";
+import VariableIncome from "@/features/positions/components/VariableIncome/VariableIncome";
+import FixedIncome from "@/features/positions/components/FixedIncome/FixedIncome";
 
 export const Positions = () => {
-  const { assets, isLoading } = usePositions();
+  const { t } = useTranslation();
+  const [consolidatedCurrency, setConsolidatedCurrency] = useState<
+    "BRL" | "USD"
+  >("BRL");
 
-  const totalPatrimonyCents = assets?.reduce((sum, asset) => {
-    sum[asset.currency] = (sum[asset.currency] ?? 0) + asset.currentValueCents;
-    return sum;
-  }, {} as Record<string, number>);
+  const { summary, exchangeRate } = useSummary();
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <CircularProgress size="xl" />
-      </div>
-    );
-  }
+  const totalPatrimonyCents = summary?.reduce(
+    (acc, item) => {
+      const currency = item.currency;
+      acc[currency] = (acc[currency] || 0) + item.totalValueCents;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const usdToBrlRate = exchangeRate?.usdToBrl || 5.7;
+
+  const consolidatedPatrimonyBRL =
+    (totalPatrimonyCents?.BRL || 0) +
+    (totalPatrimonyCents?.USD || 0) * usdToBrlRate;
+
+  const consolidatedPatrimonyUSD =
+    consolidatedPatrimonyBRL / (usdToBrlRate || 5.7);
 
   return (
-    <div className="space-y-6">
-      <TransactionDialog />
+    <div className="flex flex-col gap-3 h-auto min-h-[calc(100vh-61px)] p-3">
+      <Tabs defaultValue="positions" className="w-full">
+        <div className="flex flex-col sm:flex-row gap-3 sm:justify-between items-start sm:items-center mb-4">
+          <TabsList className="w-full sm:w-auto">
+            <TabsTrigger className="flex-1 sm:flex-none" value="positions">
+              Renda Variável
+            </TabsTrigger>
+            <TabsTrigger className="flex-1 sm:flex-none" value="allocation">
+              Renda Fixa
+            </TabsTrigger>
+          </TabsList>
 
-      <Card className="p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-muted-foreground">
-              Patromônio (parte em dólares)
-            </p>
-            <p className="text-3xl font-semibold">
-              {formatCentsToCurrency(totalPatrimonyCents?.USD || 0, "USD")}
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">
-              Patromônio (parte em reais)
-            </p>
-            <p className="text-3xl font-semibold">
-              {formatCentsToCurrency(totalPatrimonyCents?.BRL || 0, "BRL")}
-            </p>
-          </div>
-          <Button onClick={() => {}} variant="secondary" className="gap-2">
-            <RefreshCw className="h-4 w-4" />
-            Atualizar Cotações
-          </Button>
-        </div>
-      </Card>
-
-      <Card>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Ticker</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead className="text-right">Quantidade</TableHead>
-              <TableHead className="text-right">PM Compra</TableHead>
-              <TableHead className="text-right">Cotação</TableHead>
-              <TableHead className="text-right">Total</TableHead>
-              <TableHead className="text-right">L/P</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {!assets || assets?.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="text-center text-muted-foreground py-8"
-                >
-                  Nenhuma posição encontrada. Adicione uma transação para
-                  começar.
-                </TableCell>
-              </TableRow>
-            ) : (
-              assets?.map((asset) => (
-                <TableRow key={asset.ticker}>
-                  <TableCell className="font-medium">{asset.ticker}</TableCell>
-                  <TableCell>{asset.type.assetClass.name}</TableCell>
-                  <TableCell className="text-right">{asset.quantity}</TableCell>
-                  <TableCell className="text-right">
-                    {formatCentsToCurrency(
-                      asset.averagePriceCents,
-                      asset.currency,
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {formatCentsToCurrency(
-                      asset.currentPriceCents,
-                      asset.currency,
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right font-medium">
-                    {formatCentsToCurrency(
-                      asset.currentValueCents,
-                      asset.currency,
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <span
-                      className={
-                        +asset.returnPercentage >= 0
-                          ? "text-success"
-                          : "text-destructive"
-                      }
+          <Card className="w-full sm:w-auto p-3 sm:p-4 flex-shrink-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <div>
+                <p className="text-xs sm:text-sm text-muted-foreground flex gap-1 items-center mb-1">
+                  {t("positions.summary.patrimonyUSD")}
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/555/555526.png"
+                    width="16"
+                    alt="USD"
+                    className="inline"
+                  />
+                </p>
+                <p className="text-lg sm:text-xl font-semibold truncate">
+                  {formatCentsToCurrency(totalPatrimonyCents?.USD || 0, "USD")}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs sm:text-sm text-muted-foreground flex gap-1 items-center mb-1">
+                  {t("positions.summary.patrimonyBRL")}
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/3022/3022546.png"
+                    width="16"
+                    alt="BRL"
+                    className="inline"
+                  />
+                </p>
+                <p className="text-lg sm:text-xl font-semibold truncate">
+                  {formatCentsToCurrency(totalPatrimonyCents?.BRL || 0, "BRL")}
+                </p>
+              </div>
+              <div className="sm:border-l sm:pl-6 col-span-1 sm:col-span-1 lg:col-span-1">
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <p className="text-xs sm:text-sm text-muted-foreground font-semibold">
+                    Patrimônio
+                  </p>
+                  <div className="flex gap-1 bg-muted rounded p-1">
+                    <button
+                      onClick={() => setConsolidatedCurrency("BRL")}
+                      className={`px-2 py-1 text-sm rounded transition ${
+                        consolidatedCurrency === "BRL"
+                          ? "bg-primary/10 text-primary font-semibold"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                      title="Real Brasileiro"
                     >
-                      {formatPercentage(+asset.returnPercentage)}
-                    </span>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </Card>
+                      <img
+                        src="https://cdn-icons-png.flaticon.com/512/3022/3022546.png"
+                        width="16"
+                        alt="BRL"
+                        className="inline"
+                      />
+                    </button>
+                    <button
+                      onClick={() => setConsolidatedCurrency("USD")}
+                      className={`px-2 py-1 text-sm rounded transition ${
+                        consolidatedCurrency === "USD"
+                          ? "bg-primary/10 text-primary font-semibold"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                      title="Dólar Americano"
+                    >
+                      <img
+                        src="https://cdn-icons-png.flaticon.com/512/555/555526.png"
+                        width="16"
+                        alt="USD"
+                        className="inline"
+                      />
+                    </button>
+                  </div>
+                </div>
+                <p className="text-xl sm:text-2xl font-bold text-primary truncate">
+                  {formatCentsToCurrency(
+                    consolidatedCurrency === "BRL"
+                      ? consolidatedPatrimonyBRL
+                      : consolidatedPatrimonyUSD,
+                    consolidatedCurrency,
+                  )}
+                </p>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        <TabsContent value="positions" className="w-full">
+          <VariableIncome />
+        </TabsContent>
+        <TabsContent value="allocation" className="w-full">
+          <FixedIncome />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

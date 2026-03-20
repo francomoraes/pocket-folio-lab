@@ -1,0 +1,54 @@
+import { API_ENDPOINTS } from "@/config/api";
+import { api } from "@/lib/axios";
+import {
+  AuthResponse,
+  LoginRequest,
+  RegisterRequest,
+  UpdateUserRequest,
+} from "@/features/auth/types/auth";
+
+class AuthService {
+  async login(data: LoginRequest): Promise<AuthResponse> {
+    const response = await api.post<AuthResponse>(
+      API_ENDPOINTS.auth.login,
+      data,
+    );
+    return response.data;
+  }
+
+  async register(data: RegisterRequest): Promise<AuthResponse> {
+    const response = await api.post<AuthResponse>(
+      API_ENDPOINTS.auth.register,
+      data,
+    );
+    return response.data;
+  }
+
+  async updateUser(data: UpdateUserRequest) {
+    const response = await api.put<AuthResponse>(
+      API_ENDPOINTS.auth.updateUser.replace(":id", data.id.toString()),
+      data,
+    );
+    return response.data;
+  }
+
+  async uploadProfilePicture(
+    file: File,
+  ): Promise<{ profilePictureUrl: string }> {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await api.post<{ profilePictureUrl: string }>(
+      API_ENDPOINTS.auth.uploadProfilePicture,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+    return response.data;
+  }
+}
+
+export const authService = new AuthService();

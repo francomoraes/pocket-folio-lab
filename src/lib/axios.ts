@@ -3,9 +3,6 @@ import axios from "axios";
 
 export const api = axios.create({
   baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
   timeout: 10000, // 10 seconds
 });
 
@@ -29,7 +26,31 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    switch (error.response?.status) {
+    // Extract error message from backend response
+    const backendMessage =
+      error.response?.data?.message || error.response?.data?.error;
+    const statusCode = error.response?.status;
+
+    // Create a more informative error message
+    let errorMessage = error.message;
+    if (backendMessage) {
+      errorMessage = backendMessage;
+    } else if (statusCode) {
+      errorMessage = `Erro ${statusCode}: ${error.message}`;
+    }
+
+    // Create a new error with the backend message
+    const enhancedError = new Error(errorMessage);
+    // Preserve original error properties
+    Object.assign(enhancedError, {
+      response: error.response,
+      request: error.request,
+      config: error.config,
+      code: error.code,
+      status: statusCode,
+    });
+
+    switch (statusCode) {
       case 401:
         localStorage.removeItem("auth_token");
         localStorage.removeItem("auth_user");
@@ -39,6 +60,7 @@ api.interceptors.response.use(
       default:
         break;
     }
-    return Promise.reject(error);
+
+    return Promise.reject(enhancedError);
   },
 );
