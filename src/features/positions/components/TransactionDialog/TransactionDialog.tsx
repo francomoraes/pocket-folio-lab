@@ -64,13 +64,15 @@ export const TransactionDialog = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="type">Tipo de Ativo</Label>
+            <Label htmlFor="type">{t("transaction.fields.assetType")}</Label>
             <Select
               value={formData.type}
               onValueChange={(v) => updateField("type", v)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Selecione o tipo" />
+                <SelectValue
+                  placeholder={t("transaction.placeholders.selectType")}
+                />
               </SelectTrigger>
               <SelectContent>
                 {assetTypes?.map((type) => (
@@ -107,7 +109,9 @@ export const TransactionDialog = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="institution">Instituição</Label>
+            <Label htmlFor="institution">
+              {t("transaction.fields.institution")}
+            </Label>
             <Select
               value={
                 formData.institutionId ? formData.institutionId.toString() : ""
@@ -115,7 +119,9 @@ export const TransactionDialog = () => {
               onValueChange={(v) => updateField("institutionId", v)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Selecione a instituição" />
+                <SelectValue
+                  placeholder={t("transaction.placeholders.selectInstitution")}
+                />
               </SelectTrigger>
               <SelectContent>
                 {institutions?.map((institution) => (
@@ -131,7 +137,7 @@ export const TransactionDialog = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="currency">Moeda</Label>
+            <Label htmlFor="currency">{t("transaction.fields.currency")}</Label>
             <Select
               value={formData.currency}
               onValueChange={(v) => updateField("currency", v)}
@@ -140,8 +146,12 @@ export const TransactionDialog = () => {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="BRL">BRL (Real)</SelectItem>
-                <SelectItem value="USD">USD (Dólar)</SelectItem>
+                <SelectItem value="BRL">
+                  {t("transaction.currency.brl")}
+                </SelectItem>
+                <SelectItem value="USD">
+                  {t("transaction.currency.usd")}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>

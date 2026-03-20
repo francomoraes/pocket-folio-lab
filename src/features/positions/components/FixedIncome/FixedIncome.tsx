@@ -27,18 +27,22 @@ import {
 import { ConfirmDeleteDialog } from "@/shared/components/ConfirmDeleteDialog";
 import { SortableTableHead } from "@/shared/components/ui/sortable-table-head";
 
-const getIndexationLabel = (mode: IndexationMode, rate: number) => {
+const getIndexationLabel = (
+  mode: IndexationMode,
+  rate: number,
+  t: (key: string, options?: Record<string, unknown>) => string,
+) => {
   switch (mode) {
     case IndexationMode.PRE:
-      return `${rate}% a.a.`;
+      return t("positions.fixedIncome.indexation.pre", { rate });
     case IndexationMode.CDI:
-      return `CDI + ${rate}%`;
+      return t("positions.fixedIncome.indexation.cdi", { rate });
     case IndexationMode.IPCA:
-      return `IPCA + ${rate}%`;
+      return t("positions.fixedIncome.indexation.ipca", { rate });
     case IndexationMode.SELIC:
-      return `Selic + ${rate}%`;
+      return t("positions.fixedIncome.indexation.selic", { rate });
     default:
-      return `${rate}%`;
+      return t("positions.fixedIncome.indexation.default", { rate });
   }
 };
 
@@ -149,49 +153,49 @@ const FixedIncome = () => {
                 onSort={toggleSort}
               />
               <SortableTableHead
-                label="Data Início"
+                label={t("positions.table.headers.startDate")}
                 sortKey="startDate"
                 currentSortBy={sortBy}
                 currentOrder={order}
                 onSort={toggleSort}
               />
               <SortableTableHead
-                label="Vencimento"
+                label={t("positions.table.headers.maturityDate")}
                 sortKey="maturityDate"
                 currentSortBy={sortBy}
                 currentOrder={order}
                 onSort={toggleSort}
               />
               <SortableTableHead
-                label="Indexação"
+                label={t("positions.table.headers.indexation")}
                 sortKey="interestRate"
                 currentSortBy={sortBy}
                 currentOrder={order}
                 onSort={toggleSort}
               />
               <SortableTableHead
-                label="Investido"
+                label={t("positions.table.headers.invested")}
                 sortKey="investedValueCents"
                 currentSortBy={sortBy}
                 currentOrder={order}
                 onSort={toggleSort}
               />
               <SortableTableHead
-                label="Valor Atual"
+                label={t("positions.table.headers.currentValue")}
                 sortKey="currentValueCents"
                 currentSortBy={sortBy}
                 currentOrder={order}
                 onSort={toggleSort}
               />
               <SortableTableHead
-                label="Resultado"
+                label={t("positions.table.headers.result")}
                 sortKey="resultCents"
                 currentSortBy={sortBy}
                 currentOrder={order}
                 onSort={toggleSort}
               />
               <SortableTableHead
-                label="Retorno"
+                label={t("positions.table.headers.return")}
                 sortKey="returnPercentage"
                 currentSortBy={sortBy}
                 currentOrder={order}
@@ -211,7 +215,9 @@ const FixedIncome = () => {
                 currentOrder={order}
                 onSort={toggleSort}
               />
-              <TableHead className="w-[80px]">Ações</TableHead>
+              <TableHead className="w-[80px]">
+                {t("positions.table.headers.actions")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -241,6 +247,7 @@ const FixedIncome = () => {
                     {getIndexationLabel(
                       fixedIncomeAsset.indexationMode || IndexationMode.PRE,
                       fixedIncomeAsset.interestRate,
+                      t,
                     )}
                   </TableCell>
                   <TableCell>

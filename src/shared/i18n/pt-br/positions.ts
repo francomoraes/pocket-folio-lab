@@ -11,6 +11,15 @@ export default {
     patrimonyUSD: "Patromônio (parte em dólares)",
     patrimonyBRL: "Patromônio (parte em reais)",
     consolidatedPatrimony: "Patrimônio Consolidado",
+    patrimony: "Patrimônio",
+    currencyTitles: {
+      brl: "Real Brasileiro",
+      usd: "Dólar Americano",
+    },
+  },
+  tabs: {
+    variableIncome: "Renda Variável",
+    fixedIncome: "Renda Fixa",
   },
   table: {
     headers: {
@@ -24,7 +33,24 @@ export default {
       institution: "Instituição",
       portfolioPercentage: "% Carteira",
       description: "Descrição",
+      startDate: "Data Início",
+      maturityDate: "Vencimento",
+      indexation: "Indexação",
+      invested: "Investido",
+      currentValue: "Valor Atual",
+      result: "Resultado",
+      return: "Retorno",
+      actions: "Ações",
     },
     empty: "Nenhuma posição encontrada. Adicione um ativo para começar.",
+  },
+  fixedIncome: {
+    indexation: {
+      pre: "{{rate}}% a.a.",
+      cdi: "CDI + {{rate}}%",
+      ipca: "IPCA + {{rate}}%",
+      selic: "Selic + {{rate}}%",
+      default: "{{rate}}%",
+    },
   },
 };

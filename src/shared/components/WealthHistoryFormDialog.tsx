@@ -9,6 +9,7 @@ import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { useWealthHistoryForm } from "@/shared/hooks/useWealthHistoryForm";
 import { WealthHistory } from "@/shared/types/wealthHistory";
+import { useTranslation } from "react-i18next";
 
 interface WealthHistoryFormDialogProps {
   item?: WealthHistory | null;
@@ -21,6 +22,8 @@ export const WealthHistoryFormDialog = ({
   open,
   onOpenChange,
 }: WealthHistoryFormDialogProps) => {
+  const { t } = useTranslation();
+
   const {
     formData,
     updateField,
@@ -43,13 +46,15 @@ export const WealthHistoryFormDialog = ({
         <DialogHeader>
           <DialogTitle>
             {isEditMode
-              ? "Editar Histórico de Patrimônio"
-              : "Adicionar Histórico de Patrimônio"}
+              ? t("dashboard.wealthHistory.form.titleEdit")
+              : t("dashboard.wealthHistory.form.titleCreate")}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="date">Data</Label>
+            <Label htmlFor="date">
+              {t("dashboard.wealthHistory.form.date")}
+            </Label>
             <Input
               id="date"
               type="date"
@@ -60,7 +65,9 @@ export const WealthHistoryFormDialog = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="totalWealthCents">Valor do Patrimônio (R$)</Label>
+            <Label htmlFor="totalWealthCents">
+              {t("dashboard.wealthHistory.form.wealthValue")}
+            </Label>
             <Input
               id="totalWealthCents"
               type="number"
@@ -79,10 +86,12 @@ export const WealthHistoryFormDialog = ({
               variant="secondary"
               onClick={() => onOpenChange(false)}
             >
-              Cancelar
+              {t("common.buttons.cancel")}
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Salvando..." : "Salvar"}
+              {isSubmitting
+                ? t("common.status.saving")
+                : t("common.buttons.save")}
             </Button>
           </div>
         </form>

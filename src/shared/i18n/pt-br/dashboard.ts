@@ -1,18 +1,76 @@
 export default {
   title: "Alocação por Classe",
   loading: "Carregando dashboard...",
+  dragToReorder: "Arrastar para reordenar",
+  sections: {
+    allocationTable: "Tabela de Alocação",
+    allocationCharts: "Gráficos de Alocação",
+    actualVsTarget: "Comparação Atual vs Meta",
+    wealthEvolution: "Evolução Patrimonial",
+  },
   table: {
     headers: {
       class: "Classe",
       type: "Tipo",
       value: "Valor",
       percentage: "%",
+      actualPercentage: "% Atual",
+      targetPercentage: "% Meta",
     },
     empty: "Nenhum dado disponível",
+  },
+  charts: {
+    currentAllocation: "Alocação Atual",
+    targetAllocation: "Alocação Meta",
+    noData: "Sem dados para exibir",
+    currentLegend: "Atual",
+    targetLegend: "Meta",
+    axisValueBrl: "Valor (R$)",
+    insufficientData: "Dados insuficientes para gerar gráfico",
   },
   assetClasses: {
     stocks: "Ações",
     fiis: "FIIs",
     fixed_income: "Renda Fixa",
+  },
+  wealthHistory: {
+    addHistory: "+ Adicionar Histórico",
+    loading: "Carregando histórico...",
+    recordsTitle: "Histórico de Registros",
+    empty: "Nenhum histórico registrado. Adicione valores para ver a evolução.",
+    messages: {
+      created: "Registro de patrimônio adicionado com sucesso!",
+      updated: "Registro de patrimônio atualizado com sucesso!",
+      deleted: "Registro de patrimônio excluído com sucesso!",
+      createError: "Erro ao adicionar registro de patrimônio.",
+      updateError: "Erro ao atualizar registro de patrimônio.",
+      deleteError: "Erro ao excluir registro de patrimônio.",
+    },
+    form: {
+      titleCreate: "Adicionar Histórico de Patrimônio",
+      titleEdit: "Editar Histórico de Patrimônio",
+      date: "Data",
+      wealthValue: "Valor do Patrimônio (R$)",
+    },
+    list: {
+      empty: "Nenhum histórico de patrimônio registrado",
+      date: "Data",
+      value: "Valor",
+      actions: "Ações",
+      deleteDescription:
+        "Tem certeza que deseja excluir o registro de {{date}}? Esta ação não pode ser desfeita.",
+    },
+    granularity: {
+      monthly: "Mensal",
+      quarterly: "Trimestral",
+      semiannual: "Semestral",
+      annual: "Anual",
+    },
+    indices: {
+      sp500: "S&P500",
+      cdi: "CDI",
+      ipca: "IPCA",
+    },
+    wealthLegend: "Patrimônio",
   },
 };

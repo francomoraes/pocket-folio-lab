@@ -21,14 +21,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/shared/components/ui/alert-dialog";
+import { useTranslation } from "react-i18next";
 
 interface WealthHistoryListProps {
   wealthHistory: WealthHistory[];
   onEdit: (item: WealthHistory) => void;
 }
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat("pt-BR", {
+const formatCurrency = (value: number, locale: string) => {
+  return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: "BRL",
     minimumFractionDigits: 2,
@@ -36,14 +37,16 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString("pt-BR");
+const formatDate = (dateString: string, locale: string) => {
+  return new Date(dateString).toLocaleDateString(locale);
 };
 
 export const WealthHistoryList = ({
   wealthHistory,
   onEdit,
 }: WealthHistoryListProps) => {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage || "pt-BR";
   const { deleteWealthHistory } = useWealthHistory();
   const [itemToDelete, setItemToDelete] = useState<WealthHistory | null>(null);
 
@@ -57,7 +60,7 @@ export const WealthHistoryList = ({
   if (!wealthHistory || wealthHistory.length === 0) {
     return (
       <div className="text-center text-muted-foreground py-8">
-        Nenhum histórico de patrimônio registrado
+        {t("dashboard.wealthHistory.list.empty")}
       </div>
     );
   }
@@ -68,9 +71,13 @@ export const WealthHistoryList = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Data</TableHead>
-              <TableHead className="text-right">Valor</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
+              <TableHead>{t("dashboard.wealthHistory.list.date")}</TableHead>
+              <TableHead className="text-right">
+                {t("dashboard.wealthHistory.list.value")}
+              </TableHead>
+              <TableHead className="text-right">
+                {t("dashboard.wealthHistory.list.actions")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -81,9 +88,9 @@ export const WealthHistoryList = ({
               )
               .map((item) => (
                 <TableRow key={item.id}>
-                  <TableCell>{formatDate(item.date)}</TableCell>
+                  <TableCell>{formatDate(item.date, locale)}</TableCell>
                   <TableCell className="text-right">
-                    {formatCurrency(item.totalWealthCents / 100)}
+                    {formatCurrency(item.totalWealthCents / 100, locale)}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
@@ -115,17 +122,21 @@ export const WealthHistoryList = ({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("global.deleteDialog.title")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Tem certeza que deseja excluir o registro de{" "}
-              {itemToDelete && formatDate(itemToDelete.date)}? Esta ação não
-              pode ser desfeita.
+              {t("dashboard.wealthHistory.list.deleteDescription", {
+                date: itemToDelete ? formatDate(itemToDelete.date, locale) : "",
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>
+              {t("global.deleteDialog.cancelButton")}
+            </AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete}>
-              Excluir
+              {t("global.deleteDialog.deleteButton")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

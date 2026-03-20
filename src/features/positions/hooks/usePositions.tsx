@@ -4,6 +4,7 @@ import { CreateAssetRequest, UpdateAssetRequest } from "@/shared/types/asset";
 import { PaginationQuery } from "@/shared/types/pagination";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export const usePositions = ({
   page = 1,
@@ -12,6 +13,7 @@ export const usePositions = ({
   order = "ASC",
   skipPagination,
 }: PaginationQuery = {}) => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const {
@@ -48,10 +50,10 @@ export const usePositions = ({
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
-      toast.success("Ativo adicionado com sucesso!");
+      toast.success(t("transaction.messages.success"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Erro ao adicionar ativo.");
+      toast.error(error.message || t("transaction.messages.addError"));
     },
   });
 
@@ -63,10 +65,10 @@ export const usePositions = ({
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
-      toast.success("Ativo atualizado com sucesso!");
+      toast.success(t("transaction.messages.updated"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Erro ao atualizar ativo.");
+      toast.error(error.message || t("transaction.messages.updateError"));
     },
   });
 
@@ -78,10 +80,10 @@ export const usePositions = ({
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
-      toast.success("Ativo excluído com sucesso!");
+      toast.success(t("transaction.messages.deleted"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Erro ao excluir ativo.");
+      toast.error(error.message || t("transaction.messages.deleteError"));
     },
   });
 
@@ -100,11 +102,13 @@ export const usePositions = ({
       }
 
       toast.success(
-        result.message || "Preços de mercado atualizados com sucesso!",
+        result.message || t("transaction.messages.refreshPricesSuccess"),
       );
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Erro ao atualizar preços de mercado.");
+      toast.error(
+        error.message || t("transaction.messages.refreshPricesError"),
+      );
     },
   });
 

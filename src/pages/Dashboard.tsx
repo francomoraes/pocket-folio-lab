@@ -54,10 +54,10 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
 
 const ACCORDION_SECTIONS = [
-  { id: "table", label: "Tabela de Alocação" },
-  { id: "pie", label: "Gráficos de Alocação" },
-  { id: "bar", label: "Comparação Atual vs Meta" },
-  { id: "wealth-evolution", label: "Evolução Patrimonial" },
+  { id: "table" },
+  { id: "pie" },
+  { id: "bar" },
+  { id: "wealth-evolution" },
 ] as const;
 
 type SectionId = (typeof ACCORDION_SECTIONS)[number]["id"];
@@ -82,11 +82,13 @@ const loadOrder = (): SectionId[] => {
 interface SortableAccordionItemProps {
   id: SectionId;
   children: React.ReactNode;
+  dragAriaLabel: string;
 }
 
 const SortableAccordionItem = ({
   id,
   children,
+  dragAriaLabel,
 }: SortableAccordionItemProps) => {
   const {
     attributes,
@@ -109,7 +111,7 @@ const SortableAccordionItem = ({
         {...attributes}
         {...listeners}
         className="absolute left-3 top-0 h-16 flex items-center cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground z-10"
-        aria-label="Arrastar para reordenar"
+        aria-label={dragAriaLabel}
       >
         <GripVertical size={16} />
       </div>
@@ -130,8 +132,8 @@ const COLORS = [
   "#DDA0DD",
 ];
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat("pt-BR", {
+const formatCurrency = (value: number, locale: string) => {
+  return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: "BRL",
     minimumFractionDigits: 0,
@@ -139,20 +141,22 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
-const getClassLabel = (className: string) => {
-  const labels: Record<string, string> = {
-    stocks: "Ações",
-    fiis: "FIIs",
-    fixed_income: "Renda Fixa",
-  };
-  return labels[className] || className;
-};
-
 export const Dashboard = () => {
   const { summary, isLoadingSummary } = useSummary();
   const { wealthHistory, isLoading: isLoadingWealthHistory } =
     useWealthHistory();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage || "pt-BR";
+
+  const getClassLabel = (className: string) => {
+    if (className === "stocks") return t("dashboard.assetClasses.stocks");
+    if (className === "fiis") return t("dashboard.assetClasses.fiis");
+    if (className === "fixed_income") {
+      return t("dashboard.assetClasses.fixed_income");
+    }
+    return className;
+  };
+
   const [isWealthHistoryDialogOpen, setIsWealthHistoryDialogOpen] =
     useState(false);
   const [editingWealthHistory, setEditingWealthHistory] =
@@ -268,7 +272,11 @@ export const Dashboard = () => {
             {sectionOrder.map((sectionId) => {
               if (sectionId === "table")
                 return (
-                  <SortableAccordionItem key="table" id="table">
+                  <SortableAccordionItem
+                    key="table"
+                    id="table"
+                    dragAriaLabel={t("dashboard.dragToReorder")}
+                  >
                     <AccordionItem
                       value="table"
                       className="border rounded-lg mt-2"
@@ -294,10 +302,14 @@ export const Dashboard = () => {
                                     {t("dashboard.table.headers.value")}
                                   </TableHead>
                                   <TableHead className="text-right">
-                                    % Atual
+                                    {t(
+                                      "dashboard.table.headers.actualPercentage",
+                                    )}
                                   </TableHead>
                                   <TableHead className="text-right">
-                                    % Meta
+                                    {t(
+                                      "dashboard.table.headers.targetPercentage",
+                                    )}
                                   </TableHead>
                                 </TableRow>
                               </TableHeader>
@@ -337,7 +349,10 @@ export const Dashboard = () => {
                                         {item.type}
                                       </TableCell>
                                       <TableCell className="text-right text-sm sm:text-base">
-                                        {formatCurrency(item.actualValue)}
+                                        {formatCurrency(
+                                          item.actualValue,
+                                          locale,
+                                        )}
                                       </TableCell>
                                       <TableCell className="text-right font-medium text-sm sm:text-base">
                                         {(item.actualPercentage * 100).toFixed(
@@ -365,14 +380,18 @@ export const Dashboard = () => {
 
               if (sectionId === "pie")
                 return (
-                  <SortableAccordionItem key="pie" id="pie">
+                  <SortableAccordionItem
+                    key="pie"
+                    id="pie"
+                    dragAriaLabel={t("dashboard.dragToReorder")}
+                  >
                     <AccordionItem
                       value="pie"
                       className="border rounded-lg mt-2"
                     >
                       <AccordionTrigger className="pl-10 pr-4 hover:no-underline">
                         <span className="text-lg font-semibold">
-                          Gráficos de Alocação
+                          {t("dashboard.sections.allocationCharts")}
                         </span>
                       </AccordionTrigger>
                       <AccordionContent className="p-0">
@@ -380,7 +399,7 @@ export const Dashboard = () => {
                           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
                             <div className="flex flex-col items-center justify-center">
                               <h3 className="text-base sm:text-lg font-semibold mb-4">
-                                Alocação Atual
+                                {t("dashboard.charts.currentAllocation")}
                               </h3>
                               {pieDataActual && pieDataActual.length > 0 ? (
                                 <ResponsiveContainer width="100%" height={300}>
@@ -422,13 +441,13 @@ export const Dashboard = () => {
                                 </ResponsiveContainer>
                               ) : (
                                 <p className="text-muted-foreground">
-                                  Sem dados para exibir
+                                  {t("dashboard.charts.noData")}
                                 </p>
                               )}
                             </div>
                             <div className="flex flex-col items-center justify-center">
                               <h3 className="text-base sm:text-lg font-semibold mb-4">
-                                Alocação Meta
+                                {t("dashboard.charts.targetAllocation")}
                               </h3>
                               {pieDataTarget && pieDataTarget.length > 0 ? (
                                 <ResponsiveContainer width="100%" height={300}>
@@ -470,7 +489,7 @@ export const Dashboard = () => {
                                 </ResponsiveContainer>
                               ) : (
                                 <p className="text-muted-foreground">
-                                  Sem dados para exibir
+                                  {t("dashboard.charts.noData")}
                                 </p>
                               )}
                             </div>
@@ -483,14 +502,18 @@ export const Dashboard = () => {
 
               if (sectionId === "bar")
                 return (
-                  <SortableAccordionItem key="bar" id="bar">
+                  <SortableAccordionItem
+                    key="bar"
+                    id="bar"
+                    dragAriaLabel={t("dashboard.dragToReorder")}
+                  >
                     <AccordionItem
                       value="bar"
                       className="border rounded-lg mt-2"
                     >
                       <AccordionTrigger className="pl-10 pr-4 hover:no-underline">
                         <span className="text-lg font-semibold">
-                          Comparação Atual vs Meta
+                          {t("dashboard.sections.actualVsTarget")}
                         </span>
                       </AccordionTrigger>
                       <AccordionContent className="p-0">
@@ -521,13 +544,13 @@ export const Dashboard = () => {
                                   <Bar
                                     dataKey="atual"
                                     fill={COLORS[0]}
-                                    name="Atual"
+                                    name={t("dashboard.charts.currentLegend")}
                                     radius={[8, 8, 0, 0]}
                                   />
                                   <Bar
                                     dataKey="meta"
                                     fill={COLORS[1]}
-                                    name="Meta"
+                                    name={t("dashboard.charts.targetLegend")}
                                     radius={[8, 8, 0, 0]}
                                   />
                                 </BarChart>
@@ -535,7 +558,7 @@ export const Dashboard = () => {
                             </div>
                           ) : (
                             <p className="text-muted-foreground">
-                              Sem dados para exibir
+                              {t("dashboard.charts.noData")}
                             </p>
                           )}
                         </Card>
@@ -549,6 +572,7 @@ export const Dashboard = () => {
                   <SortableAccordionItem
                     key="wealth-evolution"
                     id="wealth-evolution"
+                    dragAriaLabel={t("dashboard.dragToReorder")}
                   >
                     <AccordionItem
                       value="wealth-evolution"
@@ -556,7 +580,7 @@ export const Dashboard = () => {
                     >
                       <AccordionTrigger className="pl-10 pr-4 hover:no-underline">
                         <span className="text-lg font-semibold">
-                          Evolução Patrimonial
+                          {t("dashboard.sections.wealthEvolution")}
                         </span>
                       </AccordionTrigger>
                       <AccordionContent className="p-0">
@@ -564,12 +588,12 @@ export const Dashboard = () => {
                           <div className="space-y-4">
                             <div className="flex justify-end">
                               <Button size="sm" onClick={handleOpenDialog}>
-                                + Adicionar Histórico
+                                {t("dashboard.wealthHistory.addHistory")}
                               </Button>
                             </div>
                             {isLoadingWealthHistory ? (
                               <p className="text-center text-muted-foreground">
-                                Carregando histórico...
+                                {t("dashboard.wealthHistory.loading")}
                               </p>
                             ) : wealthHistory && wealthHistory.length > 0 ? (
                               <>
@@ -578,7 +602,7 @@ export const Dashboard = () => {
                                 />
                                 <div className="mt-6">
                                   <h3 className="text-lg font-semibold mb-4">
-                                    Histórico de Registros
+                                    {t("dashboard.wealthHistory.recordsTitle")}
                                   </h3>
                                   <WealthHistoryList
                                     wealthHistory={wealthHistory}
@@ -588,8 +612,7 @@ export const Dashboard = () => {
                               </>
                             ) : (
                               <p className="text-center text-muted-foreground">
-                                Nenhum histórico registrado. Adicione valores
-                                para ver a evolução.
+                                {t("dashboard.wealthHistory.empty")}
                               </p>
                             )}
                           </div>

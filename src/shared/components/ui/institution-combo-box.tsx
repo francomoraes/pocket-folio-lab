@@ -15,6 +15,7 @@ import { Button } from "@/shared/components/ui/button";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 export function InstitutionCombobox({
   institutions,
@@ -25,6 +26,7 @@ export function InstitutionCombobox({
   value: string;
   onChange: (value: string) => void;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
 
@@ -66,20 +68,22 @@ export function InstitutionCombobox({
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {value || "Selecione ou digite"}
+          {value || t("common.combobox.selectOrType")}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
         <Command shouldFilter={false}>
           <CommandInput
-            placeholder="Buscar ou adicionar..."
+            placeholder={t("common.combobox.searchOrAdd")}
             value={search}
             onValueChange={setSearch}
           />
           <CommandList>
             {filteredInstitutions.length === 0 && !showAddButton && (
-              <CommandEmpty>Nenhuma instituição encontrada.</CommandEmpty>
+              <CommandEmpty>
+                {t("common.combobox.noInstitutionFound")}
+              </CommandEmpty>
             )}
 
             {showAddButton && (
@@ -88,7 +92,7 @@ export function InstitutionCombobox({
                   className="cursor-pointer py-2 px-2 text-sm hover:bg-accent rounded-sm"
                   onClick={handleAddCustom}
                 >
-                  Adicionar "{search}"
+                  {t("common.combobox.addWithValue", { value: search })}
                 </div>
               </CommandEmpty>
             )}

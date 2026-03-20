@@ -7,6 +7,11 @@ export default {
     submit: "Entrar",
     noAccount: "Não tem uma conta?",
     createAccount: "Criar conta",
+    placeholders: {
+      name: "Seu nome",
+      email: "seu@email.com",
+      password: "••••••••",
+    },
   },
   register: {
     title: "Criar Conta",
@@ -52,6 +57,10 @@ export default {
       changePassword: "Alterar senha",
       saveChanges: "Salvar alterações",
     },
+    localeOptions: {
+      ptBr: "Português (BR)",
+      enUs: "Inglês (US)",
+    },
     info: {
       memberSince: "Membro desde",
       lastUpdate: "Última atualização",
@@ -61,6 +70,8 @@ export default {
       error: "Erro ao atualizar perfil",
       passwordMismatch: "As senhas não coincidem",
       passwordRequired: "Digite a senha atual para alterar",
+      uploadSuccess: "Foto de perfil atualizada com sucesso",
+      uploadError: "Erro ao enviar foto de perfil",
     },
   },
   messages: {
@@ -71,5 +82,11 @@ export default {
     logoutSuccess: "Logout realizado com sucesso",
     userUpdated: "Usuário atualizado com sucesso",
     updateError: "Erro ao atualizar usuário",
+  },
+  validation: {
+    passwordLowercase: "Senha deve conter pelo menos uma letra minúscula",
+    passwordUppercase: "Senha deve conter pelo menos uma letra maiúscula",
+    passwordNumber: "Senha deve conter pelo menos um número",
+    passwordSymbol: "Senha deve conter pelo menos um símbolo (@$!%*?&)",
   },
 };

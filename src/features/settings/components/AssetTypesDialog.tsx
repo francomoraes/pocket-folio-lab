@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/shared/components/ui/select";
 import { useAssetClasses } from "@/features/settings/hooks/useAssetClasses";
+import { useTranslation } from "react-i18next";
 
 export const AssetTypesDialog = ({
   mode,
@@ -31,6 +32,7 @@ export const AssetTypesDialog = ({
   assetType?: AssetType;
   onClose?: () => void;
 }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(!!assetType);
   const [name, setName] = useState(assetType?.name || "");
   const [targetPercentage, setTargetPercentage] = useState(
@@ -102,7 +104,7 @@ export const AssetTypesDialog = ({
         {mode === "create" && (
           <Button>
             <Plus className="h-4 w-4 mr-2" />
-            Novo Tipo
+            {t("settings.assetTypes.create")}
           </Button>
         )}
       </DialogTrigger>
@@ -110,23 +112,27 @@ export const AssetTypesDialog = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {mode === "create" ? "Novo Tipo de Ativo" : "Editar Tipo de Ativo"}
+            {mode === "create"
+              ? t("settings.assetTypes.create")
+              : t("settings.assetTypes.edit")}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nome</Label>
+            <Label htmlFor="name">{t("settings.assetTypes.table.name")}</Label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Ex: Ações"
+              placeholder={t("transaction.placeholders.name")}
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="targetPercentage">Percentual Meta (%)</Label>
+            <Label htmlFor="targetPercentage">
+              {t("settings.assetTypes.table.targetPercentage")}
+            </Label>
             <Input
               id="targetPercentage"
               type="number"
@@ -135,7 +141,7 @@ export const AssetTypesDialog = ({
               max="100"
               value={targetPercentage}
               onChange={(e) => setTargetPercentage(Number(e.target.value))}
-              placeholder="Ex: 50"
+              placeholder={t("transaction.placeholders.targetPercentage")}
               required
             />
           </div>
@@ -162,7 +168,9 @@ export const AssetTypesDialog = ({
 
           <DialogFooter>
             <Button type="submit" disabled={isCreating || isUpdating}>
-              {isCreating || isUpdating ? "Salvando..." : "Salvar"}
+              {isCreating || isUpdating
+                ? t("common.status.saving")
+                : t("common.buttons.save")}
             </Button>
           </DialogFooter>
         </form>

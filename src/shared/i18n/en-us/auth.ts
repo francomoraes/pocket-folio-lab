@@ -7,6 +7,11 @@ export default {
     submit: "Sign In",
     noAccount: "Don't have an account?",
     createAccount: "Create account",
+    placeholders: {
+      name: "Your name",
+      email: "your@email.com",
+      password: "••••••••",
+    },
   },
   register: {
     title: "Create Account",
@@ -52,6 +57,10 @@ export default {
       changePassword: "Change password",
       saveChanges: "Save changes",
     },
+    localeOptions: {
+      ptBr: "🇧🇷 Portuguese (BR)",
+      enUs: "🇺🇸 English (US)",
+    },
     info: {
       memberSince: "Member since",
       lastUpdate: "Last update",
@@ -61,6 +70,8 @@ export default {
       error: "Error updating profile",
       passwordMismatch: "Passwords do not match",
       passwordRequired: "Enter current password to change",
+      uploadSuccess: "Profile picture updated successfully",
+      uploadError: "Error uploading profile picture",
     },
   },
   messages: {
@@ -71,5 +82,11 @@ export default {
     logoutSuccess: "Logout successful",
     userUpdated: "User updated successfully",
     updateError: "Error updating user",
+  },
+  validation: {
+    passwordLowercase: "Password must contain at least one lowercase letter",
+    passwordUppercase: "Password must contain at least one uppercase letter",
+    passwordNumber: "Password must contain at least one number",
+    passwordSymbol: "Password must contain at least one symbol (@$!%*?&)",
   },
 };

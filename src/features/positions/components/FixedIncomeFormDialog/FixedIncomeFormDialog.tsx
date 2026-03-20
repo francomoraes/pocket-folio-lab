@@ -58,29 +58,33 @@ export const FixedIncomeFormDialog = ({
         <DialogHeader>
           <DialogTitle>
             {isEditMode
-              ? "Editar Ativo de Renda Fixa"
-              : "Adicionar Ativo de Renda Fixa"}
+              ? t("transaction.dialog.fixedIncomeTitleEdit")
+              : t("transaction.dialog.fixedIncomeTitle")}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="description">Descrição</Label>
+            <Label htmlFor="description">
+              {t("transaction.fields.description")}
+            </Label>
             <Input
               id="description"
-              placeholder="Ex: CDB Banco XYZ"
+              placeholder={t("transaction.placeholders.description")}
               value={formData.description}
               onChange={(e) => updateField("description", e.target.value)}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="type">Tipo de Ativo</Label>
+            <Label htmlFor="type">{t("transaction.fields.assetType")}</Label>
             <Select
               value={formData.typeId ? formData.typeId.toString() : ""}
               onValueChange={(v) => updateField("typeId", Number(v))}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Selecione o tipo" />
+                <SelectValue
+                  placeholder={t("transaction.placeholders.selectType")}
+                />
               </SelectTrigger>
               <SelectContent>
                 {assetTypes?.map((type) => (
@@ -94,7 +98,9 @@ export const FixedIncomeFormDialog = ({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="startDate">Data de Início</Label>
+              <Label htmlFor="startDate">
+                {t("transaction.fields.startDate")}
+              </Label>
               <Input
                 id="startDate"
                 type="date"
@@ -104,7 +110,9 @@ export const FixedIncomeFormDialog = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="maturityDate">Data de Vencimento</Label>
+              <Label htmlFor="maturityDate">
+                {t("transaction.fields.maturityDate")}
+              </Label>
               <Input
                 id="maturityDate"
                 type="date"
@@ -115,7 +123,9 @@ export const FixedIncomeFormDialog = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="indexationMode">Tipo de Indexação</Label>
+            <Label htmlFor="indexationMode">
+              {t("transaction.fields.indexationMode")}
+            </Label>
             <Select
               value={formData.indexationMode}
               onValueChange={(v) => updateField("indexationMode", v)}
@@ -124,10 +134,18 @@ export const FixedIncomeFormDialog = ({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="PRE">Pré-fixado</SelectItem>
-                <SelectItem value="CDI">CDI +</SelectItem>
-                <SelectItem value="IPCA">IPCA +</SelectItem>
-                <SelectItem value="SELIC">Selic +</SelectItem>
+                <SelectItem value="PRE">
+                  {t("transaction.indexationMode.pre")}
+                </SelectItem>
+                <SelectItem value="CDI">
+                  {t("transaction.indexationMode.cdi")}
+                </SelectItem>
+                <SelectItem value="IPCA">
+                  {t("transaction.indexationMode.ipca")}
+                </SelectItem>
+                <SelectItem value="SELIC">
+                  {t("transaction.indexationMode.selic")}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -136,26 +154,28 @@ export const FixedIncomeFormDialog = ({
             <div className="space-y-2">
               <Label htmlFor="interestRate">
                 {formData.indexationMode === "PRE"
-                  ? "Taxa (% a.a.)"
-                  : "Taxa Adicional (%)"}
+                  ? t("transaction.fields.interestRate")
+                  : t("transaction.fields.additionalRate")}
               </Label>
               <Input
                 id="interestRate"
                 type="number"
                 step="0.01"
-                placeholder="Ex: 12.5"
+                placeholder={t("transaction.placeholders.interestRate")}
                 value={formData.interestRate}
                 onChange={(e) => updateField("interestRate", e.target.value)}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="investedValue">Valor Investido</Label>
+              <Label htmlFor="investedValue">
+                {t("transaction.fields.investedValue")}
+              </Label>
               <Input
                 id="investedValue"
                 type="number"
                 step="0.01"
-                placeholder="Ex: 10000.00"
+                placeholder={t("transaction.placeholders.investedValue")}
                 value={formData.investedValue}
                 onChange={(e) => updateField("investedValue", e.target.value)}
               />
@@ -163,7 +183,9 @@ export const FixedIncomeFormDialog = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="institution">Instituição</Label>
+            <Label htmlFor="institution">
+              {t("transaction.fields.institution")}
+            </Label>
             <Select
               value={
                 formData.institutionId ? formData.institutionId.toString() : ""
@@ -171,7 +193,9 @@ export const FixedIncomeFormDialog = ({
               onValueChange={(v) => updateField("institutionId", Number(v))}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Selecione a instituição" />
+                <SelectValue
+                  placeholder={t("transaction.placeholders.selectInstitution")}
+                />
               </SelectTrigger>
               <SelectContent>
                 {institutions?.map((institution) => (
@@ -187,7 +211,7 @@ export const FixedIncomeFormDialog = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="currency">Moeda</Label>
+            <Label htmlFor="currency">{t("transaction.fields.currency")}</Label>
             <Select
               value={formData.currency}
               onValueChange={(v) => updateField("currency", v)}
@@ -196,8 +220,12 @@ export const FixedIncomeFormDialog = ({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="BRL">BRL (Real)</SelectItem>
-                <SelectItem value="USD">USD (Dólar)</SelectItem>
+                <SelectItem value="BRL">
+                  {t("transaction.currency.brl")}
+                </SelectItem>
+                <SelectItem value="USD">
+                  {t("transaction.currency.usd")}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>

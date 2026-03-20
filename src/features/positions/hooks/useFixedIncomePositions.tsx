@@ -7,6 +7,7 @@ import {
 import { PaginationQuery } from "@/shared/types/pagination";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export const useFixedIncomePositions = ({
   page = 1,
@@ -15,6 +16,7 @@ export const useFixedIncomePositions = ({
   order = "ASC",
   skipPagination,
 }: PaginationQuery = {}) => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const {
@@ -51,10 +53,10 @@ export const useFixedIncomePositions = ({
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.FIXED_INCOME_ASSETS,
       });
-      toast.success("Ativo criado com sucesso!");
+      toast.success(t("transaction.messages.created"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Erro ao comprar ativo.");
+      toast.error(error.message || t("transaction.messages.addError"));
     },
   });
 
@@ -72,10 +74,10 @@ export const useFixedIncomePositions = ({
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.FIXED_INCOME_ASSETS,
       });
-      toast.success("Ativo atualizado com sucesso!");
+      toast.success(t("transaction.messages.updated"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Erro ao atualizar ativo.");
+      toast.error(error.message || t("transaction.messages.updateError"));
     },
   });
 
@@ -87,10 +89,10 @@ export const useFixedIncomePositions = ({
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.FIXED_INCOME_ASSETS,
       });
-      toast.success("Ativo excluído com sucesso!");
+      toast.success(t("transaction.messages.deleted"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Erro ao excluir ativo.");
+      toast.error(error.message || t("transaction.messages.deleteError"));
     },
   });
 

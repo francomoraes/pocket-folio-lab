@@ -188,7 +188,9 @@ const VariableIncome = () => {
                 currentOrder={order}
                 onSort={toggleSort}
               />
-              <TableHead className="w-[80px]">Ações</TableHead>
+              <TableHead className="w-[80px]">
+                {t("positions.table.headers.actions")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

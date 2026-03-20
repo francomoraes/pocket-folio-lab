@@ -8,5 +8,12 @@ export default {
     uploading: "Enviando...",
     success: "Posições importadas com sucesso",
     error: "Erro ao importar posições",
+    uploadedSuccess: "Arquivo CSV enviado com sucesso!",
+    downloadedSuccess: "Arquivo CSV baixado com sucesso!",
+    uploadError: "Erro ao enviar o arquivo CSV.",
+    downloadError: "Erro ao baixar o arquivo CSV.",
+    invalidFile: "Por favor, selecione um arquivo CSV válido.",
+    maxSize: "O arquivo CSV deve ter no máximo 5MB.",
+    noFileSelected: "Nenhum arquivo selecionado",
   },
 };

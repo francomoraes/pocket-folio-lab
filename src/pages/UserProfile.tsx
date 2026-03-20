@@ -244,8 +244,12 @@ export const UserProfile = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="pt-BR">🇧🇷 Português (BR)</SelectItem>
-                  <SelectItem value="en-US">🇺🇸 English (US)</SelectItem>
+                  <SelectItem value="pt-BR">
+                    {t("auth.profile.localeOptions.ptBr")}
+                  </SelectItem>
+                  <SelectItem value="en-US">
+                    {t("auth.profile.localeOptions.enUs")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>

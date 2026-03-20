@@ -7,8 +7,10 @@ import {
 } from "@/shared/types/wealthHistory";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export const useWealthHistory = () => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const {
@@ -29,10 +31,12 @@ export const useWealthHistory = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wealthHistory"] });
-      toast.success("Registro de patrimônio adicionado com sucesso!");
+      toast.success(t("dashboard.wealthHistory.messages.created"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Erro ao adicionar registro de patrimônio.");
+      toast.error(
+        error.message || t("dashboard.wealthHistory.messages.createError"),
+      );
     },
   });
 
@@ -48,10 +52,12 @@ export const useWealthHistory = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wealthHistory"] });
-      toast.success("Registro de patrimônio atualizado com sucesso!");
+      toast.success(t("dashboard.wealthHistory.messages.updated"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Erro ao atualizar registro de patrimônio.");
+      toast.error(
+        error.message || t("dashboard.wealthHistory.messages.updateError"),
+      );
     },
   });
 
@@ -61,10 +67,12 @@ export const useWealthHistory = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wealthHistory"] });
-      toast.success("Registro de patrimônio excluído com sucesso!");
+      toast.success(t("dashboard.wealthHistory.messages.deleted"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Erro ao excluir registro de patrimônio.");
+      toast.error(
+        error.message || t("dashboard.wealthHistory.messages.deleteError"),
+      );
     },
   });
 

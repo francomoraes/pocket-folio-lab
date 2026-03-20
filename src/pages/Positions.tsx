@@ -44,10 +44,10 @@ export const Positions = () => {
         <div className="flex flex-col sm:flex-row gap-3 sm:justify-between items-start sm:items-center mb-4">
           <TabsList className="w-full sm:w-auto">
             <TabsTrigger className="flex-1 sm:flex-none" value="positions">
-              Renda Variável
+              {t("positions.tabs.variableIncome")}
             </TabsTrigger>
             <TabsTrigger className="flex-1 sm:flex-none" value="allocation">
-              Renda Fixa
+              {t("positions.tabs.fixedIncome")}
             </TabsTrigger>
           </TabsList>
 
@@ -84,7 +84,7 @@ export const Positions = () => {
               <div className="sm:border-l sm:pl-6 col-span-1 sm:col-span-1 lg:col-span-1">
                 <div className="flex items-center justify-between gap-2 mb-2">
                   <p className="text-xs sm:text-sm text-muted-foreground font-semibold">
-                    Patrimônio
+                    {t("positions.summary.patrimony")}
                   </p>
                   <div className="flex gap-1 bg-muted rounded p-1">
                     <button
@@ -94,7 +94,7 @@ export const Positions = () => {
                           ? "bg-primary/10 text-primary font-semibold"
                           : "text-muted-foreground hover:text-foreground"
                       }`}
-                      title="Real Brasileiro"
+                      title={t("positions.summary.currencyTitles.brl")}
                     >
                       <img
                         src="https://cdn-icons-png.flaticon.com/512/3022/3022546.png"
@@ -110,7 +110,7 @@ export const Positions = () => {
                           ? "bg-primary/10 text-primary font-semibold"
                           : "text-muted-foreground hover:text-foreground"
                       }`}
-                      title="Dólar Americano"
+                      title={t("positions.summary.currencyTitles.usd")}
                     >
                       <img
                         src="https://cdn-icons-png.flaticon.com/512/555/555526.png"

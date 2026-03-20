@@ -1,5 +1,6 @@
 import { API_URL } from "@/config/api";
 import axios from "axios";
+import i18n from "@/shared/i18n/config";
 
 export const api = axios.create({
   baseURL: API_URL,
@@ -36,7 +37,7 @@ api.interceptors.response.use(
     if (backendMessage) {
       errorMessage = backendMessage;
     } else if (statusCode) {
-      errorMessage = `Erro ${statusCode}: ${error.message}`;
+      errorMessage = `${i18n.t("common.status.error")} ${statusCode}: ${error.message}`;
     }
 
     // Create a new error with the backend message

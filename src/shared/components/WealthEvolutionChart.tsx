@@ -13,6 +13,7 @@ import { WealthHistory } from "@/shared/types/wealthHistory";
 import { useMemo, useState, useEffect } from "react";
 import { Button } from "@/shared/components/ui/button";
 import { wealthHistoryService } from "@/shared/services/wealthHistoryService";
+import { useTranslation } from "react-i18next";
 
 interface WealthEvolutionChartProps {
   wealthHistory: WealthHistory[];
@@ -128,6 +129,7 @@ const buildNormalizedRateSeries = (
 const formatChartData = (
   history: WealthHistory[],
   granularity: Granularity,
+  locale: string,
 ) => {
   if (!history || history.length === 0) return [];
 
@@ -138,7 +140,7 @@ const formatChartData = (
           date: new Date(item.date),
           value: item.totalWealthCents / 100,
           periodKey: getPeriodKey(new Date(item.date), granularity),
-          label: new Date(item.date).toLocaleDateString("pt-BR", {
+          label: new Date(item.date).toLocaleDateString(locale, {
             year: "numeric",
             month: "short",
           }),
@@ -233,8 +235,8 @@ const formatChartData = (
   return getData();
 };
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat("pt-BR", {
+const formatCurrency = (value: number, locale: string) => {
+  return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: "BRL",
     minimumFractionDigits: 0,
@@ -245,6 +247,8 @@ const formatCurrency = (value: number) => {
 export const WealthEvolutionChart = ({
   wealthHistory,
 }: WealthEvolutionChartProps) => {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage || "pt-BR";
   const [granularity, setGranularity] = useState<Granularity>("monthly");
   const [showIndices, setShowIndices] = useState({
     sp500: false,
@@ -273,8 +277,8 @@ export const WealthEvolutionChart = ({
   }, [sortedHistory]);
 
   const chartData = useMemo(
-    () => formatChartData(sortedHistory, granularity),
-    [sortedHistory, granularity],
+    () => formatChartData(sortedHistory, granularity, locale),
+    [sortedHistory, granularity, locale],
   );
 
   // Fetch indices data when needed
@@ -357,7 +361,7 @@ export const WealthEvolutionChart = ({
   if (!wealthHistory || wealthHistory.length === 0) {
     return (
       <div className="flex items-center justify-center h-80 text-muted-foreground">
-        Nenhum histórico de patrimônio registrado
+        {t("dashboard.wealthHistory.list.empty")}
       </div>
     );
   }
@@ -376,10 +380,14 @@ export const WealthEvolutionChart = ({
               onClick={() => setGranularity(gran)}
               className="text-xs sm:text-sm"
             >
-              {gran === "monthly" && "Mensal"}
-              {gran === "quarterly" && "Trimestral"}
-              {gran === "semiannual" && "Semestral"}
-              {gran === "annual" && "Anual"}
+              {gran === "monthly" &&
+                t("dashboard.wealthHistory.granularity.monthly")}
+              {gran === "quarterly" &&
+                t("dashboard.wealthHistory.granularity.quarterly")}
+              {gran === "semiannual" &&
+                t("dashboard.wealthHistory.granularity.semiannual")}
+              {gran === "annual" &&
+                t("dashboard.wealthHistory.granularity.annual")}
             </Button>
           ))}
         </div>
@@ -394,7 +402,7 @@ export const WealthEvolutionChart = ({
               }
               className="w-4 h-4"
             />
-            S&P500
+            {t("dashboard.wealthHistory.indices.sp500")}
           </label>
           <label className="flex items-center gap-1 cursor-pointer">
             <input
@@ -405,7 +413,7 @@ export const WealthEvolutionChart = ({
               }
               className="w-4 h-4"
             />
-            CDI
+            {t("dashboard.wealthHistory.indices.cdi")}
           </label>
           <label className="flex items-center gap-1 cursor-pointer">
             <input
@@ -416,7 +424,7 @@ export const WealthEvolutionChart = ({
               }
               className="w-4 h-4"
             />
-            IPCA
+            {t("dashboard.wealthHistory.indices.ipca")}
           </label>
         </div>
       </div>
@@ -434,20 +442,20 @@ export const WealthEvolutionChart = ({
             />
             <YAxis
               label={{
-                value: "Valor (R$)",
+                value: t("dashboard.charts.axisValueBrl"),
                 angle: -90,
                 position: "insideLeft",
               }}
-              tickFormatter={formatCurrency}
+              tickFormatter={(value: number) => formatCurrency(value, locale)}
             />
             <Tooltip
               formatter={(value: number, name: string) => {
-                if (name === "Patrimônio") {
+                if (name === t("dashboard.wealthHistory.wealthLegend")) {
                   const pct =
                     initialValue > 0
                       ? ((value / initialValue - 1) * 100).toFixed(0)
                       : "0";
-                  return `${formatCurrency(value)} (${pct}%)`;
+                  return `${formatCurrency(value, locale)} (${pct}%)`;
                 }
                 // Para índices, mostrar apenas a porcentagem
                 const pct =
@@ -461,7 +469,7 @@ export const WealthEvolutionChart = ({
             <Bar
               dataKey="value"
               fill="#A8D5BA"
-              name="Patrimônio"
+              name={t("dashboard.wealthHistory.wealthLegend")}
               radius={[8, 8, 0, 0]}
             />
             {showIndices.sp500 && (
@@ -501,7 +509,7 @@ export const WealthEvolutionChart = ({
         </ResponsiveContainer>
       ) : (
         <p className="text-center text-muted-foreground">
-          Dados insuficientes para gerar gráfico
+          {t("dashboard.charts.insufficientData")}
         </p>
       )}
     </div>

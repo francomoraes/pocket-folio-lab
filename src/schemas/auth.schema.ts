@@ -1,33 +1,36 @@
 import { z } from "zod";
+import i18n from "@/shared/i18n/config";
 
 // Validador de senha customizado com mensagens específicas
 const passwordSchema = z
   .string()
-  .min(6, "Senha deve ter no mínimo 6 caracteres")
-  .max(100, "Senha deve ter no máximo 100 caracteres")
+  .min(6, i18n.t("common.validation.minLength", { min: 6 }))
+  .max(100, i18n.t("common.validation.maxLength", { max: 100 }))
   .refine((val) => /[a-z]/.test(val), {
-    message: "Senha deve conter pelo menos uma letra minúscula",
+    message: i18n.t("auth.validation.passwordLowercase"),
   })
   .refine((val) => /[A-Z]/.test(val), {
-    message: "Senha deve conter pelo menos uma letra maiúscula",
+    message: i18n.t("auth.validation.passwordUppercase"),
   })
   .refine((val) => /\d/.test(val), {
-    message: "Senha deve conter pelo menos um número",
+    message: i18n.t("auth.validation.passwordNumber"),
   })
   .refine((val) => /[@$!%*?&]/.test(val), {
-    message: "Senha deve conter pelo menos um símbolo (@$!%*?&)",
+    message: i18n.t("auth.validation.passwordSymbol"),
   });
 
 // Schema para login (validação simples)
 export const loginSchema = z.object({
-  email: z.string().email("Email inválido"),
-  password: z.string().min(6, "Senha deve ter no mínimo 6 caracteres"),
+  email: z.string().email(i18n.t("common.validation.invalidEmail")),
+  password: z
+    .string()
+    .min(6, i18n.t("common.validation.minLength", { min: 6 })),
 });
 
 // Schema para registro (validação completa)
 export const registerSchema = z.object({
-  name: z.string().min(1, "O nome é obrigatório"),
-  email: z.string().email("Email inválido"),
+  name: z.string().min(1, i18n.t("common.validation.required")),
+  email: z.string().email(i18n.t("common.validation.invalidEmail")),
   password: passwordSchema,
 });
 

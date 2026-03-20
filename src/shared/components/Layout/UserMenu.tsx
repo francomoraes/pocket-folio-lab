@@ -14,7 +14,6 @@ import {
 import { useTranslation } from "react-i18next";
 import { Button } from "@/shared/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 
 export const UserMenu = () => {
   const { user, logout, updateUser } = useAuth();
@@ -63,8 +62,28 @@ export const UserMenu = () => {
               <SelectValue placeholder={t("auth.userMenu.selectLanguage")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="en-US">🇺🇸 English (US)</SelectItem>
-              <SelectItem value="pt-BR">🇧🇷 Português (BR)</SelectItem>
+              <SelectItem value="en-US">
+                <p className="text-xs sm:text-sm text-muted-foreground flex gap-1 items-center mb-1">
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/555/555526.png"
+                    width="16"
+                    alt="USD"
+                    className="inline"
+                  />
+                  {t("auth.profile.localeOptions.enUs")}
+                </p>
+              </SelectItem>
+              <SelectItem value="pt-BR">
+                <p className="text-xs sm:text-sm text-muted-foreground flex gap-1 items-center mb-1">
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/3022/3022546.png"
+                    width="16"
+                    alt="BRL"
+                    className="inline"
+                  />
+                  {t("auth.profile.localeOptions.ptBr")}
+                </p>
+              </SelectItem>
             </SelectContent>
           </Select>
           <Button variant="destructive" onClick={logout}>

@@ -8,6 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/shared/components/ui/alert-dialog";
+import { useTranslation } from "react-i18next";
 
 export const ConfirmDeleteDialog = ({
   open,
@@ -20,17 +21,21 @@ export const ConfirmDeleteDialog = ({
   onConfirm: () => void | Promise<void>;
   isLoading?: boolean;
 }) => {
+  const { t } = useTranslation();
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+          <AlertDialogTitle>{t("global.deleteDialog.title")}</AlertDialogTitle>
           <AlertDialogDescription>
-            Tem certeza que deseja excluir? Esta ação não pode ser desfeita.
+            {t("global.deleteDialog.message")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel disabled={isLoading}>
+            {t("global.deleteDialog.cancelButton")}
+          </AlertDialogCancel>
           <AlertDialogAction
             onClick={(e) => {
               e.preventDefault();
@@ -38,7 +43,9 @@ export const ConfirmDeleteDialog = ({
             }}
             disabled={isLoading}
           >
-            {isLoading ? "Excluindo..." : "Excluir"}
+            {isLoading
+              ? t("global.deleteDialog.deleting")
+              : t("global.deleteDialog.deleteButton")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

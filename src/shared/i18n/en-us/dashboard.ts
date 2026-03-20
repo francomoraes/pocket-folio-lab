@@ -1,18 +1,76 @@
 export default {
   title: "Allocation by Class",
   loading: "Loading dashboard...",
+  dragToReorder: "Drag to reorder",
+  sections: {
+    allocationTable: "Allocation Table",
+    allocationCharts: "Allocation Charts",
+    actualVsTarget: "Actual vs Target Comparison",
+    wealthEvolution: "Wealth Evolution",
+  },
   table: {
     headers: {
       class: "Class",
       type: "Type",
       value: "Value",
       percentage: "%",
+      actualPercentage: "% Actual",
+      targetPercentage: "% Target",
     },
     empty: "No data available",
+  },
+  charts: {
+    currentAllocation: "Current Allocation",
+    targetAllocation: "Target Allocation",
+    noData: "No data to display",
+    currentLegend: "Actual",
+    targetLegend: "Target",
+    axisValueBrl: "Value (BRL)",
+    insufficientData: "Insufficient data to render chart",
   },
   assetClasses: {
     stocks: "Stocks",
     fiis: "REITs",
     fixed_income: "Fixed Income",
+  },
+  wealthHistory: {
+    addHistory: "+ Add History",
+    loading: "Loading history...",
+    recordsTitle: "History Records",
+    empty: "No history recorded. Add values to view evolution.",
+    messages: {
+      created: "Wealth record added successfully!",
+      updated: "Wealth record updated successfully!",
+      deleted: "Wealth record deleted successfully!",
+      createError: "Error adding wealth record.",
+      updateError: "Error updating wealth record.",
+      deleteError: "Error deleting wealth record.",
+    },
+    form: {
+      titleCreate: "Add Wealth History",
+      titleEdit: "Edit Wealth History",
+      date: "Date",
+      wealthValue: "Wealth Value (R$)",
+    },
+    list: {
+      empty: "No wealth history recorded",
+      date: "Date",
+      value: "Value",
+      actions: "Actions",
+      deleteDescription:
+        "Are you sure you want to delete the record from {{date}}? This action cannot be undone.",
+    },
+    granularity: {
+      monthly: "Monthly",
+      quarterly: "Quarterly",
+      semiannual: "Semiannual",
+      annual: "Annual",
+    },
+    indices: {
+      sp500: "S&P500",
+      cdi: "CDI",
+      ipca: "IPCA",
+    },
+    wealthLegend: "Wealth",
   },
 };

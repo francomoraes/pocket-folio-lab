@@ -13,6 +13,7 @@ import { Label } from "@/shared/components/ui/label";
 import { Plus } from "lucide-react";
 import { useInstitutions } from "@/features/settings/hooks/useInstitutions";
 import { Institution } from "@/shared/types/institution";
+import { useTranslation } from "react-i18next";
 
 export const InstitutionDialog = ({
   mode,
@@ -23,6 +24,7 @@ export const InstitutionDialog = ({
   institution?: Institution;
   onClose?: () => void;
 }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(!!institution);
   const [name, setName] = useState(institution?.name || "");
   const { createInstitution, updateInstitution, isCreating, isUpdating } =
@@ -57,7 +59,7 @@ export const InstitutionDialog = ({
         {mode === "create" && (
           <Button>
             <Plus className="h-4 w-4 mr-2" />
-            Nova Instituição
+            {t("settings.institutions.create")}
           </Button>
         )}
       </DialogTrigger>
@@ -65,25 +67,31 @@ export const InstitutionDialog = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {mode === "create" ? "Nova Instituição" : "Editar Instituição"}
+            {mode === "create"
+              ? t("settings.institutions.create")
+              : t("settings.institutions.edit")}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nome</Label>
+            <Label htmlFor="name">
+              {t("settings.institutions.table.name")}
+            </Label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Ex: Ações"
+              placeholder={t("transaction.placeholders.name")}
               required
             />
           </div>
 
           <DialogFooter>
             <Button type="submit" disabled={isCreating || isUpdating}>
-              {isCreating || isUpdating ? "Salvando..." : "Salvar"}
+              {isCreating || isUpdating
+                ? t("common.status.saving")
+                : t("common.buttons.save")}
             </Button>
           </DialogFooter>
         </form>

@@ -16,14 +16,12 @@ export const ErrorFallback = ({ error, resetError }: ErrorFallbackProps) => {
 
         <h2 className="text-2xl font-bold">{t("common.status.error")}</h2>
 
-        <p className="text-muted-foreground">
-          Ocorreu um erro inesperado. Tente recarregar a página.
-        </p>
+        <p className="text-muted-foreground">{t("global.errors.unexpected")}</p>
 
         {process.env.NODE_ENV === "development" && error && (
           <details className="text-left text-xs bg-muted p-4 rounded">
             <summary className="cursor-pointer font-semibold mb-2">
-              Detalhes técnicos
+              {t("global.errors.technicalDetails")}
             </summary>
             <pre className="overflow-auto">
               {error.message}
@@ -35,12 +33,12 @@ export const ErrorFallback = ({ error, resetError }: ErrorFallbackProps) => {
 
         <div className="flex gap-2 justify-center">
           <Button onClick={() => window.location.reload()}>
-            Recarregar Página
+            {t("common.buttons.reloadPage")}
           </Button>
 
           {resetError && (
             <Button variant="outline" onClick={resetError}>
-              Tentar Novamente
+              {t("common.buttons.tryAgain")}
             </Button>
           )}
         </div>

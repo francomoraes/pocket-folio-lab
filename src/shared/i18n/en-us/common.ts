@@ -16,6 +16,8 @@ export default {
     refresh: "Refresh",
     next: "Next",
     previous: "Previous",
+    reloadPage: "Reload Page",
+    tryAgain: "Try Again",
   },
   status: {
     loading: "Loading...",
@@ -29,5 +31,14 @@ export default {
     invalidEmail: "Invalid email",
     minLength: "Minimum {{min}} characters",
     maxLength: "Maximum {{max}} characters",
+  },
+  misc: {
+    or: "or",
+  },
+  combobox: {
+    selectOrType: "Select or type",
+    searchOrAdd: "Search or add...",
+    noInstitutionFound: "No institution found.",
+    addWithValue: 'Add "{{value}}"',
   },
 };

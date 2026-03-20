@@ -118,14 +118,14 @@ export const PaginationControls = ({ pagination }: PaginationControlsProps) => {
       {/* Navegação */}
       <div className="w-full sm:w-auto flex justify-center">
         <Pagination>
-          <PaginationContent className="gap-0 sm:gap-1">
+          <PaginationContent className="gap-2 sm:gap-1">
             <PaginationItem>
               <PaginationPrevious
                 onClick={previousPage}
                 className={
                   !meta.hasPreviousPage
-                    ? "pointer-events-none opacity-50 h-8 w-8 sm:h-9 sm:w-20 text-xs sm:text-sm px-2 sm:px-4"
-                    : "cursor-pointer h-8 w-8 sm:h-9 sm:w-20 text-xs sm:text-sm px-2 sm:px-4"
+                    ? "pointer-events-none opacity-50 h-8 w-8 sm:h-9 sm:w-20 text-xs sm:text-sm px-1 sm:px-4 [&>span]:hidden sm:[&>span]:inline"
+                    : "cursor-pointer h-8 w-8 sm:h-9 sm:w-20 text-xs sm:text-sm px-1 sm:px-4 [&>span]:hidden sm:[&>span]:inline"
                 }
               />
             </PaginationItem>
@@ -149,9 +149,8 @@ export const PaginationControls = ({ pagination }: PaginationControlsProps) => {
               </PaginationItem>
             ))}
 
-            {/* Mobile: mostrar apenas página atual */}
             <PaginationItem className="sm:hidden">
-              <span className="flex h-8 w-auto px-3 items-center justify-center text-xs font-medium">
+              <span className="flex h-8 w-auto px-4 items-center justify-center text-xs font-medium whitespace-nowrap">
                 {page} / {meta.totalPages}
               </span>
             </PaginationItem>
@@ -161,8 +160,8 @@ export const PaginationControls = ({ pagination }: PaginationControlsProps) => {
                 onClick={nextPage}
                 className={
                   !meta.hasNextPage
-                    ? "pointer-events-none opacity-50 h-8 w-8 sm:h-9 sm:w-20 text-xs sm:text-sm px-2 sm:px-4"
-                    : "cursor-pointer h-8 w-8 sm:h-9 sm:w-20 text-xs sm:text-sm px-2 sm:px-4"
+                    ? "pointer-events-none opacity-50 h-8 w-8 sm:h-9 sm:w-20 text-xs sm:text-sm px-1 sm:px-4 [&>span]:hidden sm:[&>span]:inline"
+                    : "cursor-pointer h-8 w-8 sm:h-9 sm:w-20 text-xs sm:text-sm px-1 sm:px-4 [&>span]:hidden sm:[&>span]:inline"
                 }
               />
             </PaginationItem>

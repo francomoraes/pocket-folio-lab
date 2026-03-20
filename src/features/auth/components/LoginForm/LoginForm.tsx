@@ -46,7 +46,7 @@ export const LoginForm = () => {
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Seu nome"
+                  placeholder={t("auth.login.placeholders.name")}
                   {...register("name")}
                   disabled={isLoading}
                 />
@@ -63,7 +63,7 @@ export const LoginForm = () => {
               <Input
                 id="email"
                 type="email"
-                placeholder="seu@email.com"
+                placeholder={t("auth.login.placeholders.email")}
                 {...register("email")}
                 disabled={isLoading}
               />
@@ -79,7 +79,7 @@ export const LoginForm = () => {
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder={t("auth.login.placeholders.password")}
                 {...register("password")}
                 disabled={isLoading}
               />
@@ -114,7 +114,7 @@ export const LoginForm = () => {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  ou
+                  {t("common.misc.or")}
                 </span>
               </div>
             </div>

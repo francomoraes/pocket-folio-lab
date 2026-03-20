@@ -9,8 +9,10 @@ import {
   type RegisterFormData,
 } from "@/schemas/auth.schema";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export const useLoginForm = () => {
+  const { t } = useTranslation();
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const { login, register: registerUser, isLoading } = useAuth();
 
@@ -31,15 +33,15 @@ export const useLoginForm = () => {
           email: data.email,
           password: data.password,
         });
-        toast.success("Cadastro realizado com sucesso!");
+        toast.success(t("auth.messages.registerSuccess"));
       } else {
         await login({ email: data.email, password: data.password });
-        toast.success("Login realizado com sucesso!");
+        toast.success(t("auth.messages.loginSuccess"));
       }
       window.location.href = "/";
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Erro ao autenticar";
+        error instanceof Error ? error.message : t("auth.messages.loginError");
       toast.error(message);
     }
   };

@@ -3,8 +3,10 @@ import { QUERY_KEYS } from "@/shared/constants/queryKeys";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export const useCsvUpload = () => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -13,13 +15,13 @@ export const useCsvUpload = () => {
   const uploadMutation = useMutation({
     mutationFn: (file: File) => csvService.uploadCsv(file),
     onSuccess: () => {
-      toast.success("Arquivo CSV enviado com sucesso!");
+      toast.success(t("csv.upload.uploadedSuccess"));
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
       setIsOpen(false);
       setFile(null);
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Erro ao enviar o arquivo CSV.");
+      toast.error(error.message || t("csv.upload.uploadError"));
       console.error(error);
     },
   });
@@ -27,10 +29,10 @@ export const useCsvUpload = () => {
   const downloadMutation = useMutation({
     mutationFn: () => csvService.downloadTemplate(),
     onSuccess: () => {
-      toast.success("Arquivo CSV baixado com sucesso!");
+      toast.success(t("csv.upload.downloadedSuccess"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Erro ao baixar o arquivo CSV.");
+      toast.error(error.message || t("csv.upload.downloadError"));
       console.error(error);
     },
   });
@@ -38,13 +40,13 @@ export const useCsvUpload = () => {
   const handleFileSelect = (selectedFile: File) => {
     uploadMutation.reset();
     if (!selectedFile.name.endsWith(".csv")) {
-      toast.error("Por favor, selecione um arquivo CSV válido.");
+      toast.error(t("csv.upload.invalidFile"));
       return;
     }
 
     if (selectedFile.size > 5 * 1024 * 1024) {
       // 5MB
-      toast.error("O arquivo CSV deve ter no máximo 5MB.");
+      toast.error(t("csv.upload.maxSize"));
       return;
     }
 
@@ -59,7 +61,7 @@ export const useCsvUpload = () => {
     handleDownloadTemplate: () => downloadMutation.mutate(),
     handleUpload: () => {
       if (!file) {
-        toast.error("Nenhum arquivo selecionado");
+        toast.error(t("csv.upload.noFileSelected"));
         return;
       }
       uploadMutation.mutate(file);

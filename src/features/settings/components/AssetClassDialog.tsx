@@ -13,6 +13,7 @@ import { Label } from "@/shared/components/ui/label";
 import { Plus } from "lucide-react";
 import { useAssetClasses } from "@/features/settings/hooks/useAssetClasses";
 import { AssetClass } from "@/shared/types/assetClass";
+import { useTranslation } from "react-i18next";
 
 export const AssetClassDialog = ({
   mode,
@@ -23,6 +24,7 @@ export const AssetClassDialog = ({
   assetClass?: AssetClass;
   onClose?: () => void;
 }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(!!assetClass);
   const [name, setName] = useState(assetClass?.name || "");
   const { createAssetClass, updateAssetClass, isCreating, isUpdating } =
@@ -57,7 +59,7 @@ export const AssetClassDialog = ({
         {mode === "create" && (
           <Button>
             <Plus className="h-4 w-4 mr-2" />
-            Nova Classe
+            {t("settings.assetClasses.create")}
           </Button>
         )}
       </DialogTrigger>
@@ -66,26 +68,30 @@ export const AssetClassDialog = ({
         <DialogHeader>
           <DialogTitle>
             {mode === "create"
-              ? "Nova Classe de Ativo"
-              : "Editar Classe de Ativo"}
+              ? t("settings.assetClasses.create")
+              : t("settings.assetClasses.edit")}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nome</Label>
+            <Label htmlFor="name">
+              {t("settings.assetClasses.table.name")}
+            </Label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Ex: Ações"
+              placeholder={t("transaction.placeholders.name")}
               required
             />
           </div>
 
           <DialogFooter>
             <Button type="submit" disabled={isCreating || isUpdating}>
-              {isCreating || isUpdating ? "Salvando..." : "Salvar"}
+              {isCreating || isUpdating
+                ? t("common.status.saving")
+                : t("common.buttons.save")}
             </Button>
           </DialogFooter>
         </form>
