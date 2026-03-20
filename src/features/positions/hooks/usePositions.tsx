@@ -89,11 +89,19 @@ export const usePositions = ({
     mutationFn: () => {
       return assetService.refreshMarketPrices();
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
-      toast.success("Preços de mercado atualizados com sucesso!");
+
+      if (result.usedCacheOnly) {
+        toast.info(result.message);
+        return;
+      }
+
+      toast.success(
+        result.message || "Preços de mercado atualizados com sucesso!",
+      );
     },
     onError: (error: Error) => {
       toast.error(error.message || "Erro ao atualizar preços de mercado.");

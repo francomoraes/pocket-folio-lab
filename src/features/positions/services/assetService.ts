@@ -53,14 +53,22 @@ class AssetService {
   }
 
   async refreshMarketPrices(): Promise<{
+    message: string;
     updated: number;
     failed: number;
     failedTickers: string[];
+    usedCacheOnly: boolean;
+    cooldownHours: number;
+    nextYahooCallAt: string | null;
   }> {
     const response = await api.get<{
+      message: string;
       updated: number;
       failed: number;
       failedTickers: string[];
+      usedCacheOnly: boolean;
+      cooldownHours: number;
+      nextYahooCallAt: string | null;
     }>(API_ENDPOINTS.assets.refreshMarketPrices);
     return response.data;
   }
