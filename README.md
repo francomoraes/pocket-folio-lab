@@ -5,7 +5,8 @@ Frontend application for portfolio tracking and allocation monitoring.
 ## Live URLs
 
 - Frontend: https://investment-tracker-manager.vercel.app/
-- Backend API: https://assetbreakdown-production.up.railway.app/api
+- Backend repo: https://github.com/francomoraes/asset_breakdown
+- Backend API Health check: https://assetbreakdown-production.up.railway.app/health
 
 ## Demo account
 
