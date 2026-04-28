@@ -8,6 +8,7 @@ import {
 } from "@/features/auth/types/auth";
 import { createContext, useEffect, useState } from "react";
 import { authService } from "@/features/auth/services/authService";
+import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
@@ -120,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem(TOKEN_KEY, response.token);
       toast.success("User updated successfully");
     } catch (error) {
-      toast.error("Failed to update user");
+      toast.error(resolveErrorMessage(error, "auth.messages.updateError"));
       throw error;
     } finally {
       setIsLoading(false);

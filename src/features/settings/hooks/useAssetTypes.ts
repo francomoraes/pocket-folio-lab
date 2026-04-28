@@ -2,6 +2,8 @@ import { assetTypeService } from "@/features/settings/services/assetTypeService"
 import { QUERY_KEYS } from "@/shared/constants/queryKeys";
 import { CreateAssetType, UpdateAssetType } from "@/shared/types/assetType";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 
 export const useAssetTypes = () => {
   const queryClient = useQueryClient();
@@ -30,7 +32,9 @@ export const useAssetTypes = () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
     },
     onError: (error: Error) => {
-      console.error(error.message || "Error creating asset type");
+      toast.error(
+        resolveErrorMessage(error, "auth.errorCodes.ASSET_TYPE_ALREADY_EXISTS"),
+      );
     },
   });
 
@@ -44,7 +48,7 @@ export const useAssetTypes = () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
     },
     onError: (error: Error) => {
-      console.error(error.message || "Error updating asset type");
+      toast.error(resolveErrorMessage(error, "auth.messages.updateError"));
     },
   });
 
@@ -58,7 +62,9 @@ export const useAssetTypes = () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
     },
     onError: (error: Error) => {
-      console.error(error.message || "Error deleting asset type");
+      toast.error(
+        resolveErrorMessage(error, "auth.errorCodes.ASSET_TYPE_HAS_ASSETS"),
+      );
     },
   });
 
