@@ -8,6 +8,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 
 export const useWealthHistory = () => {
   const { t } = useTranslation();
@@ -35,7 +36,10 @@ export const useWealthHistory = () => {
     },
     onError: (error: Error) => {
       toast.error(
-        error.message || t("dashboard.wealthHistory.messages.createError"),
+        resolveErrorMessage(
+          error,
+          "dashboard.wealthHistory.messages.createError",
+        ),
       );
     },
   });
@@ -56,7 +60,10 @@ export const useWealthHistory = () => {
     },
     onError: (error: Error) => {
       toast.error(
-        error.message || t("dashboard.wealthHistory.messages.updateError"),
+        resolveErrorMessage(
+          error,
+          "dashboard.wealthHistory.messages.updateError",
+        ),
       );
     },
   });
@@ -71,7 +78,10 @@ export const useWealthHistory = () => {
     },
     onError: (error: Error) => {
       toast.error(
-        error.message || t("dashboard.wealthHistory.messages.deleteError"),
+        resolveErrorMessage(
+          error,
+          "dashboard.wealthHistory.messages.deleteError",
+        ),
       );
     },
   });

@@ -1,73 +1,63 @@
-# Welcome to your Lovable project
+# Investment Tracker Frontend
 
-## Project info
+Frontend application for portfolio tracking and allocation monitoring.
 
-**URL**: https://lovable.dev/projects/1d16fd49-5ca6-4d90-a34b-59dc670acd30
+## Live URLs
 
-## How can I edit this code?
+- Frontend: https://investment-tracker-manager.vercel.app/
+- Backend API: https://assetbreakdown-production.up.railway.app/api
 
-There are several ways of editing your application.
+## Demo account
 
-**Use Lovable**
+- Email: user@test.com
+- Password: User123!
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/1d16fd49-5ca6-4d90-a34b-59dc670acd30) and start prompting.
+This account is provided for demo and portfolio review purposes.
 
-Changes made via Lovable will be committed automatically to this repo.
+## Frontend highlights
 
-**Use your preferred IDE**
+- Authentication flows (register/login/session)
+- Portfolio dashboard with allocation and summary views
+- Asset management screens with market refresh feedback
+- Profile management with image upload
+- API integration via Axios + centralized endpoints
+- React Query data fetching and cache behavior
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Tech stack
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- React + TypeScript
+- Vite
+- Tailwind CSS
+- shadcn/ui
+- TanStack Query
+- Axios
 
-Follow these steps:
+## Local setup
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Build preview
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```sh
+npm run build
+npm run preview
+```
 
-**Use GitHub Codespaces**
+## Environment variable
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Set the API endpoint before build/deploy:
 
-## What technologies are used for this project?
+```dotenv
+VITE_API_URL=https://assetbreakdown-production.up.railway.app/api
+```
 
-This project is built with:
+## Next steps (portfolio roadmap)
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/1d16fd49-5ca6-4d90-a34b-59dc670acd30) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+1. Add manager role views and navigation controls.
+2. Build manager screens to review assets across 10-20 users.
+3. Add UI controls for target allocation updates by manager role.
+4. Improve role-aware UX states and access restrictions.
+5. Expand end-to-end tests for manager user journeys.
