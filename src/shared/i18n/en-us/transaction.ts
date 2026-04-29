@@ -23,6 +23,7 @@ export default {
     interestRate: "Rate (% p.a.)",
     additionalRate: "Additional Rate (%)",
     investedValue: "Invested Value",
+    currentPrice: "Current Price (manual)",
   },
   operations: {
     buy: "Buy",
@@ -51,13 +52,11 @@ export default {
     selic: "Selic +",
   },
   emptyState: {
-    noTypes: "No asset types registered. Go to",
-    noInstitutions: "No institutions registered. Go to",
-    settingsLink: "Settings",
-    settingsSuffix: "to add them.",
-  },
-  fields: {
-    currentPrice: "Current Price (manual)",
+    noTypes: "No asset types registered.",
+    noTypesLine2: "Go to Settings to add them.",
+    noInstitutions: "No institutions registered.",
+    noInstitutionsLine2: "Go to Settings to add them.",
+    settingsLink: "Go to Settings →",
   },
   messages: {
     success: "Asset added successfully",

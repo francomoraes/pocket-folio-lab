@@ -36,6 +36,10 @@ export const AssetFormDialog = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  const goToSettings = () => {
+    navigate("/settings");
+  };
+
   const {
     formData,
     updateField,
@@ -83,41 +87,40 @@ export const AssetFormDialog = ({
             <Select
               value={formData.type}
               onValueChange={(v) => updateField("type", v)}
+              disabled={isLoadingTypes || assetTypes.length === 0}
             >
               <SelectTrigger>
-                <SelectValue
-                  placeholder={t("transaction.placeholders.selectType")}
-                />
+                {isLoadingTypes ? (
+                  <span className="flex items-center gap-2 text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  </span>
+                ) : (
+                  <SelectValue
+                    placeholder={t("transaction.placeholders.selectType")}
+                  />
+                )}
               </SelectTrigger>
               <SelectContent>
-                {isLoadingTypes ? (
-                  <div className="flex items-center justify-center py-3">
-                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                  </div>
-                ) : assetTypes.length === 0 ? (
-                  <div className="px-2 py-3 text-sm text-muted-foreground leading-snug">
-                    {t("transaction.emptyState.noTypes")}{" "}
-                    <button
-                      type="button"
-                      className="underline text-primary"
-                      onClick={() => {
-                        handleOpenChange(false);
-                        navigate("/settings");
-                      }}
-                    >
-                      {t("transaction.emptyState.settingsLink")}
-                    </button>{" "}
-                    {t("transaction.emptyState.settingsSuffix")}
-                  </div>
-                ) : (
-                  assetTypes.map((type) => (
-                    <SelectItem key={type.id} value={type.name}>
-                      {type.name}
-                    </SelectItem>
-                  ))
-                )}
+                {assetTypes.map((type) => (
+                  <SelectItem key={type.id} value={type.name}>
+                    {type.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
+            {!isLoadingTypes && assetTypes.length === 0 && (
+              <div className="text-sm text-muted-foreground space-y-0.5">
+                <p>{t("transaction.emptyState.noTypes")}</p>
+                <p>{t("transaction.emptyState.noTypesLine2")}</p>
+                <button
+                  type="button"
+                  className="underline text-primary"
+                  onClick={goToSettings}
+                >
+                  {t("transaction.emptyState.settingsLink")}
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -155,45 +158,51 @@ export const AssetFormDialog = ({
                 formData.institutionId ? formData.institutionId.toString() : ""
               }
               onValueChange={(v) => updateField("institutionId", v)}
-              disabled={isEditMode}
+              disabled={
+                isEditMode ||
+                isLoadingInstitutions ||
+                (institutions ?? []).length === 0
+              }
             >
               <SelectTrigger>
-                <SelectValue
-                  placeholder={t("transaction.placeholders.selectInstitution")}
-                />
+                {isLoadingInstitutions ? (
+                  <span className="flex items-center gap-2 text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  </span>
+                ) : (
+                  <SelectValue
+                    placeholder={t(
+                      "transaction.placeholders.selectInstitution",
+                    )}
+                  />
+                )}
               </SelectTrigger>
               <SelectContent>
-                {isLoadingInstitutions ? (
-                  <div className="flex items-center justify-center py-3">
-                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                  </div>
-                ) : (institutions ?? []).length === 0 ? (
-                  <div className="px-2 py-3 text-sm text-muted-foreground leading-snug">
-                    {t("transaction.emptyState.noInstitutions")}{" "}
-                    <button
-                      type="button"
-                      className="underline text-primary"
-                      onClick={() => {
-                        handleOpenChange(false);
-                        navigate("/settings");
-                      }}
-                    >
-                      {t("transaction.emptyState.settingsLink")}
-                    </button>{" "}
-                    {t("transaction.emptyState.settingsSuffix")}
-                  </div>
-                ) : (
-                  (institutions ?? []).map((institution) => (
-                    <SelectItem
-                      key={institution.id}
-                      value={institution.id.toString()}
-                    >
-                      {institution.name}
-                    </SelectItem>
-                  ))
-                )}
+                {(institutions ?? []).map((institution) => (
+                  <SelectItem
+                    key={institution.id}
+                    value={institution.id.toString()}
+                  >
+                    {institution.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
+            {!isEditMode &&
+              !isLoadingInstitutions &&
+              (institutions ?? []).length === 0 && (
+                <div className="text-sm text-muted-foreground space-y-0.5">
+                  <p>{t("transaction.emptyState.noInstitutions")}</p>
+                  <p>{t("transaction.emptyState.noInstitutionsLine2")}</p>
+                  <button
+                    type="button"
+                    className="underline text-primary"
+                    onClick={goToSettings}
+                  >
+                    {t("transaction.emptyState.settingsLink")}
+                  </button>
+                </div>
+              )}
           </div>
 
           <div className="space-y-2">

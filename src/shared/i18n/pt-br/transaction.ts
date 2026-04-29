@@ -23,6 +23,7 @@ export default {
     interestRate: "Taxa (% a.a.)",
     additionalRate: "Taxa Adicional (%)",
     investedValue: "Valor Investido",
+    currentPrice: "Cotação Atual (manual)",
   },
   operations: {
     buy: "Compra",
@@ -51,13 +52,11 @@ export default {
     selic: "Selic +",
   },
   emptyState: {
-    noTypes: "Nenhum tipo de ativo cadastrado. Acesse",
-    noInstitutions: "Nenhuma instituição cadastrada. Acesse",
-    settingsLink: "Configurações",
-    settingsSuffix: "para cadastrar.",
-  },
-  fields: {
-    currentPrice: "Cotação Atual (manual)",
+    noTypes: "Nenhum tipo de ativo cadastrado.",
+    noTypesLine2: "Acesse Configurações para cadastrar.",
+    noInstitutions: "Nenhuma instituição cadastrada.",
+    noInstitutionsLine2: "Acesse Configurações para cadastrar.",
+    settingsLink: "Ir para Configurações →",
   },
   messages: {
     success: "Ativo adicionado com sucesso",

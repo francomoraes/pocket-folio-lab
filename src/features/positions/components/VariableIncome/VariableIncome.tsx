@@ -229,7 +229,12 @@ const VariableIncome = () => {
                         <TooltipTrigger asChild>
                           <span className="flex items-center gap-1 text-amber-500 cursor-help">
                             <AlertCircle className="h-4 w-4 shrink-0" />
-                            {t("positions.table.priceUnavailable")}
+                            {asset.currentPriceCents !== asset.averagePriceCents
+                              ? formatCentsToCurrency(
+                                  asset.currentPriceCents,
+                                  asset.currency,
+                                )
+                              : t("positions.table.priceUnavailable")}
                           </span>
                         </TooltipTrigger>
                         <TooltipContent>

@@ -12,7 +12,7 @@ export const useInstitutions = () => {
   const queryClient = useQueryClient();
 
   const {
-    data: institutions,
+    data: rawInstitutions,
     isLoading,
     error,
     refetch,
@@ -22,6 +22,8 @@ export const useInstitutions = () => {
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
   });
+
+  const institutions = rawInstitutions ?? [];
 
   const createInstitutionMutation = useMutation({
     mutationFn: (data: CreateInstitution) => {
