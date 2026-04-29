@@ -44,7 +44,8 @@ export default {
     },
     empty: "No positions found. Add an asset to get started.",
     priceUnavailable: "N/A",
-    priceUnavailableTooltip: "Price unavailable. Edit the asset to set it manually. Last attempt: {{date}}",
+    priceUnavailableTooltip:
+      "Price unavailable. Edit the asset to set it manually. Last attempt: {{date}}",
   },
   fixedIncome: {
     indexation: {

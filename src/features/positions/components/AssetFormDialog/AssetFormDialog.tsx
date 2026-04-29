@@ -218,7 +218,10 @@ export const AssetFormDialog = ({
 
           {isEditMode && asset?.priceUnavailable && (
             <div className="space-y-2 rounded-md border border-amber-500/40 bg-amber-500/10 p-3">
-              <Label htmlFor="currentPrice" className="text-amber-600 dark:text-amber-400">
+              <Label
+                htmlFor="currentPrice"
+                className="text-amber-600 dark:text-amber-400"
+              >
                 {t("transaction.fields.currentPrice")}
               </Label>
               <Input

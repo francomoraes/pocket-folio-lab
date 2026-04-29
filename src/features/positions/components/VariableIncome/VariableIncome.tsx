@@ -234,7 +234,9 @@ const VariableIncome = () => {
                         </TooltipTrigger>
                         <TooltipContent>
                           {t("positions.table.priceUnavailableTooltip", {
-                            date: new Date(asset.updatedAt).toLocaleDateString(),
+                            date: new Date(
+                              asset.updatedAt,
+                            ).toLocaleDateString(),
                           })}
                         </TooltipContent>
                       </Tooltip>

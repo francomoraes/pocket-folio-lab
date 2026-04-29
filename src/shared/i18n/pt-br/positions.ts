@@ -44,7 +44,8 @@ export default {
     },
     empty: "Nenhuma posição encontrada. Adicione um ativo para começar.",
     priceUnavailable: "N/D",
-    priceUnavailableTooltip: "Cotação indisponível. Edite o ativo para informar o preço manualmente. Última tentativa: {{date}}",
+    priceUnavailableTooltip:
+      "Cotação indisponível. Edite o ativo para informar o preço manualmente. Última tentativa: {{date}}",
   },
   fixedIncome: {
     indexation: {
