@@ -19,6 +19,8 @@ import { useAssetTypes } from "@/features/settings/hooks/useAssetTypes";
 import { useAssetForm } from "@/features/positions/components/AssetFormDialog/useAssetForm";
 import { useTranslation } from "react-i18next";
 import { Asset } from "@/shared/types/asset";
+import { Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface AssetFormDialogProps {
   asset?: Asset | null;
@@ -32,6 +34,7 @@ export const AssetFormDialog = ({
   onOpenChange,
 }: AssetFormDialogProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const {
     formData,
@@ -49,8 +52,8 @@ export const AssetFormDialog = ({
     }
   };
 
-  const { institutions } = useInstitutions();
-  const { assetTypes } = useAssetTypes();
+  const { institutions, isLoading: isLoadingInstitutions } = useInstitutions();
+  const { assetTypes, isLoading: isLoadingTypes } = useAssetTypes();
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -87,11 +90,32 @@ export const AssetFormDialog = ({
                 />
               </SelectTrigger>
               <SelectContent>
-                {assetTypes?.map((type) => (
-                  <SelectItem key={type.id} value={type.name}>
-                    {type.name}
-                  </SelectItem>
-                ))}
+                {isLoadingTypes ? (
+                  <div className="flex items-center justify-center py-3">
+                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                  </div>
+                ) : assetTypes.length === 0 ? (
+                  <div className="px-2 py-3 text-sm text-muted-foreground leading-snug">
+                    {t("transaction.emptyState.noTypes")}{" "}
+                    <button
+                      type="button"
+                      className="underline text-primary"
+                      onClick={() => {
+                        handleOpenChange(false);
+                        navigate("/settings");
+                      }}
+                    >
+                      {t("transaction.emptyState.settingsLink")}
+                    </button>{" "}
+                    {t("transaction.emptyState.settingsSuffix")}
+                  </div>
+                ) : (
+                  assetTypes.map((type) => (
+                    <SelectItem key={type.id} value={type.name}>
+                      {type.name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -139,14 +163,35 @@ export const AssetFormDialog = ({
                 />
               </SelectTrigger>
               <SelectContent>
-                {institutions?.map((institution) => (
-                  <SelectItem
-                    key={institution.id}
-                    value={institution.id.toString()}
-                  >
-                    {institution.name}
-                  </SelectItem>
-                ))}
+                {isLoadingInstitutions ? (
+                  <div className="flex items-center justify-center py-3">
+                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                  </div>
+                ) : (institutions ?? []).length === 0 ? (
+                  <div className="px-2 py-3 text-sm text-muted-foreground leading-snug">
+                    {t("transaction.emptyState.noInstitutions")}{" "}
+                    <button
+                      type="button"
+                      className="underline text-primary"
+                      onClick={() => {
+                        handleOpenChange(false);
+                        navigate("/settings");
+                      }}
+                    >
+                      {t("transaction.emptyState.settingsLink")}
+                    </button>{" "}
+                    {t("transaction.emptyState.settingsSuffix")}
+                  </div>
+                ) : (
+                  (institutions ?? []).map((institution) => (
+                    <SelectItem
+                      key={institution.id}
+                      value={institution.id.toString()}
+                    >
+                      {institution.name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -170,6 +215,27 @@ export const AssetFormDialog = ({
               </SelectContent>
             </Select>
           </div>
+
+          {isEditMode && asset?.priceUnavailable && (
+            <div className="space-y-2 rounded-md border border-amber-500/40 bg-amber-500/10 p-3">
+              <Label htmlFor="currentPrice" className="text-amber-600 dark:text-amber-400">
+                {t("transaction.fields.currentPrice")}
+              </Label>
+              <Input
+                id="currentPrice"
+                type="number"
+                step="0.01"
+                placeholder="0.00"
+                value={formData.currentPrice}
+                onChange={(e) => updateField("currentPrice", e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                {t("positions.table.priceUnavailableTooltip", {
+                  date: new Date(asset.updatedAt).toLocaleDateString(),
+                })}
+              </p>
+            </div>
+          )}
 
           <div className="flex justify-end gap-2 sticky bottom-0 bg-background pt-4 mt-4">
             <Button

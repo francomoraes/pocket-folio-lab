@@ -50,6 +50,15 @@ export default {
     ipca: "IPCA +",
     selic: "Selic +",
   },
+  emptyState: {
+    noTypes: "No asset types registered. Go to",
+    noInstitutions: "No institutions registered. Go to",
+    settingsLink: "Settings",
+    settingsSuffix: "to add them.",
+  },
+  fields: {
+    currentPrice: "Current Price (manual)",
+  },
   messages: {
     success: "Asset added successfully",
     error: "Error processing asset. Please try again.",

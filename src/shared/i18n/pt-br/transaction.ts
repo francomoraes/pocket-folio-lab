@@ -50,6 +50,15 @@ export default {
     ipca: "IPCA +",
     selic: "Selic +",
   },
+  emptyState: {
+    noTypes: "Nenhum tipo de ativo cadastrado. Acesse",
+    noInstitutions: "Nenhuma instituição cadastrada. Acesse",
+    settingsLink: "Configurações",
+    settingsSuffix: "para cadastrar.",
+  },
+  fields: {
+    currentPrice: "Cotação Atual (manual)",
+  },
   messages: {
     success: "Ativo adicionado com sucesso",
     error: "Erro ao processar ativo. Por favor, tente novamente.",

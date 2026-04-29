@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { RefreshCw, Pencil, Trash } from "lucide-react";
+import { RefreshCw, Pencil, Trash, AlertCircle } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Card } from "@/shared/components/ui/card";
 import {
@@ -10,6 +10,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/shared/components/ui/tooltip";
 import {
   AssetFormDialog,
   CsvUploadDialog,
@@ -205,7 +210,10 @@ const VariableIncome = () => {
               </TableRow>
             ) : (
               assets?.data?.map((asset) => (
-                <TableRow key={asset.ticker}>
+                <TableRow
+                  key={asset.ticker}
+                  className={asset.priceUnavailable ? "bg-amber-500/10" : ""}
+                >
                   <TableCell className="font-medium">{asset.ticker}</TableCell>
                   <TableCell>{asset.type.assetClass.name}</TableCell>
                   <TableCell>{asset.quantity}</TableCell>
@@ -216,9 +224,25 @@ const VariableIncome = () => {
                     )}
                   </TableCell>
                   <TableCell>
-                    {formatCentsToCurrency(
-                      asset.currentPriceCents,
-                      asset.currency,
+                    {asset.priceUnavailable ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="flex items-center gap-1 text-amber-500 cursor-help">
+                            <AlertCircle className="h-4 w-4 shrink-0" />
+                            {t("positions.table.priceUnavailable")}
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {t("positions.table.priceUnavailableTooltip", {
+                            date: new Date(asset.updatedAt).toLocaleDateString(),
+                          })}
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      formatCentsToCurrency(
+                        asset.currentPriceCents,
+                        asset.currency,
+                      )
                     )}
                   </TableCell>
                   <TableCell className="font-medium">
