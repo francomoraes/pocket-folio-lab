@@ -5,6 +5,7 @@ import { PaginationQuery } from "@/shared/types/pagination";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 
 export const usePositions = ({
   page = 1,
@@ -53,7 +54,7 @@ export const usePositions = ({
       toast.success(t("transaction.messages.success"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || t("transaction.messages.addError"));
+      toast.error(resolveErrorMessage(error, "transaction.messages.addError"));
     },
   });
 
@@ -68,7 +69,9 @@ export const usePositions = ({
       toast.success(t("transaction.messages.updated"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || t("transaction.messages.updateError"));
+      toast.error(
+        resolveErrorMessage(error, "transaction.messages.updateError"),
+      );
     },
   });
 
@@ -83,7 +86,9 @@ export const usePositions = ({
       toast.success(t("transaction.messages.deleted"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || t("transaction.messages.deleteError"));
+      toast.error(
+        resolveErrorMessage(error, "transaction.messages.deleteError"),
+      );
     },
   });
 

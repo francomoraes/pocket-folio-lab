@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Pencil, Trash } from "lucide-react";
+import { AlertCircle, Pencil, Trash } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Card } from "@/shared/components/ui/card";
 import {
@@ -10,6 +10,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/shared/components/ui/tooltip";
 import { FixedIncomeFormDialog } from "@/features/positions/components";
 import CircularProgress from "@/shared/components/ui/circular-progress";
 import {
@@ -232,22 +237,50 @@ const FixedIncome = () => {
               </TableRow>
             ) : (
               fixedIncomeAssets?.data?.map((fixedIncomeAsset) => (
-                <TableRow key={fixedIncomeAsset.description}>
+                <TableRow
+                  key={fixedIncomeAsset.description}
+                  className={
+                    fixedIncomeAsset.manualMode ? "bg-amber-500/10" : ""
+                  }
+                >
                   <TableCell className="font-medium">
                     {fixedIncomeAsset.description}
                   </TableCell>
                   <TableCell>{fixedIncomeAsset.type.assetClass.name}</TableCell>
                   <TableCell>
-                    {formatDateOnly(fixedIncomeAsset.startDate)}
+                    {fixedIncomeAsset.manualMode || !fixedIncomeAsset.startDate
+                      ? "—"
+                      : formatDateOnly(fixedIncomeAsset.startDate)}
                   </TableCell>
                   <TableCell>
-                    {formatDateOnly(fixedIncomeAsset.maturityDate)}
+                    {fixedIncomeAsset.manualMode ||
+                    !fixedIncomeAsset.maturityDate
+                      ? "—"
+                      : formatDateOnly(fixedIncomeAsset.maturityDate)}
                   </TableCell>
                   <TableCell>
-                    {getIndexationLabel(
-                      fixedIncomeAsset.indexationMode || IndexationMode.PRE,
-                      fixedIncomeAsset.interestRate,
-                      t,
+                    {fixedIncomeAsset.manualMode ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="flex items-center gap-1 text-amber-500">
+                            <AlertCircle className="h-4 w-4 shrink-0" />
+                            {t("positions.fixedIncome.manualMode")}
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {t("positions.fixedIncome.manualModeTooltip", {
+                            date: new Date(
+                              fixedIncomeAsset.updatedAt,
+                            ).toLocaleDateString(),
+                          })}
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      getIndexationLabel(
+                        fixedIncomeAsset.indexationMode || IndexationMode.PRE,
+                        fixedIncomeAsset.interestRate,
+                        t,
+                      )
                     )}
                   </TableCell>
                   <TableCell>

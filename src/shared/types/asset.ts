@@ -16,6 +16,7 @@ export interface Asset {
   portfolioPercentage: number;
   institution: Institution;
   currency: string;
+  priceUnavailable?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -36,6 +37,7 @@ export interface UpdateAssetRequest {
   averagePriceCents?: number;
   institutionId?: number;
   currency?: string;
+  manualCurrentPriceCents?: number;
 }
 
 export interface PaginatedResponse<T> {

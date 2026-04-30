@@ -36,6 +36,7 @@ export interface Position {
 export interface AllocationByClass {
   class: string;
   type: string;
+  currency?: string;
   actualPercentage?: number;
   targetPercentage?: number;
   actualValue?: number;
