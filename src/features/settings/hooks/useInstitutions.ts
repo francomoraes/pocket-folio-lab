@@ -8,7 +8,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 
-export const useInstitutions = () => {
+export const useInstitutions = (options?: { enabled?: boolean }) => {
   const queryClient = useQueryClient();
 
   const {
@@ -21,6 +21,7 @@ export const useInstitutions = () => {
     queryFn: async () => institutionService.list(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
+    enabled: options?.enabled ?? true,
   });
 
   const institutions = rawInstitutions ?? [];

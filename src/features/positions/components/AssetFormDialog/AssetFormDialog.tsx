@@ -56,8 +56,12 @@ export const AssetFormDialog = ({
     }
   };
 
-  const { institutions, isLoading: isLoadingInstitutions } = useInstitutions();
-  const { assetTypes, isLoading: isLoadingTypes } = useAssetTypes();
+  const { institutions, isLoading: isLoadingInstitutions } = useInstitutions({
+    enabled: open,
+  });
+  const { assetTypes, isLoading: isLoadingTypes } = useAssetTypes({
+    enabled: open,
+  });
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>

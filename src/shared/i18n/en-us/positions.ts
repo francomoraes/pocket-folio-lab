@@ -45,9 +45,12 @@ export default {
     empty: "No positions found. Add an asset to get started.",
     priceUnavailable: "N/A",
     priceUnavailableTooltip:
-      "Price unavailable. Edit the asset to set it manually. Last attempt: {{date}}",
+      "Price unavailable. Edit the asset to set it manually. Last update: {{date}}",
   },
   fixedIncome: {
+    manualMode: "Manual",
+    manualModeTooltip:
+      "Value updated manually. Edit the asset to update the current value. Last update: {{date}}",
     indexation: {
       pre: "{{rate}}% p.a.",
       cdi: "CDI + {{rate}}%",

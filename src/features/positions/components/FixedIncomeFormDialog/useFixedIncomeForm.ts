@@ -14,6 +14,7 @@ type FixedIncomeFormData = {
   indexationMode: IndexationMode;
   interestRate: string;
   investedValue: string;
+  currentValue: string;
   institutionId: number | null;
   typeId: number | null;
   currency: string;
@@ -26,6 +27,7 @@ const initialState: FixedIncomeFormData = {
   indexationMode: IndexationMode.PRE,
   interestRate: "",
   investedValue: "",
+  currentValue: "",
   institutionId: null,
   typeId: null,
   currency: "BRL",
@@ -57,11 +59,15 @@ export const useFixedIncomeForm = (
     if (asset) {
       setFormData({
         description: asset.description,
-        startDate: toInputDate(asset.startDate),
-        maturityDate: toInputDate(asset.maturityDate),
+        startDate: asset.startDate ? toInputDate(asset.startDate) : "",
+        maturityDate: asset.maturityDate ? toInputDate(asset.maturityDate) : "",
         indexationMode: asset.indexationMode || IndexationMode.PRE,
-        interestRate: asset.interestRate.toString(),
+        interestRate:
+          asset.interestRate != null ? asset.interestRate.toString() : "",
         investedValue: (asset.investedValueCents / 100).toString(),
+        currentValue: asset.manualMode
+          ? (asset.currentValueCents / 100).toString()
+          : "",
         institutionId: asset.institution.id,
         typeId: asset.type.id,
         currency: asset.currency,
@@ -86,21 +92,6 @@ export const useFixedIncomeForm = (
       toast.error("A descrição é obrigatória.");
       return false;
     }
-    if (!formData.startDate) {
-      toast.error("A data de início é obrigatória.");
-      return false;
-    }
-    if (!formData.maturityDate) {
-      toast.error("A data de vencimento é obrigatória.");
-      return false;
-    }
-    if (
-      !formData.interestRate.trim() ||
-      parseFloat(formData.interestRate) < 0
-    ) {
-      toast.error("A taxa de juros deve ser maior ou igual a zero");
-      return false;
-    }
     if (
       !formData.investedValue.trim() ||
       parseFloat(formData.investedValue) <= 0
@@ -120,16 +111,16 @@ export const useFixedIncomeForm = (
       toast.error("O tipo de ativo é obrigatório.");
       return false;
     }
-
-    // Validar datas
-    const startDate = new Date(formData.startDate);
-    const maturityDate = new Date(formData.maturityDate);
-
-    if (maturityDate <= startDate) {
-      toast.error("A data de vencimento deve ser posterior à data de início.");
-      return false;
+    if (formData.startDate && formData.maturityDate) {
+      const startDate = new Date(formData.startDate);
+      const maturityDate = new Date(formData.maturityDate);
+      if (maturityDate <= startDate) {
+        toast.error(
+          "A data de vencimento deve ser posterior à data de início.",
+        );
+        return false;
+      }
     }
-
     return true;
   };
 
@@ -142,44 +133,41 @@ export const useFixedIncomeForm = (
 
     if (!validateForm()) return;
 
-    const interestRate = parseFloat(formData.interestRate);
-    const investedValue = parseFloat(formData.investedValue);
-    const investedValueCents = formatCurrencyToCents(investedValue);
+    const hasRate = formData.interestRate.trim() !== "";
+    const hasCurrentValue = formData.currentValue.trim() !== "";
+    const manualMode = hasCurrentValue && !hasRate;
+
+    const investedValueCents = formatCurrencyToCents(
+      parseFloat(formData.investedValue),
+    );
+    const currentValueCents = manualMode
+      ? formatCurrencyToCents(parseFloat(formData.currentValue))
+      : undefined;
+    const interestRate = hasRate
+      ? parseFloat(formData.interestRate)
+      : undefined;
     const institutionId = Number(formData.institutionId);
     const typeId = Number(formData.typeId);
 
+    const payload = {
+      description: formData.description,
+      manualMode,
+      startDate: formData.startDate || undefined,
+      maturityDate: formData.maturityDate || undefined,
+      indexationMode: !manualMode ? formData.indexationMode : undefined,
+      interestRate,
+      investedValueCents,
+      currentValueCents,
+      institutionId,
+      typeId,
+      currency: formData.currency,
+    };
+
     try {
       if (isEditMode && asset) {
-        // Modo edição
-        await updateFixedIncomeAsset({
-          id: asset.id,
-          data: {
-            description: formData.description,
-            startDate: formData.startDate,
-            maturityDate: formData.maturityDate,
-            indexationMode: formData.indexationMode,
-            interestRate,
-            investedValueCents,
-            institutionId,
-            typeId,
-            currency: formData.currency,
-          },
-        });
+        await updateFixedIncomeAsset({ id: asset.id, data: payload });
       } else {
-        // Modo criação
-        await createFixedIncomeAsset({
-          data: {
-            description: formData.description,
-            startDate: formData.startDate,
-            maturityDate: formData.maturityDate,
-            indexationMode: formData.indexationMode,
-            interestRate,
-            investedValueCents,
-            institutionId,
-            typeId,
-            currency: formData.currency,
-          },
-        });
+        await createFixedIncomeAsset({ data: payload });
       }
       resetForm();
       onSuccess?.();

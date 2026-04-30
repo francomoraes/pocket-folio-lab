@@ -24,6 +24,7 @@ import CircularProgress from "@/shared/components/ui/circular-progress";
 import {
   formatCentsToCurrency,
   formatPercentage,
+  formatQuantity,
 } from "@/shared/utils/formatters";
 import { usePagination } from "@/shared/hooks/usePagination";
 import { useEffect, useState } from "react";
@@ -215,8 +216,10 @@ const VariableIncome = () => {
                   className={asset.priceUnavailable ? "bg-amber-500/10" : ""}
                 >
                   <TableCell className="font-medium">{asset.ticker}</TableCell>
-                  <TableCell>{asset.type.assetClass.name}</TableCell>
-                  <TableCell>{asset.quantity}</TableCell>
+                  <TableCell>{asset.type.name}</TableCell>
+                  <TableCell>
+                    {formatQuantity(Number(asset.quantity))}
+                  </TableCell>
                   <TableCell>
                     {formatCentsToCurrency(
                       asset.averagePriceCents,

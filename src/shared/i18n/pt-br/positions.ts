@@ -45,9 +45,12 @@ export default {
     empty: "Nenhuma posição encontrada. Adicione um ativo para começar.",
     priceUnavailable: "N/D",
     priceUnavailableTooltip:
-      "Cotação indisponível. Edite o ativo para informar o preço manualmente. Última tentativa: {{date}}",
+      "Cotação indisponível. Edite o ativo para informar o preço manualmente. Última atualização: {{date}}",
   },
   fixedIncome: {
+    manualMode: "Manual",
+    manualModeTooltip:
+      "Valor atualizado manualmente. Edite o ativo para atualizar o valor atual. Última atualização: {{date}}",
     indexation: {
       pre: "{{rate}}% a.a.",
       cdi: "CDI + {{rate}}%",
