@@ -13,6 +13,7 @@ export interface FixedIncomeAsset {
   userId: number;
   type: AssetType;
   description: string;
+  manualMode: boolean;
   startDate: Date;
   maturityDate: Date;
   indexationMode: IndexationMode;
@@ -30,11 +31,13 @@ export interface FixedIncomeAsset {
 
 export interface CreateFixedIncomeAsset {
   description: string;
-  startDate: string;
-  maturityDate: string;
+  manualMode?: boolean;
+  startDate?: string;
+  maturityDate?: string;
   indexationMode?: IndexationMode;
-  interestRate: number;
+  interestRate?: number;
   investedValueCents: number;
+  currentValueCents?: number;
   institutionId: number;
   typeId: number;
   currency: string;
@@ -43,11 +46,13 @@ export interface CreateFixedIncomeAsset {
 export interface UpdateFixedIncomeAsset {
   id?: number;
   description?: string;
+  manualMode?: boolean;
   startDate?: string;
   maturityDate?: string;
   indexationMode?: IndexationMode;
   interestRate?: number;
   investedValueCents?: number;
+  currentValueCents?: number;
   institutionId?: number;
   typeId?: number;
   currency?: string;

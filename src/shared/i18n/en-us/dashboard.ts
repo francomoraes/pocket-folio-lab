@@ -4,6 +4,8 @@ export default {
   dragToReorder: "Drag to reorder",
   sections: {
     allocationTable: "Allocation Table",
+    allocationByClass: "Allocation by Class",
+    allocationByType: "Allocation by Type",
     allocationCharts: "Allocation Charts",
     actualVsTarget: "Actual vs Target Comparison",
     wealthEvolution: "Wealth Evolution",

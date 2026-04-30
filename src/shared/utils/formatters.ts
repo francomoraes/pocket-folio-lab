@@ -27,6 +27,21 @@ export const formatCurrencyToCents = (value: number): number => {
   return Math.round(value * 100);
 };
 
+export const formatQuantity = (value: number): string => {
+  // Use up to 8 decimal places for precision (e.g. BTC), strip trailing zeros,
+  // but always show at least 2 decimal places for whole-number-like quantities.
+  const str = Number(value)
+    .toFixed(8)
+    .replace(/(\.\d*?)0+$/, "$1")
+    .replace(/\.$/, "");
+  // Ensure at least 2 decimal places for display consistency
+  const dotIndex = str.indexOf(".");
+  if (dotIndex === -1) return `${str}.00`;
+  const decimals = str.length - dotIndex - 1;
+  if (decimals < 2) return str.padEnd(str.length + (2 - decimals), "0");
+  return str;
+};
+
 export const formatPercentage = (value: number): string => {
   return `${value.toFixed(2)}%`;
 };
