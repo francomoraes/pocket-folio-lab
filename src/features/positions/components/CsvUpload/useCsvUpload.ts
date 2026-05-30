@@ -14,9 +14,23 @@ export const useCsvUpload = () => {
 
   const uploadMutation = useMutation({
     mutationFn: (file: File) => csvService.uploadCsv(file),
-    onSuccess: () => {
-      toast.success(t("csv.upload.uploadedSuccess"));
+    onSuccess: (data) => {
+      const { autoCreated } = data;
+      const totalCreated =
+        autoCreated.institutions.length +
+        autoCreated.assetClasses.length +
+        autoCreated.assetTypes.length;
+
+      const message =
+        totalCreated > 0
+          ? `${t("csv.upload.uploadedSuccess")} ${t("csv.upload.autoCreatedSummary", { count: totalCreated })}`
+          : t("csv.upload.uploadedSuccess");
+
+      toast.success(message);
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.INSTITUTIONS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_CLASSES });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_TYPES });
       setIsOpen(false);
       setFile(null);
     },

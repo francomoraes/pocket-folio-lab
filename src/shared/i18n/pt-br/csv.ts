@@ -9,6 +9,7 @@ export default {
     success: "Posições importadas com sucesso",
     error: "Erro ao importar posições",
     uploadedSuccess: "Arquivo CSV enviado com sucesso!",
+    autoCreatedSummary: "{{count}} entidade(s) criada(s) automaticamente.",
     downloadedSuccess: "Arquivo CSV baixado com sucesso!",
     uploadError: "Erro ao enviar o arquivo CSV.",
     downloadError: "Erro ao baixar o arquivo CSV.",

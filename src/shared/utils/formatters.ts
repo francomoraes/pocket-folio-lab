@@ -27,6 +27,12 @@ export const formatCurrencyToCents = (value: number): number => {
   return Math.round(value * 100);
 };
 
+export const formatQuantity = (value: number): string => {
+  return new Intl.NumberFormat("pt-BR", {
+    maximumFractionDigits: 8,
+  }).format(value);
+};
+
 export const formatPercentage = (value: number): string => {
   return `${value.toFixed(2)}%`;
 };

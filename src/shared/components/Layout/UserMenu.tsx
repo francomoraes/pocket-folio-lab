@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 
 export const UserMenu = () => {
   const { user, logout, updateUser } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
   if (!user) {
@@ -55,7 +55,7 @@ export const UserMenu = () => {
             {t("auth.userMenu.profile")}
           </Button>
           <Select
-            value={user.locale || "en-US"}
+            value={i18n.language}
             onValueChange={(locale) => updateUser({ ...user, locale })}
           >
             <SelectTrigger>

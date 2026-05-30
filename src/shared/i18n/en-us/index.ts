@@ -8,6 +8,7 @@ import auth from "./auth";
 import pagination from "./pagination";
 import csv from "./csv";
 import global from "./global";
+import home from "./home";
 
 export default {
   common,
@@ -20,4 +21,5 @@ export default {
   pagination,
   csv,
   global,
+  home,
 };

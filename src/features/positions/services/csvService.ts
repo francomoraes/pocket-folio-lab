@@ -1,6 +1,15 @@
 import { API_ENDPOINTS } from "@/config/api";
 import { api } from "@/lib/axios";
 
+interface CsvUploadResponse {
+  message: string;
+  autoCreated: {
+    institutions: string[];
+    assetClasses: string[];
+    assetTypes: string[];
+  };
+}
+
 class CsvService {
   async downloadTemplate(): Promise<Blob> {
     const response = await api.get<Blob>(API_ENDPOINTS.csv.downloadTemplate, {
@@ -15,10 +24,14 @@ class CsvService {
     return response.data;
   }
 
-  async uploadCsv(file: File): Promise<void> {
+  async uploadCsv(file: File): Promise<CsvUploadResponse> {
     const formData = new FormData();
     formData.append("file", file);
-    await api.post(API_ENDPOINTS.csv.upload, formData);
+    const response = await api.post<CsvUploadResponse>(
+      API_ENDPOINTS.csv.upload,
+      formData,
+    );
+    return response.data;
   }
 }
 
