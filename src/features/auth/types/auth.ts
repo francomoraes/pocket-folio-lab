@@ -39,7 +39,7 @@ export interface AuthContextType {
   token: string | null;
   login: (data: LoginRequest) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   updateUser: (updatedUser: UpdateUserRequest) => Promise<void>;
   isLoading: boolean;
   isInitializing: boolean;

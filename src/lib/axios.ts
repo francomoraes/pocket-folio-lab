@@ -1,38 +1,97 @@
 import { API_URL } from "@/config/api";
 import axios from "axios";
 import i18n from "@/shared/i18n/config";
+import { tokenStore } from "@/lib/tokenStore";
 
 export const api = axios.create({
   baseURL: API_URL,
-  timeout: 10000, // 10 seconds
+  timeout: 10000,
+  withCredentials: true, // needed for the refresh token cookie
 });
 
-// Adds token to every requisition
+// Separate instance for the refresh call — avoids triggering the 401 interceptor recursively
+const refreshApi = axios.create({
+  baseURL: API_URL,
+  withCredentials: true,
+});
+
+// For use in AuthContext on mount — avoids going through the 401 interceptor
+export async function tryRefreshToken(): Promise<string | null> {
+  try {
+    const { data } = await refreshApi.post<{ token: string }>("/auth/refresh");
+    return data.token;
+  } catch {
+    return null;
+  }
+}
+
+let isRefreshing = false;
+let pendingRequests: Array<{
+  resolve: (token: string) => void;
+  reject: (err: unknown) => void;
+}> = [];
+
+function processQueue(error: unknown, token: string | null) {
+  pendingRequests.forEach((p) =>
+    error ? p.reject(error) : p.resolve(token!),
+  );
+  pendingRequests = [];
+}
+
+// Adds access token to every request
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("auth_token");
+    const token = tokenStore.get();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  },
+  (error) => Promise.reject(error),
 );
 
-// Treats response errors
+// Handles 401 by refreshing the access token via the HttpOnly cookie
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    // Extract error message from backend response
-    const backendMessage =
-      error.response?.data?.message || error.response?.data?.error;
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
     const statusCode = error.response?.status;
 
-    // Create a more informative error message
+    if (statusCode === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          pendingRequests.push({ resolve, reject });
+        }).then((token) => {
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+          return api(originalRequest);
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const { data } = await refreshApi.post<{ token: string }>(
+          "/auth/refresh",
+        );
+        tokenStore.set(data.token);
+        processQueue(null, data.token);
+        originalRequest.headers.Authorization = `Bearer ${data.token}`;
+        return api(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        tokenStore.clear();
+        tokenStore.triggerLogout();
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    // Build informative error for consumers
+    const backendMessage =
+      error.response?.data?.message || error.response?.data?.error;
+
     let errorMessage = error.message;
     if (backendMessage) {
       errorMessage = backendMessage;
@@ -40,9 +99,7 @@ api.interceptors.response.use(
       errorMessage = `${i18n.t("common.status.error")} ${statusCode}: ${error.message}`;
     }
 
-    // Create a new error with the backend message
     const enhancedError = new Error(errorMessage);
-    // Preserve original error properties
     Object.assign(enhancedError, {
       response: error.response,
       request: error.request,
@@ -50,17 +107,6 @@ api.interceptors.response.use(
       code: error.code,
       status: statusCode,
     });
-
-    switch (statusCode) {
-      case 401:
-        localStorage.removeItem("auth_token");
-        localStorage.removeItem("auth_user");
-        window.location.href = "/login";
-        break;
-
-      default:
-        break;
-    }
 
     return Promise.reject(enhancedError);
   },

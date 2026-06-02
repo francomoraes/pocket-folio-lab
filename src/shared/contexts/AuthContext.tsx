@@ -1,6 +1,5 @@
 import {
   AuthContextType,
-  AuthResponse,
   LoginRequest,
   RegisterRequest,
   UpdateUserRequest,
@@ -10,55 +9,67 @@ import { createContext, useEffect, useState } from "react";
 import { authService } from "@/features/auth/services/authService";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { tokenStore } from "@/lib/tokenStore";
+import { api, tryRefreshToken } from "@/lib/axios";
+import { API_ENDPOINTS } from "@/config/api";
 
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined,
 );
 
-const TOKEN_KEY = "auth_token";
+// User info (non-sensitive) kept in localStorage for fast rendering across page loads
 const USER_KEY = "auth_user";
 
+function persistUser(user: User) {
+  localStorage.setItem(USER_KEY, JSON.stringify(user));
+}
+
+function clearPersistedUser() {
+  localStorage.removeItem(USER_KEY);
+}
+
+function loadPersistedUser(): User | null {
+  try {
+    const stored = localStorage.getItem(USER_KEY);
+    return stored ? JSON.parse(stored) : null;
+  } catch {
+    return null;
+  }
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(loadPersistedUser);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
   const { i18n } = useTranslation();
 
-  // Helper function to check if JWT token is expired
-  const isTokenExpired = (token: string): boolean => {
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      const expirationTime = payload.exp * 1000; // Convert to milliseconds
-      return Date.now() >= expirationTime;
-    } catch (error) {
-      return true; // If we can't decode, consider it expired
-    }
-  };
+  function applyToken(newToken: string | null) {
+    tokenStore.set(newToken);
+    setToken(newToken);
+  }
 
+  // Register logout handler so the axios interceptor can force logout on refresh failure
   useEffect(() => {
-    const storedToken = localStorage.getItem(TOKEN_KEY);
-    const storedUser = localStorage.getItem(USER_KEY);
+    tokenStore.setLogoutHandler(() => {
+      applyToken(null);
+      setUser(null);
+      clearPersistedUser();
+    });
+  }, []);
 
-    if (storedToken && storedUser) {
-      // Check if token is expired
-      if (isTokenExpired(storedToken)) {
-        // Token is expired, clear storage
-        localStorage.removeItem(TOKEN_KEY);
-        localStorage.removeItem(USER_KEY);
+  // On mount: try to restore session via the refresh token cookie (HttpOnly)
+  useEffect(() => {
+    tryRefreshToken().then((newToken) => {
+      if (newToken) {
+        applyToken(newToken);
       } else {
-        // Token is valid, restore session
-        const parsedUser = JSON.parse(storedUser);
-        setToken(storedToken);
-        setUser(parsedUser);
-
-        if (parsedUser.locale) {
-          i18n.changeLanguage(parsedUser.locale);
-        }
+        applyToken(null);
+        setUser(null);
+        clearPersistedUser();
       }
-    }
-
-    setIsInitializing(false);
+      setIsInitializing(false);
+    });
   }, []);
 
   useEffect(() => {
@@ -71,14 +82,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     try {
       const response = await authService.login(data);
-
+      applyToken(response.token);
       setUser(response.user);
-      setToken(response.token);
-
-      localStorage.setItem(TOKEN_KEY, response.token);
-      localStorage.setItem(USER_KEY, JSON.stringify(response.user));
-    } catch (error) {
-      throw error;
+      persistUser(response.user);
     } finally {
       setIsLoading(false);
     }
@@ -88,11 +94,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     try {
       const response = await authService.register(data);
+      applyToken(response.token);
       setUser(response.user);
-      setToken(response.token);
-
-      localStorage.setItem(TOKEN_KEY, response.token);
-      localStorage.setItem(USER_KEY, JSON.stringify(response.user));
+      persistUser(response.user);
     } catch (error) {
       console.error(error);
       throw error;
@@ -101,23 +105,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await api.post(API_ENDPOINTS.auth.logout);
+    } catch {
+      // Proceed with local logout even if the server call fails
+    }
+    applyToken(null);
     setUser(null);
-    setToken(null);
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
+    clearPersistedUser();
     toast.success("Logout successful");
   };
 
   const updateUser = async (updatedUser: UpdateUserRequest) => {
     setIsLoading(true);
-
     try {
       const response = await authService.updateUser(updatedUser);
+      applyToken(response.token);
       setUser(response.user);
-      setToken(response.token);
-      localStorage.setItem(USER_KEY, JSON.stringify(response.user));
-      localStorage.setItem(TOKEN_KEY, response.token);
+      persistUser(response.user);
       toast.success("User updated successfully");
     } catch (error) {
       toast.error("Failed to update user");
