@@ -208,8 +208,10 @@ const VariableIncome = () => {
               assets?.data?.map((asset) => (
                 <TableRow key={asset.ticker}>
                   <TableCell className="font-medium">{asset.ticker}</TableCell>
-                  <TableCell>{asset.type.assetClass.name}</TableCell>
-                  <TableCell>{formatQuantity(Number(asset.quantity))}</TableCell>
+                  <TableCell>{asset.type.name}</TableCell>
+                  <TableCell>
+                    {formatQuantity(Number(asset.quantity))}
+                  </TableCell>
                   <TableCell>
                     {formatCentsToCurrency(
                       asset.averagePriceCents,
