@@ -112,8 +112,8 @@ const FixedIncome = () => {
     );
   }
   return (
-    <div>
-      <div className="flex gap-2 justify-start mb-2">
+    <div className="flex flex-col flex-1 min-h-0">
+      <div className="flex gap-2 justify-start mb-2 shrink-0">
         <Button onClick={handleCreateAsset}>
           {t("positions.actions.addAsset")}
         </Button>
@@ -139,8 +139,9 @@ const FixedIncome = () => {
         isLoading={isDeletingFixedIncomeAsset}
       />
 
-      <Card className="flex-1 flex flex-col min-h-0 h-full">
-        <Table>
+      <Card className="flex-1 flex flex-col min-h-0 overflow-hidden">
+        <div className="overflow-auto flex-1 min-h-0">
+        <Table wrapperClassName="overflow-visible">
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
               <SortableTableHead
@@ -351,7 +352,7 @@ const FixedIncome = () => {
             )}
           </TableBody>
         </Table>
-        {/* simple pagination */}
+        </div>
         <PaginationControls pagination={pagination} />
       </Card>
     </div>

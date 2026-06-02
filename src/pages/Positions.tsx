@@ -39,9 +39,9 @@ export const Positions = () => {
     consolidatedPatrimonyBRL / (usdToBrlRate || 5.7);
 
   return (
-    <div className="flex flex-col gap-3 h-auto min-h-[calc(100vh-61px)] p-3">
-      <Tabs defaultValue="positions" className="w-full">
-        <div className="flex flex-col sm:flex-row gap-3 sm:justify-between items-start sm:items-center mb-4">
+    <div className="flex flex-col gap-3 h-[calc(100vh-61px)] p-3 overflow-hidden">
+      <Tabs defaultValue="positions" className="w-full flex flex-col flex-1 min-h-0">
+        <div className="flex flex-col sm:flex-row gap-3 sm:justify-between items-start sm:items-center mb-4 shrink-0">
           <TabsList className="w-full sm:w-auto">
             <TabsTrigger className="flex-1 sm:flex-none" value="positions">
               {t("positions.tabs.variableIncome")}
@@ -134,10 +134,10 @@ export const Positions = () => {
           </Card>
         </div>
 
-        <TabsContent value="positions" className="w-full">
+        <TabsContent value="positions" className="w-full flex flex-col flex-1 min-h-0 mt-0">
           <VariableIncome />
         </TabsContent>
-        <TabsContent value="allocation" className="w-full">
+        <TabsContent value="allocation" className="w-full flex flex-col flex-1 min-h-0 mt-0">
           <FixedIncome />
         </TabsContent>
       </Tabs>
