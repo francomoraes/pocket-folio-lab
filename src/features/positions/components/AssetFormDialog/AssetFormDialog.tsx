@@ -19,6 +19,8 @@ import { useAssetTypes } from "@/features/settings/hooks/useAssetTypes";
 import { useAssetForm } from "@/features/positions/components/AssetFormDialog/useAssetForm";
 import { useTranslation } from "react-i18next";
 import { Asset } from "@/shared/types/asset";
+import { Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface AssetFormDialogProps {
   asset?: Asset | null;
@@ -32,6 +34,11 @@ export const AssetFormDialog = ({
   onOpenChange,
 }: AssetFormDialogProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const goToSettings = () => {
+    navigate("/settings");
+  };
 
   const {
     formData,
@@ -49,8 +56,12 @@ export const AssetFormDialog = ({
     }
   };
 
-  const { institutions } = useInstitutions();
-  const { assetTypes } = useAssetTypes();
+  const { institutions, isLoading: isLoadingInstitutions } = useInstitutions({
+    enabled: open,
+  });
+  const { assetTypes, isLoading: isLoadingTypes } = useAssetTypes({
+    enabled: open,
+  });
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -80,20 +91,40 @@ export const AssetFormDialog = ({
             <Select
               value={formData.type}
               onValueChange={(v) => updateField("type", v)}
+              disabled={isLoadingTypes || assetTypes.length === 0}
             >
               <SelectTrigger>
-                <SelectValue
-                  placeholder={t("transaction.placeholders.selectType")}
-                />
+                {isLoadingTypes ? (
+                  <span className="flex items-center gap-2 text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  </span>
+                ) : (
+                  <SelectValue
+                    placeholder={t("transaction.placeholders.selectType")}
+                  />
+                )}
               </SelectTrigger>
               <SelectContent>
-                {assetTypes?.map((type) => (
+                {assetTypes.map((type) => (
                   <SelectItem key={type.id} value={type.name}>
                     {type.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            {!isLoadingTypes && assetTypes.length === 0 && (
+              <div className="text-sm text-muted-foreground space-y-0.5">
+                <p>{t("transaction.emptyState.noTypes")}</p>
+                <p>{t("transaction.emptyState.noTypesLine2")}</p>
+                <button
+                  type="button"
+                  className="underline text-primary"
+                  onClick={goToSettings}
+                >
+                  {t("transaction.emptyState.settingsLink")}
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -131,15 +162,27 @@ export const AssetFormDialog = ({
                 formData.institutionId ? formData.institutionId.toString() : ""
               }
               onValueChange={(v) => updateField("institutionId", v)}
-              disabled={isEditMode}
+              disabled={
+                isEditMode ||
+                isLoadingInstitutions ||
+                (institutions ?? []).length === 0
+              }
             >
               <SelectTrigger>
-                <SelectValue
-                  placeholder={t("transaction.placeholders.selectInstitution")}
-                />
+                {isLoadingInstitutions ? (
+                  <span className="flex items-center gap-2 text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  </span>
+                ) : (
+                  <SelectValue
+                    placeholder={t(
+                      "transaction.placeholders.selectInstitution",
+                    )}
+                  />
+                )}
               </SelectTrigger>
               <SelectContent>
-                {institutions?.map((institution) => (
+                {(institutions ?? []).map((institution) => (
                   <SelectItem
                     key={institution.id}
                     value={institution.id.toString()}
@@ -149,6 +192,21 @@ export const AssetFormDialog = ({
                 ))}
               </SelectContent>
             </Select>
+            {!isEditMode &&
+              !isLoadingInstitutions &&
+              (institutions ?? []).length === 0 && (
+                <div className="text-sm text-muted-foreground space-y-0.5">
+                  <p>{t("transaction.emptyState.noInstitutions")}</p>
+                  <p>{t("transaction.emptyState.noInstitutionsLine2")}</p>
+                  <button
+                    type="button"
+                    className="underline text-primary"
+                    onClick={goToSettings}
+                  >
+                    {t("transaction.emptyState.settingsLink")}
+                  </button>
+                </div>
+              )}
           </div>
 
           <div className="space-y-2">
@@ -170,6 +228,30 @@ export const AssetFormDialog = ({
               </SelectContent>
             </Select>
           </div>
+
+          {isEditMode && asset?.priceUnavailable && (
+            <div className="space-y-2 rounded-md border border-amber-500/40 bg-amber-500/10 p-3">
+              <Label
+                htmlFor="currentPrice"
+                className="text-amber-600 dark:text-amber-400"
+              >
+                {t("transaction.fields.currentPrice")}
+              </Label>
+              <Input
+                id="currentPrice"
+                type="number"
+                step="0.01"
+                placeholder="0.00"
+                value={formData.currentPrice}
+                onChange={(e) => updateField("currentPrice", e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                {t("positions.table.priceUnavailableTooltip", {
+                  date: new Date(asset.updatedAt).toLocaleDateString(),
+                })}
+              </p>
+            </div>
+          )}
 
           <div className="flex justify-end gap-2 sticky bottom-0 bg-background pt-4 mt-4">
             <Button

@@ -10,6 +10,7 @@ import {
 } from "@/schemas/auth.schema";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 
 export const useLoginForm = () => {
   const { t } = useTranslation();
@@ -40,9 +41,10 @@ export const useLoginForm = () => {
       }
       window.location.href = "/";
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : t("auth.messages.loginError");
-      toast.error(message);
+      const fallbackKey = isRegisterMode
+        ? "auth.messages.registerError"
+        : "auth.messages.loginError";
+      toast.error(resolveErrorMessage(error, fallbackKey));
     }
   };
 

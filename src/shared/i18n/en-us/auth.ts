@@ -89,4 +89,31 @@ export default {
     passwordNumber: "Password must contain at least one number",
     passwordSymbol: "Password must contain at least one symbol (@$!%*?&)",
   },
+  errorCodes: {
+    USER_ALREADY_EXISTS: "This email is already registered",
+    INVALID_CREDENTIALS: "Invalid email or password",
+    USER_NOT_FOUND: "User not found",
+    CURRENT_PASSWORD_REQUIRED: "Enter your current password to change it",
+    INVALID_CURRENT_PASSWORD: "Current password is incorrect",
+    ASSET_CLASS_ALREADY_EXISTS: "This asset class already exists",
+    ASSET_CLASS_NOT_FOUND: "Asset class not found",
+    ASSET_CLASS_HAS_ASSET_TYPES:
+      "Cannot delete an asset class that has associated asset types",
+    ASSET_TYPE_ALREADY_EXISTS: "This asset type already exists",
+    ASSET_TYPE_NOT_FOUND: "Asset type not found",
+    ASSET_TYPE_HAS_ASSETS:
+      "Cannot delete an asset type that has associated assets",
+    ASSET_NOT_FOUND: "Asset not found",
+    ASSET_ALREADY_EXISTS_IN_INSTITUTION:
+      "An asset with this ticker already exists in this institution. To change it, edit the existing asset.",
+    NO_ASSETS_FOUND: "No assets found",
+    INSTITUTION_ALREADY_EXISTS: "This institution already exists",
+    INSTITUTION_NOT_FOUND: "Institution not found",
+    INSTITUTION_HAS_ASSETS:
+      "Cannot delete an institution that has associated assets",
+    FIXED_INCOME_ASSET_NOT_FOUND: "Fixed income asset not found",
+    WEALTH_HISTORY_DATE_CONFLICT:
+      "A wealth history record already exists for this date",
+    WEALTH_HISTORY_NOT_FOUND: "Wealth history record not found",
+  },
 };

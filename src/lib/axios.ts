@@ -106,6 +106,7 @@ api.interceptors.response.use(
       config: error.config,
       code: error.code,
       status: statusCode,
+      errorCode: error.response?.data?.code,
     });
 
     return Promise.reject(enhancedError);

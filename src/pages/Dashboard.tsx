@@ -7,9 +7,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/ui/table";
+import { SortableTableHead } from "@/shared/components/ui/sortable-table-head";
 import { useSummary } from "@/shared/hooks/useSummary";
 import { useWealthHistory } from "@/shared/hooks/useWealthHistory";
 import { AllocationByClass } from "@/shared/types/investment";
+import { formatCentsToCurrency } from "@/shared/utils/formatters";
 import {
   PieChart,
   Pie,
@@ -54,6 +56,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
 
 const ACCORDION_SECTIONS = [
+  { id: "table-class" },
   { id: "table" },
   { id: "pie" },
   { id: "bar" },
@@ -132,21 +135,13 @@ const COLORS = [
   "#DDA0DD",
 ];
 
-const formatCurrency = (value: number, locale: string) => {
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value);
-};
-
 export const Dashboard = () => {
-  const { summary, isLoadingSummary } = useSummary();
+  const { summary, isLoadingSummary, exchangeRate } = useSummary();
   const { wealthHistory, isLoading: isLoadingWealthHistory } =
     useWealthHistory();
   const { t, i18n } = useTranslation();
   const locale = i18n.resolvedLanguage || "pt-BR";
+  const usdToBrlRate = exchangeRate?.usdToBrl ?? 5.7;
 
   const getClassLabel = (className: string) => {
     if (className === "stocks") return t("dashboard.assetClasses.stocks");
@@ -162,6 +157,29 @@ export const Dashboard = () => {
   const [editingWealthHistory, setEditingWealthHistory] =
     useState<WealthHistory | null>(null);
   const [sectionOrder, setSectionOrder] = useState<SectionId[]>(loadOrder);
+
+  const [classSort, setClassSort] = useState<{ key: string; order: "ASC" | "DESC" }>(
+    { key: "actualPercentage", order: "DESC" },
+  );
+  const [typeSort, setTypeSort] = useState<{ key: string; order: "ASC" | "DESC" }>(
+    { key: "actualPercentage", order: "DESC" },
+  );
+
+  const toggleClassSort = (key: string) => {
+    setClassSort((prev) =>
+      prev.key === key
+        ? { key, order: prev.order === "ASC" ? "DESC" : "ASC" }
+        : { key, order: "DESC" },
+    );
+  };
+
+  const toggleTypeSort = (key: string) => {
+    setTypeSort((prev) =>
+      prev.key === key
+        ? { key, order: prev.order === "ASC" ? "DESC" : "ASC" }
+        : { key, order: "DESC" },
+    );
+  };
 
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -193,35 +211,73 @@ export const Dashboard = () => {
     setEditingWealthHistory(null);
   };
 
-  const allocationByClass: AllocationByClass[] = summary
-    ? summary?.map((item) => ({
+  const rawAllocItems = summary
+    ? summary.map((item) => ({
         class: item.assetClassName,
         type: item.assetTypeName,
-        actualPercentage: item.actualPercentage,
+        currency: item.currency,
         targetPercentage: item.targetPercentage,
         actualValue: item.totalValueCents,
-        targetValue:
-          (item.targetPercentage * item.totalValueCents) /
-          item.actualPercentage,
       }))
     : [];
+
+  const totalBRL = rawAllocItems.reduce((acc, item) => {
+    const valueBRL =
+      item.currency === "USD"
+        ? item.actualValue * usdToBrlRate
+        : item.actualValue;
+    return acc + valueBRL;
+  }, 0);
+
+  const allocationByClass: AllocationByClass[] = rawAllocItems.map((item) => {
+    const valueBRL =
+      item.currency === "USD"
+        ? item.actualValue * usdToBrlRate
+        : item.actualValue;
+    return {
+      ...item,
+      actualPercentage: totalBRL > 0 ? valueBRL / totalBRL : 0,
+    };
+  });
 
   const classGroups = allocationByClass.reduce(
     (acc, item) => {
       const className = item.class;
+      const valueBRL =
+        item.currency === "USD"
+          ? (item.actualValue ?? 0) * usdToBrlRate
+          : (item.actualValue ?? 0);
       if (!acc[className]) {
         acc[className] = {
           actualPercentage: 0,
           targetPercentage: 0,
+          actualValueBRL: 0,
+          currencies: new Set<string>(),
+          _seenTypes: new Set<string>(),
         };
       }
-      acc[className].actualPercentage += item.actualPercentage;
-      acc[className].targetPercentage += item.targetPercentage;
+      acc[className].actualPercentage += item.actualPercentage ?? 0;
+      acc[className].actualValueBRL += valueBRL;
+      if (item.currency) acc[className].currencies.add(item.currency);
+      // targetPercentage is a property of the type, not per-currency row —
+      // only add it once per unique type to avoid double-counting when the
+      // same type has assets in multiple currencies (e.g. BTC in BRL + USD).
+      const typeKey = `${className}|${item.type}`;
+      if (!acc[className]._seenTypes.has(typeKey)) {
+        acc[className].targetPercentage += item.targetPercentage ?? 0;
+        acc[className]._seenTypes.add(typeKey);
+      }
       return acc;
     },
     {} as Record<
       string,
-      { actualPercentage: number; targetPercentage: number }
+      {
+        actualPercentage: number;
+        targetPercentage: number;
+        actualValueBRL: number;
+        currencies: Set<string>;
+        _seenTypes: Set<string>;
+      }
     >,
   );
 
@@ -247,6 +303,40 @@ export const Dashboard = () => {
     meta: data.targetPercentage * 100,
   }));
 
+  const sortedClassEntries = Object.entries(classGroups).sort(([aName, aData], [bName, bData]) => {
+    let aVal: number | string;
+    let bVal: number | string;
+    switch (classSort.key) {
+      case "class": aVal = aName; bVal = bName; break;
+      case "value": aVal = aData.actualValueBRL; bVal = bData.actualValueBRL; break;
+      case "targetPercentage": aVal = aData.targetPercentage; bVal = bData.targetPercentage; break;
+      default: aVal = aData.actualPercentage; bVal = bData.actualPercentage;
+    }
+    if (typeof aVal === "string" && typeof bVal === "string") {
+      return classSort.order === "ASC" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+    }
+    return classSort.order === "ASC" ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number);
+  });
+
+  const sortedTypeRows = [...allocationByClass].sort((a, b) => {
+    let aVal: number | string;
+    let bVal: number | string;
+    switch (typeSort.key) {
+      case "class": aVal = a.class; bVal = b.class; break;
+      case "type": aVal = a.type; bVal = b.type; break;
+      case "value":
+        aVal = a.currency === "USD" ? (a.actualValue ?? 0) * usdToBrlRate : (a.actualValue ?? 0);
+        bVal = b.currency === "USD" ? (b.actualValue ?? 0) * usdToBrlRate : (b.actualValue ?? 0);
+        break;
+      case "targetPercentage": aVal = a.targetPercentage ?? 0; bVal = b.targetPercentage ?? 0; break;
+      default: aVal = a.actualPercentage ?? 0; bVal = b.actualPercentage ?? 0;
+    }
+    if (typeof aVal === "string" && typeof bVal === "string") {
+      return typeSort.order === "ASC" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+    }
+    return typeSort.order === "ASC" ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number);
+  });
+
   if (isLoadingSummary) {
     return <div>{t("dashboard.loading")}</div>;
   }
@@ -268,8 +358,127 @@ export const Dashboard = () => {
           items={sectionOrder}
           strategy={verticalListSortingStrategy}
         >
-          <Accordion type="single" collapsible defaultValue="table">
+          <Accordion type="single" collapsible defaultValue="table-class">
             {sectionOrder.map((sectionId) => {
+              if (sectionId === "table-class")
+                return (
+                  <SortableAccordionItem
+                    key="table-class"
+                    id="table-class"
+                    dragAriaLabel={t("dashboard.dragToReorder")}
+                  >
+                    <AccordionItem
+                      value="table-class"
+                      className="border rounded-lg mt-2"
+                    >
+                      <AccordionTrigger className="pl-10 pr-4 hover:no-underline">
+                        <span className="text-lg font-semibold">
+                          {t("dashboard.sections.allocationByClass")}
+                        </span>
+                      </AccordionTrigger>
+                      <AccordionContent className="p-0">
+                        <Card className="rounded-none border-t">
+                          <div className="overflow-x-auto">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <SortableTableHead
+                                    label={t("dashboard.table.headers.class")}
+                                    sortKey="class"
+                                    currentSortBy={classSort.key}
+                                    currentOrder={classSort.order}
+                                    onSort={toggleClassSort}
+                                  />
+                                  <SortableTableHead
+                                    label={t("dashboard.table.headers.value")}
+                                    sortKey="value"
+                                    currentSortBy={classSort.key}
+                                    currentOrder={classSort.order}
+                                    onSort={toggleClassSort}
+                                    className="text-right"
+                                  />
+                                  <SortableTableHead
+                                    label={t("dashboard.table.headers.actualPercentage")}
+                                    sortKey="actualPercentage"
+                                    currentSortBy={classSort.key}
+                                    currentOrder={classSort.order}
+                                    onSort={toggleClassSort}
+                                    className="text-right"
+                                  />
+                                  <SortableTableHead
+                                    label={t("dashboard.table.headers.targetPercentage")}
+                                    sortKey="targetPercentage"
+                                    currentSortBy={classSort.key}
+                                    currentOrder={classSort.order}
+                                    onSort={toggleClassSort}
+                                    className="text-right"
+                                  />
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {Object.keys(classGroups).length === 0 ? (
+                                  <TableRow>
+                                    <TableCell
+                                      colSpan={4}
+                                      className="text-center text-muted-foreground py-8"
+                                    >
+                                      {t("dashboard.table.empty")}
+                                    </TableCell>
+                                  </TableRow>
+                                ) : (
+                                  sortedClassEntries.map(
+                                    ([className, data], index) => (
+                                      <TableRow key={className}>
+                                        <TableCell>
+                                          <div className="flex items-center gap-2">
+                                            <div
+                                              className="w-3 h-3 rounded-full flex-shrink-0"
+                                              style={{
+                                                backgroundColor:
+                                                  COLORS[index % COLORS.length],
+                                              }}
+                                            />
+                                            {getClassLabel(className)}
+                                          </div>
+                                        </TableCell>
+                                        <TableCell className="text-right text-sm sm:text-base">
+                                          {(() => {
+                                            const displayCurrency =
+                                              data.currencies.size === 1
+                                                ? ([...data.currencies][0] as string)
+                                                : "BRL";
+                                            const displayValue =
+                                              displayCurrency === "USD"
+                                                ? data.actualValueBRL / usdToBrlRate
+                                                : data.actualValueBRL;
+                                            return formatCentsToCurrency(displayValue, displayCurrency);
+                                          })()}
+                                        </TableCell>
+                                        <TableCell className="text-right font-medium text-sm sm:text-base">
+                                          {(
+                                            data.actualPercentage * 100
+                                          ).toFixed(1)}
+                                          %
+                                        </TableCell>
+                                        <TableCell className="text-right font-medium text-sm sm:text-base">
+                                          {(
+                                            data.targetPercentage * 100
+                                          ).toFixed(1)}
+                                          %
+                                        </TableCell>
+                                      </TableRow>
+                                    ),
+                                  )
+                                )}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </Card>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </SortableAccordionItem>
+                );
+
               if (sectionId === "table")
                 return (
                   <SortableAccordionItem
@@ -283,7 +492,7 @@ export const Dashboard = () => {
                     >
                       <AccordionTrigger className="pl-10 pr-4 hover:no-underline">
                         <span className="text-lg font-semibold">
-                          {t("dashboard.table.headers.class")}
+                          {t("dashboard.sections.allocationByType")}
                         </span>
                       </AccordionTrigger>
                       <AccordionContent className="p-0">
@@ -292,25 +501,45 @@ export const Dashboard = () => {
                             <Table>
                               <TableHeader>
                                 <TableRow>
-                                  <TableHead>
-                                    {t("dashboard.table.headers.class")}
-                                  </TableHead>
-                                  <TableHead className="text-right">
-                                    {t("dashboard.table.headers.type")}
-                                  </TableHead>
-                                  <TableHead className="text-right">
-                                    {t("dashboard.table.headers.value")}
-                                  </TableHead>
-                                  <TableHead className="text-right">
-                                    {t(
-                                      "dashboard.table.headers.actualPercentage",
-                                    )}
-                                  </TableHead>
-                                  <TableHead className="text-right">
-                                    {t(
-                                      "dashboard.table.headers.targetPercentage",
-                                    )}
-                                  </TableHead>
+                                  <SortableTableHead
+                                    label={t("dashboard.table.headers.class")}
+                                    sortKey="class"
+                                    currentSortBy={typeSort.key}
+                                    currentOrder={typeSort.order}
+                                    onSort={toggleTypeSort}
+                                  />
+                                  <SortableTableHead
+                                    label={t("dashboard.table.headers.type")}
+                                    sortKey="type"
+                                    currentSortBy={typeSort.key}
+                                    currentOrder={typeSort.order}
+                                    onSort={toggleTypeSort}
+                                    className="text-right"
+                                  />
+                                  <SortableTableHead
+                                    label={t("dashboard.table.headers.value")}
+                                    sortKey="value"
+                                    currentSortBy={typeSort.key}
+                                    currentOrder={typeSort.order}
+                                    onSort={toggleTypeSort}
+                                    className="text-right"
+                                  />
+                                  <SortableTableHead
+                                    label={t("dashboard.table.headers.actualPercentage")}
+                                    sortKey="actualPercentage"
+                                    currentSortBy={typeSort.key}
+                                    currentOrder={typeSort.order}
+                                    onSort={toggleTypeSort}
+                                    className="text-right"
+                                  />
+                                  <SortableTableHead
+                                    label={t("dashboard.table.headers.targetPercentage")}
+                                    sortKey="targetPercentage"
+                                    currentSortBy={typeSort.key}
+                                    currentOrder={typeSort.order}
+                                    onSort={toggleTypeSort}
+                                    className="text-right"
+                                  />
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
@@ -324,7 +553,7 @@ export const Dashboard = () => {
                                     </TableCell>
                                   </TableRow>
                                 ) : (
-                                  allocationByClass?.map((item, index) => (
+                                  sortedTypeRows.map((item, index) => (
                                     <TableRow key={item.class + index}>
                                       <TableCell>
                                         <div className="flex items-center gap-2">
@@ -349,9 +578,9 @@ export const Dashboard = () => {
                                         {item.type}
                                       </TableCell>
                                       <TableCell className="text-right text-sm sm:text-base">
-                                        {formatCurrency(
-                                          item.actualValue,
-                                          locale,
+                                        {formatCentsToCurrency(
+                                          item.actualValue ?? 0,
+                                          item.currency ?? "BRL",
                                         )}
                                       </TableCell>
                                       <TableCell className="text-right font-medium text-sm sm:text-base">

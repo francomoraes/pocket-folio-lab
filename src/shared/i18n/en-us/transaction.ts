@@ -23,6 +23,7 @@ export default {
     interestRate: "Rate (% p.a.)",
     additionalRate: "Additional Rate (%)",
     investedValue: "Invested Value",
+    currentPrice: "Current Price (manual)",
   },
   operations: {
     buy: "Buy",
@@ -49,6 +50,23 @@ export default {
     cdi: "CDI +",
     ipca: "IPCA +",
     selic: "Selic +",
+  },
+  emptyState: {
+    noTypes: "No asset types registered.",
+    noTypesLine2: "Go to Settings to add them.",
+    noInstitutions: "No institutions registered.",
+    noInstitutionsLine2: "Go to Settings to add them.",
+    settingsLink: "Go to Settings →",
+  },
+  fixedIncome: {
+    manualMode: "I don't know the rate/dates (manual update)",
+    currentValue: "Current Value (manual)",
+    currentValueHint:
+      "Fill in the current value to record it manually. If you enter a rate, this field is calculated automatically.",
+    interestRateDisabledTooltip:
+      'Clear the "Current Value" field to enable the rate.',
+    currentValueDisabledTooltip:
+      "Clear the interest rate to enable the manual current value.",
   },
   messages: {
     success: "Asset added successfully",

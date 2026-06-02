@@ -3,6 +3,7 @@ import { QUERY_KEYS } from "@/shared/constants/queryKeys";
 import { CreateAssetClass, UpdateAssetClass } from "@/shared/types/assetClass";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 
 export const useAssetClasses = () => {
   const queryClient = useQueryClient();
@@ -29,7 +30,12 @@ export const useAssetClasses = () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_CLASSES });
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Error creating asset class");
+      toast.error(
+        resolveErrorMessage(
+          error,
+          "auth.errorCodes.ASSET_CLASS_ALREADY_EXISTS",
+        ),
+      );
     },
   });
 
@@ -41,7 +47,7 @@ export const useAssetClasses = () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_CLASSES });
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Error updating asset class");
+      toast.error(resolveErrorMessage(error, "auth.messages.updateError"));
     },
   });
 
@@ -53,7 +59,12 @@ export const useAssetClasses = () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_CLASSES });
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Error deleting asset class");
+      toast.error(
+        resolveErrorMessage(
+          error,
+          "auth.errorCodes.ASSET_CLASS_HAS_ASSET_TYPES",
+        ),
+      );
     },
   });
 

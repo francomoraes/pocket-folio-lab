@@ -11,6 +11,7 @@ type AssetFormData = {
   institutionId: number | null;
   currency: string;
   type: string;
+  currentPrice: string;
 };
 
 const initialState: AssetFormData = {
@@ -20,6 +21,7 @@ const initialState: AssetFormData = {
   institutionId: null,
   currency: "BRL",
   type: "Ação",
+  currentPrice: "",
 };
 
 export const useAssetForm = (asset?: Asset | null, onSuccess?: () => void) => {
@@ -40,6 +42,7 @@ export const useAssetForm = (asset?: Asset | null, onSuccess?: () => void) => {
         institutionId: asset.institution.id,
         currency: asset.currency,
         type: asset.type.name,
+        currentPrice: "",
       });
     } else {
       setFormData(initialState);
@@ -115,6 +118,7 @@ export const useAssetForm = (asset?: Asset | null, onSuccess?: () => void) => {
 
     try {
       if (isEditMode && asset) {
+        const currentPriceValue = parseFloat(formData.currentPrice);
         await updateAsset({
           id: asset.id,
           data: {
@@ -124,6 +128,11 @@ export const useAssetForm = (asset?: Asset | null, onSuccess?: () => void) => {
             type: formData.type,
             institutionId,
             currency: formData.currency,
+            ...(asset.priceUnavailable &&
+              currentPriceValue > 0 && {
+                manualCurrentPriceCents:
+                  formatCurrencyToCents(currentPriceValue),
+              }),
           },
         });
       } else {

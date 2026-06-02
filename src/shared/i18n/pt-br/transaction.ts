@@ -23,6 +23,7 @@ export default {
     interestRate: "Taxa (% a.a.)",
     additionalRate: "Taxa Adicional (%)",
     investedValue: "Valor Investido",
+    currentPrice: "Cotação Atual (manual)",
   },
   operations: {
     buy: "Compra",
@@ -49,6 +50,23 @@ export default {
     cdi: "CDI +",
     ipca: "IPCA +",
     selic: "Selic +",
+  },
+  emptyState: {
+    noTypes: "Nenhum tipo de ativo cadastrado.",
+    noTypesLine2: "Acesse Configurações para cadastrar.",
+    noInstitutions: "Nenhuma instituição cadastrada.",
+    noInstitutionsLine2: "Acesse Configurações para cadastrar.",
+    settingsLink: "Ir para Configurações →",
+  },
+  fixedIncome: {
+    manualMode: "Não sei a taxa/datas (atualização manual)",
+    currentValue: "Valor Atual (manual)",
+    currentValueHint:
+      "Preencha o valor atual para registrar manualmente. Se informar a taxa, este campo é calculado automaticamente.",
+    interestRateDisabledTooltip:
+      'Limpe o campo "Valor Atual" para habilitar a taxa.',
+    currentValueDisabledTooltip:
+      "Limpe a taxa de juros para habilitar o valor atual manual.",
   },
   messages: {
     success: "Ativo adicionado com sucesso",

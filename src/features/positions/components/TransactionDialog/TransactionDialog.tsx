@@ -36,8 +36,8 @@ export const TransactionDialog = () => {
     }
   };
 
-  const { institutions } = useInstitutions();
-  const { assetTypes } = useAssetTypes();
+  const { institutions } = useInstitutions({ enabled: open });
+  const { assetTypes } = useAssetTypes({ enabled: open });
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>

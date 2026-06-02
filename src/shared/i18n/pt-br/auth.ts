@@ -89,4 +89,31 @@ export default {
     passwordNumber: "Senha deve conter pelo menos um número",
     passwordSymbol: "Senha deve conter pelo menos um símbolo (@$!%*?&)",
   },
+  errorCodes: {
+    USER_ALREADY_EXISTS: "Este e-mail já está cadastrado",
+    INVALID_CREDENTIALS: "E-mail ou senha inválidos",
+    USER_NOT_FOUND: "Usuário não encontrado",
+    CURRENT_PASSWORD_REQUIRED: "Digite a senha atual para alterar a senha",
+    INVALID_CURRENT_PASSWORD: "Senha atual incorreta",
+    ASSET_CLASS_ALREADY_EXISTS: "Esta classe de ativo já existe",
+    ASSET_CLASS_NOT_FOUND: "Classe de ativo não encontrada",
+    ASSET_CLASS_HAS_ASSET_TYPES:
+      "Não é possível excluir uma classe que possui tipos de ativo associados",
+    ASSET_TYPE_ALREADY_EXISTS: "Este tipo de ativo já existe",
+    ASSET_TYPE_NOT_FOUND: "Tipo de ativo não encontrado",
+    ASSET_TYPE_HAS_ASSETS:
+      "Não é possível excluir um tipo que possui ativos associados",
+    ASSET_NOT_FOUND: "Ativo não encontrado",
+    ASSET_ALREADY_EXISTS_IN_INSTITUTION:
+      "Já existe um ativo com esse ticker nessa instituição. Para alterar, edite o ativo existente.",
+    NO_ASSETS_FOUND: "Nenhum ativo encontrado",
+    INSTITUTION_ALREADY_EXISTS: "Esta instituição já existe",
+    INSTITUTION_NOT_FOUND: "Instituição não encontrada",
+    INSTITUTION_HAS_ASSETS:
+      "Não é possível excluir uma instituição que possui ativos associados",
+    FIXED_INCOME_ASSET_NOT_FOUND: "Ativo de renda fixa não encontrado",
+    WEALTH_HISTORY_DATE_CONFLICT:
+      "Já existe um registro de patrimônio para esta data",
+    WEALTH_HISTORY_NOT_FOUND: "Registro de patrimônio não encontrado",
+  },
 };

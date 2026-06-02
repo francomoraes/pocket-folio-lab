@@ -6,12 +6,13 @@ import {
 } from "@/shared/types/institution";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 
-export const useInstitutions = () => {
+export const useInstitutions = (options?: { enabled?: boolean }) => {
   const queryClient = useQueryClient();
 
   const {
-    data: institutions,
+    data: rawInstitutions,
     isLoading,
     error,
     refetch,
@@ -20,7 +21,10 @@ export const useInstitutions = () => {
     queryFn: async () => institutionService.list(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
+    enabled: options?.enabled ?? true,
   });
+
+  const institutions = rawInstitutions ?? [];
 
   const createInstitutionMutation = useMutation({
     mutationFn: (data: CreateInstitution) => {
@@ -30,7 +34,12 @@ export const useInstitutions = () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.INSTITUTIONS });
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Error creating institution");
+      toast.error(
+        resolveErrorMessage(
+          error,
+          "auth.errorCodes.INSTITUTION_ALREADY_EXISTS",
+        ),
+      );
     },
   });
 
@@ -42,7 +51,7 @@ export const useInstitutions = () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.INSTITUTIONS });
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Error updating asset class");
+      toast.error(resolveErrorMessage(error, "auth.messages.updateError"));
     },
   });
 
@@ -54,7 +63,9 @@ export const useInstitutions = () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.INSTITUTIONS });
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Error deleting institution");
+      toast.error(
+        resolveErrorMessage(error, "auth.errorCodes.INSTITUTION_HAS_ASSETS"),
+      );
     },
   });
 

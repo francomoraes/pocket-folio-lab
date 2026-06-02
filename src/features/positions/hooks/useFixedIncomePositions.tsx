@@ -8,6 +8,7 @@ import { PaginationQuery } from "@/shared/types/pagination";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 
 export const useFixedIncomePositions = ({
   page = 1,
@@ -56,7 +57,7 @@ export const useFixedIncomePositions = ({
       toast.success(t("transaction.messages.created"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || t("transaction.messages.addError"));
+      toast.error(resolveErrorMessage(error, "transaction.messages.addError"));
     },
   });
 
@@ -77,7 +78,9 @@ export const useFixedIncomePositions = ({
       toast.success(t("transaction.messages.updated"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || t("transaction.messages.updateError"));
+      toast.error(
+        resolveErrorMessage(error, "transaction.messages.updateError"),
+      );
     },
   });
 
@@ -92,7 +95,9 @@ export const useFixedIncomePositions = ({
       toast.success(t("transaction.messages.deleted"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || t("transaction.messages.deleteError"));
+      toast.error(
+        resolveErrorMessage(error, "transaction.messages.deleteError"),
+      );
     },
   });
 
