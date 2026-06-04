@@ -19,8 +19,8 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
-    { to: "/positions", label: t("navbar.links.positions") },
     { to: "/dashboard", label: t("navbar.links.dashboard") },
+    { to: "/positions", label: t("navbar.links.positions") },
     { to: "/settings", label: t("navbar.links.settings") },
   ];
 

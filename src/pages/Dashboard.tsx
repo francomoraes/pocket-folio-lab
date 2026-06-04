@@ -12,19 +12,6 @@ import { useSummary } from "@/shared/hooks/useSummary";
 import { useWealthHistory } from "@/shared/hooks/useWealthHistory";
 import { AllocationByClass } from "@/shared/types/investment";
 import { formatCentsToCurrency } from "@/shared/utils/formatters";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Legend,
-  CartesianGrid,
-} from "recharts";
 import { useTranslation } from "react-i18next";
 import {
   Accordion,
@@ -38,6 +25,7 @@ import { WealthHistoryFormDialog } from "@/shared/components/WealthHistoryFormDi
 import { WealthHistoryList } from "@/shared/components/WealthHistoryList";
 import { WealthHistory } from "@/shared/types/wealthHistory";
 import { useState, useCallback } from "react";
+import { SummaryCards } from "@/features/summary/components/SummaryCards";
 import {
   DndContext,
   closestCenter,
@@ -58,8 +46,6 @@ import { GripVertical } from "lucide-react";
 const ACCORDION_SECTIONS = [
   { id: "table-class" },
   { id: "table" },
-  { id: "pie" },
-  { id: "bar" },
   { id: "wealth-evolution" },
 ] as const;
 
@@ -281,28 +267,6 @@ export const Dashboard = () => {
     >,
   );
 
-  const pieDataActual = Object.entries(classGroups).map(
-    ([className, data]) => ({
-      name: getClassLabel(className),
-      value: data.actualPercentage,
-      className: className,
-    }),
-  );
-
-  const pieDataTarget = Object.entries(classGroups).map(
-    ([className, data]) => ({
-      name: getClassLabel(className),
-      value: data.targetPercentage,
-      className: className,
-    }),
-  );
-
-  const barChartData = Object.entries(classGroups).map(([className, data]) => ({
-    name: getClassLabel(className),
-    atual: data.actualPercentage * 100,
-    meta: data.targetPercentage * 100,
-  }));
-
   const sortedClassEntries = Object.entries(classGroups).sort(([aName, aData], [bName, bData]) => {
     let aVal: number | string;
     let bVal: number | string;
@@ -337,16 +301,16 @@ export const Dashboard = () => {
     return typeSort.order === "ASC" ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number);
   });
 
-  if (isLoadingSummary) {
-    return <div>{t("dashboard.loading")}</div>;
-  }
-
-  if (!summary || summary.length === 0) {
-    return <div>{t("dashboard.table.empty")}</div>;
-  }
-
   return (
     <div className="flex flex-col gap-3 h-auto min-h-[calc(100vh-61px)] p-3 overflow-x-hidden">
+      <SummaryCards />
+
+      {isLoadingSummary ? (
+        <div>{t("dashboard.loading")}</div>
+      ) : !summary || summary.length === 0 ? (
+        <div>{t("dashboard.table.empty")}</div>
+      ) : (
+      <>
       <h2 className="text-2xl font-semibold mb-2">{t("dashboard.title")}</h2>
 
       <DndContext
@@ -379,15 +343,16 @@ export const Dashboard = () => {
                       <AccordionContent className="p-0">
                         <Card className="rounded-none border-t">
                           <div className="overflow-x-auto">
-                            <Table>
+                            <Table className="min-w-[480px]">
                               <TableHeader>
                                 <TableRow>
                                   <SortableTableHead
                                     label={t("dashboard.table.headers.class")}
-                                    sortKey="class"
+                                    sortKey="actualPercentage"
                                     currentSortBy={classSort.key}
                                     currentOrder={classSort.order}
                                     onSort={toggleClassSort}
+                                    className="w-full"
                                   />
                                   <SortableTableHead
                                     label={t("dashboard.table.headers.value")}
@@ -395,15 +360,7 @@ export const Dashboard = () => {
                                     currentSortBy={classSort.key}
                                     currentOrder={classSort.order}
                                     onSort={toggleClassSort}
-                                    className="text-right"
-                                  />
-                                  <SortableTableHead
-                                    label={t("dashboard.table.headers.actualPercentage")}
-                                    sortKey="actualPercentage"
-                                    currentSortBy={classSort.key}
-                                    currentOrder={classSort.order}
-                                    onSort={toggleClassSort}
-                                    className="text-right"
+                                    className="text-right whitespace-nowrap"
                                   />
                                   <SortableTableHead
                                     label={t("dashboard.table.headers.targetPercentage")}
@@ -411,7 +368,7 @@ export const Dashboard = () => {
                                     currentSortBy={classSort.key}
                                     currentOrder={classSort.order}
                                     onSort={toggleClassSort}
-                                    className="text-right"
+                                    className="text-right whitespace-nowrap"
                                   />
                                 </TableRow>
                               </TableHeader>
@@ -419,7 +376,7 @@ export const Dashboard = () => {
                                 {Object.keys(classGroups).length === 0 ? (
                                   <TableRow>
                                     <TableCell
-                                      colSpan={4}
+                                      colSpan={3}
                                       className="text-center text-muted-foreground py-8"
                                     >
                                       {t("dashboard.table.empty")}
@@ -429,19 +386,32 @@ export const Dashboard = () => {
                                   sortedClassEntries.map(
                                     ([className, data], index) => (
                                       <TableRow key={className}>
-                                        <TableCell>
-                                          <div className="flex items-center gap-2">
-                                            <div
-                                              className="w-3 h-3 rounded-full flex-shrink-0"
-                                              style={{
-                                                backgroundColor:
-                                                  COLORS[index % COLORS.length],
-                                              }}
-                                            />
-                                            {getClassLabel(className)}
+                                        <TableCell className="min-w-[240px] py-3">
+                                          <div className="space-y-2">
+                                            <span className="text-sm font-medium">
+                                              {getClassLabel(className)}
+                                            </span>
+                                            <div className="flex items-center gap-2">
+                                              <div className="relative flex-1 h-3.5 bg-muted rounded-full">
+                                                <div
+                                                  className="h-full rounded-full"
+                                                  style={{
+                                                    width: `${Math.min(data.actualPercentage * 100, 100).toFixed(1)}%`,
+                                                    backgroundColor: COLORS[index % COLORS.length],
+                                                  }}
+                                                />
+                                                <div
+                                                  className="absolute top-[-3px] h-[calc(100%+6px)] w-[2px] rounded-full bg-foreground/40"
+                                                  style={{ left: `${Math.min(data.targetPercentage * 100, 100).toFixed(1)}%` }}
+                                                />
+                                              </div>
+                                              <span className="text-xs font-medium text-muted-foreground w-10 text-right flex-shrink-0">
+                                                {(data.actualPercentage * 100).toFixed(1)}%
+                                              </span>
+                                            </div>
                                           </div>
                                         </TableCell>
-                                        <TableCell className="text-right text-sm sm:text-base">
+                                        <TableCell className="text-right text-sm whitespace-nowrap">
                                           {(() => {
                                             const displayCurrency =
                                               data.currencies.size === 1
@@ -454,17 +424,8 @@ export const Dashboard = () => {
                                             return formatCentsToCurrency(displayValue, displayCurrency);
                                           })()}
                                         </TableCell>
-                                        <TableCell className="text-right font-medium text-sm sm:text-base">
-                                          {(
-                                            data.actualPercentage * 100
-                                          ).toFixed(1)}
-                                          %
-                                        </TableCell>
-                                        <TableCell className="text-right font-medium text-sm sm:text-base">
-                                          {(
-                                            data.targetPercentage * 100
-                                          ).toFixed(1)}
-                                          %
+                                        <TableCell className="text-right font-medium text-sm whitespace-nowrap">
+                                          {(data.targetPercentage * 100).toFixed(1)}%
                                         </TableCell>
                                       </TableRow>
                                     ),
@@ -498,23 +459,16 @@ export const Dashboard = () => {
                       <AccordionContent className="p-0">
                         <Card className="rounded-none border-t">
                           <div className="overflow-x-auto">
-                            <Table>
+                            <Table className="min-w-[480px]">
                               <TableHeader>
                                 <TableRow>
                                   <SortableTableHead
-                                    label={t("dashboard.table.headers.class")}
-                                    sortKey="class"
-                                    currentSortBy={typeSort.key}
-                                    currentOrder={typeSort.order}
-                                    onSort={toggleTypeSort}
-                                  />
-                                  <SortableTableHead
                                     label={t("dashboard.table.headers.type")}
-                                    sortKey="type"
+                                    sortKey="actualPercentage"
                                     currentSortBy={typeSort.key}
                                     currentOrder={typeSort.order}
                                     onSort={toggleTypeSort}
-                                    className="text-right"
+                                    className="w-full"
                                   />
                                   <SortableTableHead
                                     label={t("dashboard.table.headers.value")}
@@ -522,15 +476,7 @@ export const Dashboard = () => {
                                     currentSortBy={typeSort.key}
                                     currentOrder={typeSort.order}
                                     onSort={toggleTypeSort}
-                                    className="text-right"
-                                  />
-                                  <SortableTableHead
-                                    label={t("dashboard.table.headers.actualPercentage")}
-                                    sortKey="actualPercentage"
-                                    currentSortBy={typeSort.key}
-                                    currentOrder={typeSort.order}
-                                    onSort={toggleTypeSort}
-                                    className="text-right"
+                                    className="text-right whitespace-nowrap"
                                   />
                                   <SortableTableHead
                                     label={t("dashboard.table.headers.targetPercentage")}
@@ -538,7 +484,7 @@ export const Dashboard = () => {
                                     currentSortBy={typeSort.key}
                                     currentOrder={typeSort.order}
                                     onSort={toggleTypeSort}
-                                    className="text-right"
+                                    className="text-right whitespace-nowrap"
                                   />
                                 </TableRow>
                               </TableHeader>
@@ -546,7 +492,7 @@ export const Dashboard = () => {
                                 {allocationByClass.length === 0 ? (
                                   <TableRow>
                                     <TableCell
-                                      colSpan={5}
+                                      colSpan={3}
                                       className="text-center text-muted-foreground py-8"
                                     >
                                       {t("dashboard.table.empty")}
@@ -555,45 +501,43 @@ export const Dashboard = () => {
                                 ) : (
                                   sortedTypeRows.map((item, index) => (
                                     <TableRow key={item.class + index}>
-                                      <TableCell>
-                                        <div className="flex items-center gap-2">
-                                          <div
-                                            className="w-3 h-3 rounded-full flex-shrink-0"
-                                            style={{
-                                              backgroundColor:
-                                                COLORS[index % COLORS.length],
-                                            }}
-                                          />
-                                          <span className="hidden sm:inline">
-                                            {getClassLabel(item.class)}
-                                          </span>
-                                          <span className="sm:hidden text-xs">
-                                            {getClassLabel(
-                                              item.class,
-                                            ).substring(0, 3)}
-                                          </span>
+                                      <TableCell className="min-w-[240px]">
+                                        <div className="space-y-1.5">
+                                          <div className="flex items-center gap-1.5">
+                                            <span className="text-xs text-muted-foreground">
+                                              {getClassLabel(item.class)}
+                                            </span>
+                                            <span className="text-muted-foreground/40">·</span>
+                                            <span className="text-sm font-medium">{item.type}</span>
+                                          </div>
+                                          <div className="flex items-center gap-2">
+                                            <div className="relative flex-1 h-3.5 bg-muted rounded-full">
+                                              <div
+                                                className="h-full rounded-full"
+                                                style={{
+                                                  width: `${Math.min(item.actualPercentage * 100, 100).toFixed(1)}%`,
+                                                  backgroundColor: COLORS[index % COLORS.length],
+                                                }}
+                                              />
+                                              <div
+                                                className="absolute top-[-3px] h-[calc(100%+6px)] w-[2px] rounded-full bg-foreground/40"
+                                                style={{ left: `${Math.min(item.targetPercentage * 100, 100).toFixed(1)}%` }}
+                                              />
+                                            </div>
+                                            <span className="text-xs font-medium text-muted-foreground w-10 text-right flex-shrink-0">
+                                              {(item.actualPercentage * 100).toFixed(1)}%
+                                            </span>
+                                          </div>
                                         </div>
                                       </TableCell>
-                                      <TableCell className="text-right text-sm sm:text-base">
-                                        {item.type}
-                                      </TableCell>
-                                      <TableCell className="text-right text-sm sm:text-base">
+                                      <TableCell className="text-right text-sm whitespace-nowrap">
                                         {formatCentsToCurrency(
                                           item.actualValue ?? 0,
                                           item.currency ?? "BRL",
                                         )}
                                       </TableCell>
-                                      <TableCell className="text-right font-medium text-sm sm:text-base">
-                                        {(item.actualPercentage * 100).toFixed(
-                                          1,
-                                        )}
-                                        %
-                                      </TableCell>
-                                      <TableCell className="text-right font-medium text-sm sm:text-base">
-                                        {(item.targetPercentage * 100).toFixed(
-                                          1,
-                                        )}
-                                        %
+                                      <TableCell className="text-right font-medium text-sm whitespace-nowrap">
+                                        {(item.targetPercentage * 100).toFixed(1)}%
                                       </TableCell>
                                     </TableRow>
                                   ))
@@ -601,195 +545,6 @@ export const Dashboard = () => {
                               </TableBody>
                             </Table>
                           </div>
-                        </Card>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </SortableAccordionItem>
-                );
-
-              if (sectionId === "pie")
-                return (
-                  <SortableAccordionItem
-                    key="pie"
-                    id="pie"
-                    dragAriaLabel={t("dashboard.dragToReorder")}
-                  >
-                    <AccordionItem
-                      value="pie"
-                      className="border rounded-lg mt-2"
-                    >
-                      <AccordionTrigger className="pl-10 pr-4 hover:no-underline">
-                        <span className="text-lg font-semibold">
-                          {t("dashboard.sections.allocationCharts")}
-                        </span>
-                      </AccordionTrigger>
-                      <AccordionContent className="p-0">
-                        <Card className="p-4 sm:p-6 rounded-none border-t">
-                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-                            <div className="flex flex-col items-center justify-center">
-                              <h3 className="text-base sm:text-lg font-semibold mb-4">
-                                {t("dashboard.charts.currentAllocation")}
-                              </h3>
-                              {pieDataActual && pieDataActual.length > 0 ? (
-                                <ResponsiveContainer width="100%" height={300}>
-                                  <PieChart>
-                                    <Pie
-                                      data={pieDataActual}
-                                      cx="50%"
-                                      cy="50%"
-                                      innerRadius={60}
-                                      outerRadius={100}
-                                      paddingAngle={2}
-                                      dataKey="value"
-                                      label={({ name, value }) =>
-                                        `${name}: ${(value * 100).toFixed(0)}%`
-                                      }
-                                    >
-                                      {pieDataActual?.map((entry) => {
-                                        const colorIndex =
-                                          allocationByClass.findIndex(
-                                            (item) =>
-                                              item.class === entry.className,
-                                          );
-                                        return (
-                                          <Cell
-                                            key={`cell-actual-${entry.className}`}
-                                            fill={
-                                              COLORS[colorIndex % COLORS.length]
-                                            }
-                                          />
-                                        );
-                                      })}
-                                    </Pie>
-                                    <Tooltip
-                                      formatter={(value: number) =>
-                                        `${(value * 100).toFixed(1)}%`
-                                      }
-                                    />
-                                  </PieChart>
-                                </ResponsiveContainer>
-                              ) : (
-                                <p className="text-muted-foreground">
-                                  {t("dashboard.charts.noData")}
-                                </p>
-                              )}
-                            </div>
-                            <div className="flex flex-col items-center justify-center">
-                              <h3 className="text-base sm:text-lg font-semibold mb-4">
-                                {t("dashboard.charts.targetAllocation")}
-                              </h3>
-                              {pieDataTarget && pieDataTarget.length > 0 ? (
-                                <ResponsiveContainer width="100%" height={300}>
-                                  <PieChart>
-                                    <Pie
-                                      data={pieDataTarget}
-                                      cx="50%"
-                                      cy="50%"
-                                      innerRadius={60}
-                                      outerRadius={100}
-                                      paddingAngle={2}
-                                      dataKey="value"
-                                      label={({ name, value }) =>
-                                        `${name}: ${(value * 100).toFixed(0)}%`
-                                      }
-                                    >
-                                      {pieDataTarget?.map((entry) => {
-                                        const colorIndex =
-                                          allocationByClass.findIndex(
-                                            (item) =>
-                                              item.class === entry.className,
-                                          );
-                                        return (
-                                          <Cell
-                                            key={`cell-target-${entry.className}`}
-                                            fill={
-                                              COLORS[colorIndex % COLORS.length]
-                                            }
-                                          />
-                                        );
-                                      })}
-                                    </Pie>
-                                    <Tooltip
-                                      formatter={(value: number) =>
-                                        `${(value * 100).toFixed(1)}%`
-                                      }
-                                    />
-                                  </PieChart>
-                                </ResponsiveContainer>
-                              ) : (
-                                <p className="text-muted-foreground">
-                                  {t("dashboard.charts.noData")}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        </Card>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </SortableAccordionItem>
-                );
-
-              if (sectionId === "bar")
-                return (
-                  <SortableAccordionItem
-                    key="bar"
-                    id="bar"
-                    dragAriaLabel={t("dashboard.dragToReorder")}
-                  >
-                    <AccordionItem
-                      value="bar"
-                      className="border rounded-lg mt-2"
-                    >
-                      <AccordionTrigger className="pl-10 pr-4 hover:no-underline">
-                        <span className="text-lg font-semibold">
-                          {t("dashboard.sections.actualVsTarget")}
-                        </span>
-                      </AccordionTrigger>
-                      <AccordionContent className="p-0">
-                        <Card className="p-4 sm:p-6 rounded-none border-t">
-                          {barChartData && barChartData.length > 0 ? (
-                            <div className="w-full overflow-x-auto">
-                              <ResponsiveContainer
-                                width="100%"
-                                height={300}
-                                minWidth={300}
-                              >
-                                <BarChart data={barChartData}>
-                                  <CartesianGrid strokeDasharray="3 3" />
-                                  <XAxis dataKey="name" />
-                                  <YAxis
-                                    label={{
-                                      value: "%",
-                                      angle: -90,
-                                      position: "insideLeft",
-                                    }}
-                                  />
-                                  <Tooltip
-                                    formatter={(value: number) =>
-                                      `${value.toFixed(1)}%`
-                                    }
-                                  />
-                                  <Legend />
-                                  <Bar
-                                    dataKey="atual"
-                                    fill={COLORS[0]}
-                                    name={t("dashboard.charts.currentLegend")}
-                                    radius={[8, 8, 0, 0]}
-                                  />
-                                  <Bar
-                                    dataKey="meta"
-                                    fill={COLORS[1]}
-                                    name={t("dashboard.charts.targetLegend")}
-                                    radius={[8, 8, 0, 0]}
-                                  />
-                                </BarChart>
-                              </ResponsiveContainer>
-                            </div>
-                          ) : (
-                            <p className="text-muted-foreground">
-                              {t("dashboard.charts.noData")}
-                            </p>
-                          )}
                         </Card>
                       </AccordionContent>
                     </AccordionItem>
@@ -862,6 +617,8 @@ export const Dashboard = () => {
         open={isWealthHistoryDialogOpen}
         onOpenChange={handleCloseDialog}
       />
+      </>
+      )}
     </div>
   );
 };

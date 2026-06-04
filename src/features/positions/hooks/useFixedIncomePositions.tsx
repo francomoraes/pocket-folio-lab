@@ -54,6 +54,8 @@ export const useFixedIncomePositions = ({
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.FIXED_INCOME_ASSETS,
       });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       toast.success(t("transaction.messages.created"));
     },
     onError: (error: Error) => {
@@ -75,6 +77,8 @@ export const useFixedIncomePositions = ({
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.FIXED_INCOME_ASSETS,
       });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       toast.success(t("transaction.messages.updated"));
     },
     onError: (error: Error) => {
@@ -92,6 +96,8 @@ export const useFixedIncomePositions = ({
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.FIXED_INCOME_ASSETS,
       });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       toast.success(t("transaction.messages.deleted"));
     },
     onError: (error: Error) => {

@@ -12,6 +12,7 @@ export default {
     patrimonyBRL: "Net Worth (BRL portion)",
     consolidatedPatrimony: "Consolidated Net Worth",
     patrimony: "Net Worth",
+    pnlBalance: "P&L Balance",
     currencyTitles: {
       brl: "Brazilian Real",
       usd: "US Dollar",

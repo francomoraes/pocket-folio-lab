@@ -15,6 +15,7 @@ export type ExchangeRate = {
 export type SummaryResponse = {
   data: SummaryData[];
   exchangeRate: ExchangeRate;
+  totalPnlCents: number;
 };
 
 export type OverviewData = {

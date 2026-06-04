@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import { Asset } from "@/shared/types/asset";
 import { Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 interface AssetFormDialogProps {
   asset?: Asset | null;
@@ -62,6 +63,18 @@ export const AssetFormDialog = ({
   const { assetTypes, isLoading: isLoadingTypes } = useAssetTypes({
     enabled: open,
   });
+
+  useEffect(() => {
+    if (open && !isEditMode && assetTypes?.length) {
+      updateField("type", assetTypes[0].name);
+    }
+  }, [open, assetTypes, isEditMode]);
+
+  useEffect(() => {
+    if (open && !isEditMode && !formData.institutionId && institutions?.length) {
+      updateField("institutionId", institutions[0].id.toString());
+    }
+  }, [open, institutions, isEditMode, formData.institutionId]);
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>

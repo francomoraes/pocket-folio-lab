@@ -15,7 +15,7 @@ export const RootRedirect = () => {
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/positions" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <HomePage />;

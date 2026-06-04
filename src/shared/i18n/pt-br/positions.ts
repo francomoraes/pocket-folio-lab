@@ -12,6 +12,7 @@ export default {
     patrimonyBRL: "Patromônio (parte em reais)",
     consolidatedPatrimony: "Patrimônio Consolidado",
     patrimony: "Patrimônio",
+    pnlBalance: "Saldo L/P",
     currencyTitles: {
       brl: "Real Brasileiro",
       usd: "Dólar Americano",

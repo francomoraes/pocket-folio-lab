@@ -30,6 +30,7 @@ export const useSummary = () => {
   return {
     summary: summaryResponse?.data,
     exchangeRate: summaryResponse?.exchangeRate,
+    totalPnlCents: summaryResponse?.totalPnlCents,
     isLoadingSummary,
     errorSummary,
     refetchSummary,

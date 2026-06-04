@@ -13,12 +13,7 @@ import {
   FileX2,
 } from "lucide-react";
 
-const FEATURE_ICONS = [
-  PieChart,
-  FileSpreadsheet,
-  Globe2,
-  BarChart2,
-] as const;
+const FEATURE_ICONS = [PieChart, FileSpreadsheet, Globe2, BarChart2] as const;
 
 export const HomePage = () => {
   const { t } = useTranslation();
@@ -36,7 +31,7 @@ export const HomePage = () => {
       <section className="flex flex-col items-center justify-center text-center px-4 py-20 sm:py-32 gap-6">
         <div className="flex items-center gap-2 text-accent mb-2">
           <TrendingUp className="h-8 w-8" />
-          <span className="text-2xl font-bold">Pocket Folio</span>
+          <span className="text-2xl font-bold">Invest Tracker</span>
         </div>
 
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight max-w-3xl">
@@ -51,7 +46,12 @@ export const HomePage = () => {
           <Button asChild size="lg" className="text-base px-8">
             <Link to="/login">{t("home.hero.ctaRegister")}</Link>
           </Button>
-          <Button asChild size="lg" variant="outline" className="text-base px-8">
+          <Button
+            asChild
+            size="lg"
+            variant="outline"
+            className="text-base px-8"
+          >
             <Link to="/login">{t("home.hero.ctaLogin")}</Link>
           </Button>
         </div>
@@ -104,9 +104,21 @@ export const HomePage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full">
             {(
               [
-                { key: "noCredentials", Icon: ShieldCheck, color: "text-green-500 bg-green-500/10" },
-                { key: "noIntegration", Icon: WifiOff,     color: "text-blue-500  bg-blue-500/10"  },
-                { key: "noIr",          Icon: FileX2,      color: "text-amber-500 bg-amber-500/10" },
+                {
+                  key: "noCredentials",
+                  Icon: ShieldCheck,
+                  color: "text-green-500 bg-green-500/10",
+                },
+                {
+                  key: "noIntegration",
+                  Icon: WifiOff,
+                  color: "text-blue-500  bg-blue-500/10",
+                },
+                {
+                  key: "noIr",
+                  Icon: FileX2,
+                  color: "text-amber-500 bg-amber-500/10",
+                },
               ] as const
             ).map(({ key, Icon, color }) => (
               <div
@@ -188,9 +200,7 @@ export const HomePage = () => {
 
       {/* Footer CTA */}
       <section className="px-4 py-12 bg-muted/40 text-center">
-        <p className="text-muted-foreground mb-4">
-          {t("home.hero.subtitle")}
-        </p>
+        <p className="text-muted-foreground mb-4">{t("home.hero.subtitle")}</p>
         <Button asChild size="lg">
           <Link to="/login">{t("home.hero.ctaRegister")}</Link>
         </Button>

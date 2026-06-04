@@ -31,6 +31,8 @@ export const useCsvUpload = () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.INSTITUTIONS });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_CLASSES });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_TYPES });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       setIsOpen(false);
       setFile(null);
     },
