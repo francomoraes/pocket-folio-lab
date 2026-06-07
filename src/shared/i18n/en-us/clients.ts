@@ -1,0 +1,38 @@
+export default {
+  title: "Clients",
+  subtitle: "Manage your clients and pending requests",
+  pending: {
+    title: "Pending requests",
+    singular: "pending request",
+    plural: "pending requests",
+    accept: "Accept",
+    reject: "Reject",
+  },
+  table: {
+    name: "Name",
+    email: "Email",
+    linkedAt: "Linked since",
+    wealth: "Current wealth",
+    actions: "Actions",
+    viewPortfolio: "View portfolio",
+    endLink: "End link",
+    empty: "No active clients at the moment",
+  },
+  search: "Search by name or email",
+  sortBy: {
+    name: "Name",
+    activatedAt: "Link date",
+  },
+  linkApproved: "Request accepted successfully",
+  linkRejected: "Request rejected",
+  linkRevoked: "Link ended successfully",
+  approveError: "Error accepting request",
+  rejectError: "Error rejecting request",
+  revokeError: "Error ending link",
+  confirmRevoke: {
+    title: "End link",
+    description: "Are you sure you want to end the link with this investor?",
+    confirm: "End",
+    cancel: "Cancel",
+  },
+};

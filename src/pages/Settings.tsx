@@ -1,7 +1,7 @@
-import { Navbar } from "@/shared/components/Layout";
 import { AssetClassTable } from "@/features/settings/components/AssetClassTable";
 import { AssetTypesTable } from "@/features/settings/components/AssetTypesTable";
 import { InstitutionsTable } from "@/features/settings/components/InstitutionsTable";
+import { UsersTable } from "@/features/admin/components/UsersTable";
 import {
   Tabs,
   TabsContent,
@@ -9,9 +9,11 @@ import {
   TabsTrigger,
 } from "@/shared/components/ui/tabs";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/shared/hooks/useAuth";
 
 export const Settings = () => {
   const { t } = useTranslation();
+  const { isAdmin } = useAuth();
 
   return (
     <div className="flex flex-col gap-3 h-[calc(100vh-61px)] p-3">
@@ -32,6 +34,11 @@ export const Settings = () => {
             <TabsTrigger value="institutions">
               {t("settings.tabs.institutions")}
             </TabsTrigger>
+            {isAdmin && (
+              <TabsTrigger value="users">
+                {t("admin.users.title")}
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="classes">
@@ -51,6 +58,14 @@ export const Settings = () => {
               <InstitutionsTable />
             </div>
           </TabsContent>
+
+          {isAdmin && (
+            <TabsContent value="users">
+              <div className="pt-4">
+                <UsersTable />
+              </div>
+            </TabsContent>
+          )}
         </Tabs>
       </div>
     </div>

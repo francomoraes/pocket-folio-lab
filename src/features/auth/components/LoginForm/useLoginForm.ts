@@ -11,9 +11,11 @@ import {
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
+import { useNavigate } from "react-router-dom";
 
 export const useLoginForm = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const { login, register: registerUser, isLoading } = useAuth();
 
@@ -39,7 +41,7 @@ export const useLoginForm = () => {
         await login({ email: data.email, password: data.password });
         toast.success(t("auth.messages.loginSuccess"));
       }
-      window.location.href = "/";
+      navigate("/dashboard");
     } catch (error) {
       const fallbackKey = isRegisterMode
         ? "auth.messages.registerError"

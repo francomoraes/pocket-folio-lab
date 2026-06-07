@@ -58,4 +58,39 @@ export const API_ENDPOINTS = {
     update: "wealth-history/:id",
     delete: "wealth-history/:id",
   },
+  managers: {
+    list: "managers",
+    dashboard: "managers/me/dashboard",
+    clients: "managers/me/clients",
+    clientSummary: (investorId: number) =>
+      `managers/me/clients/${investorId}/summary`,
+    clientAssets: (investorId: number) =>
+      `managers/me/clients/${investorId}/assets`,
+    clientFixedIncome: (investorId: number) =>
+      `managers/me/clients/${investorId}/fixed-income-assets`,
+    clientWealthHistory: (investorId: number) =>
+      `managers/me/clients/${investorId}/wealth-history`,
+    clientProfile: (investorId: number) =>
+      `managers/me/clients/${investorId}/profile`,
+    clientAssetTypeTargetPercentage: (
+      investorId: number,
+      assetTypeId: number,
+    ) =>
+      `managers/me/clients/${investorId}/asset-types/${assetTypeId}/target-percentage`,
+  },
+  managerLinks: {
+    create: "manager-links",
+    myLinks: "manager-links/me",
+    myHistory: "manager-links/me/history",
+    pending: "manager-links/pending",
+    approve: (linkId: number) => `manager-links/${linkId}/approve`,
+    reject: (linkId: number) => `manager-links/${linkId}/reject`,
+    revoke: (linkId: number) => `manager-links/${linkId}/revoke`,
+  },
+  admin: {
+    listUsers: "admin/users",
+    setRole: (userId: number) => `admin/users/${userId}/role`,
+    setClientLimit: (managerId: number) =>
+      `admin/managers/${managerId}/client-limit`,
+  },
 } as const;

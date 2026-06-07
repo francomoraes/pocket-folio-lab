@@ -1,0 +1,38 @@
+export default {
+  title: "Clientes",
+  subtitle: "Gerencie seus clientes e solicitações pendentes",
+  pending: {
+    title: "Solicitações pendentes",
+    singular: "solicitação pendente",
+    plural: "solicitações pendentes",
+    accept: "Aceitar",
+    reject: "Rejeitar",
+  },
+  table: {
+    name: "Nome",
+    email: "E-mail",
+    linkedAt: "Vínculo desde",
+    wealth: "Patrimônio atual",
+    actions: "Ações",
+    viewPortfolio: "Ver carteira",
+    endLink: "Encerrar vínculo",
+    empty: "Nenhum cliente ativo no momento",
+  },
+  search: "Buscar por nome ou e-mail",
+  sortBy: {
+    name: "Nome",
+    activatedAt: "Data de vínculo",
+  },
+  linkApproved: "Solicitação aceita com sucesso",
+  linkRejected: "Solicitação rejeitada",
+  linkRevoked: "Vínculo encerrado com sucesso",
+  approveError: "Erro ao aceitar solicitação",
+  rejectError: "Erro ao rejeitar solicitação",
+  revokeError: "Erro ao encerrar vínculo",
+  confirmRevoke: {
+    title: "Encerrar vínculo",
+    description: "Tem certeza que deseja encerrar o vínculo com este investor?",
+    confirm: "Encerrar",
+    cancel: "Cancelar",
+  },
+};

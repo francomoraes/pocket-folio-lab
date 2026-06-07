@@ -3,6 +3,7 @@ import { TrendingUp, Menu } from "lucide-react";
 import { NavLink, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/shared/hooks/useAuth";
+import { usePendingLinks } from "@/features/manager/hooks/usePendingLinks";
 import { useState } from "react";
 import {
   Sheet,
@@ -15,13 +16,28 @@ import { Button } from "@/shared/components/ui/button";
 
 export const Navbar = () => {
   const { t } = useTranslation();
-  const { isAuthenticated, isInitializing } = useAuth();
+  const { isAuthenticated, isInitializing, isManager, isInvestor } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  const navItems = [
+  const { pendingCount } = usePendingLinks();
+
+  type NavItem = { to: string; label: string; badge?: number };
+
+  const navItems: NavItem[] = [
     { to: "/dashboard", label: t("navbar.links.dashboard") },
     { to: "/positions", label: t("navbar.links.positions") },
     { to: "/settings", label: t("navbar.links.settings") },
+    ...(isInvestor ? [{ to: "/my-managers", label: t("navbar.links.managers") }] : []),
+    ...(isManager
+      ? [
+          {
+            to: "/manager/clients",
+            label: t("navbar.links.clients"),
+            badge: pendingCount > 0 ? pendingCount : undefined,
+          },
+          { to: "/manager/dashboard", label: t("navbar.links.managerDashboard") },
+        ]
+      : []),
   ];
 
   return (
@@ -53,6 +69,11 @@ export const Navbar = () => {
                     }
                   >
                     {item.label}
+                    {item.badge != null && (
+                      <span className="ml-1 rounded-full bg-destructive px-1.5 py-0.5 text-xs text-white leading-none">
+                        {item.badge}
+                      </span>
+                    )}
                   </NavLink>
                 ))}
               </div>
@@ -84,6 +105,11 @@ export const Navbar = () => {
                         }
                       >
                         {item.label}
+                        {item.badge != null && (
+                          <span className="ml-1 rounded-full bg-destructive px-1.5 py-0.5 text-xs text-white leading-none">
+                            {item.badge}
+                          </span>
+                        )}
                       </NavLink>
                     ))}
                     <div className="border-t pt-4 mt-4">

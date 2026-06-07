@@ -115,5 +115,14 @@ export default {
     WEALTH_HISTORY_DATE_CONFLICT:
       "A wealth history record already exists for this date",
     WEALTH_HISTORY_NOT_FOUND: "Wealth history record not found",
+    PENDING_LINK_EXISTS: "A pending request already exists for this manager.",
+    ACTIVE_LINK_EXISTS: "You already have an active link with this manager.",
+    MANAGER_CLIENT_LIMIT_REACHED: "This manager has reached the client limit.",
+    NO_ACTIVE_LINK: "You have no active link with this investor.",
+    INVALID_STATUS_TRANSITION:
+      "This action is not allowed in the current link state.",
+    SELF_LINK_NOT_ALLOWED: "You cannot request a link with yourself.",
+    MANAGER_NOT_FOUND: "Manager not found.",
+    MANAGER_NOT_ELIGIBLE: "This user no longer has the manager role.",
   },
 };

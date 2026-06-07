@@ -115,5 +115,14 @@ export default {
     WEALTH_HISTORY_DATE_CONFLICT:
       "Já existe um registro de patrimônio para esta data",
     WEALTH_HISTORY_NOT_FOUND: "Registro de patrimônio não encontrado",
+    PENDING_LINK_EXISTS: "Já existe uma solicitação pendente para este gestor.",
+    ACTIVE_LINK_EXISTS: "Você já tem um vínculo ativo com este gestor.",
+    MANAGER_CLIENT_LIMIT_REACHED: "Este gestor atingiu o limite de clientes.",
+    NO_ACTIVE_LINK: "Você não tem vínculo ativo com este investidor.",
+    INVALID_STATUS_TRANSITION:
+      "Esta ação não é permitida no estado atual do vínculo.",
+    SELF_LINK_NOT_ALLOWED: "Você não pode solicitar vínculo consigo mesmo.",
+    MANAGER_NOT_FOUND: "Gestor não encontrado.",
+    MANAGER_NOT_ELIGIBLE: "Este usuário não tem mais o papel de gestor.",
   },
 };

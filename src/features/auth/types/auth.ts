@@ -1,9 +1,14 @@
+import { UserRole } from "@/shared/types/roles";
+
+export { UserRole };
+
 export interface User {
   id: number;
   email: string;
   name: string;
   profilePictureUrl?: string;
   locale?: string;
+  role: UserRole;
   createdAt: string;
   updatedAt: string;
 }
@@ -44,4 +49,7 @@ export interface AuthContextType {
   isLoading: boolean;
   isInitializing: boolean;
   isAuthenticated: boolean;
+  isManager: boolean;
+  isAdmin: boolean;
+  isInvestor: boolean;
 }

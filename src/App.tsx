@@ -18,6 +18,11 @@ import {
 import { RootRedirect } from "@/components/RootRedirect";
 import "@/shared/i18n/config";
 import { UserProfile } from "@/pages/UserProfile";
+import { ManagerLinksPage } from "@/features/manager/pages/ManagerLinksPage";
+import { ManagerDashboardPage } from "@/features/manager/pages/ManagerDashboardPage";
+import { ManagerClientsPage } from "@/features/manager/pages/ManagerClientsPage";
+import { ClientPositionsPage } from "@/features/manager/pages/ClientPositionsPage";
+import { ClientTargetsPage } from "@/features/manager/pages/ClientTargetsPage";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +77,50 @@ const App = () => (
                 }
               />
               <Route path="/login" element={<LoginForm />} />
+
+              {/* Investor routes */}
+              <Route
+                path="/my-managers"
+                element={
+                  <ProtectedRoute requiredRole="investor">
+                    <ManagerLinksPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Manager routes */}
+              <Route
+                path="/manager/dashboard"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <ManagerDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/manager/clients"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <ManagerClientsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/manager/clients/:investorId/positions"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <ClientPositionsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/manager/clients/:investorId/targets"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <ClientTargetsPage />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

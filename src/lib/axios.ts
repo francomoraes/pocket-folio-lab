@@ -16,10 +16,10 @@ const refreshApi = axios.create({
 });
 
 // For use in AuthContext on mount — avoids going through the 401 interceptor
-export async function tryRefreshToken(): Promise<string | null> {
+export async function tryRefreshToken(): Promise<{ token: string; user: unknown } | null> {
   try {
-    const { data } = await refreshApi.post<{ token: string }>("/auth/refresh");
-    return data.token;
+    const { data } = await refreshApi.post<{ token: string; user: unknown }>("/auth/refresh");
+    return { token: data.token, user: data.user };
   } catch {
     return null;
   }

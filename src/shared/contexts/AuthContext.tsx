@@ -5,7 +5,7 @@ import {
   UpdateUserRequest,
   User,
 } from "@/features/auth/types/auth";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import { authService } from "@/features/auth/services/authService";
 import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 import { toast } from "sonner";
@@ -44,8 +44,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
   const { i18n } = useTranslation();
+  const tokenRef = useRef<string | null>(null);
 
   function applyToken(newToken: string | null) {
+    tokenRef.current = newToken;
     tokenStore.set(newToken);
     setToken(newToken);
   }
@@ -61,10 +63,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // On mount: try to restore session via the refresh token cookie (HttpOnly)
   useEffect(() => {
-    tryRefreshToken().then((newToken) => {
-      if (newToken) {
-        applyToken(newToken);
-      } else {
+    tryRefreshToken().then((result) => {
+      if (result) {
+        applyToken(result.token);
+        // Refresh response carries fresh user data (including current role).
+        // Overwrite localStorage so role changes by admin are reflected immediately.
+        const freshUser = result.user as User;
+        setUser(freshUser);
+        persistUser(freshUser);
+      } else if (!tokenRef.current) {
+        // Only clear if login hasn't already set a token concurrently.
+        // Without this check, a slow tryRefreshToken resolving after a successful
+        // login would wipe the freshly-set token/user (race condition).
         applyToken(null);
         setUser(null);
         clearPersistedUser();
@@ -134,6 +144,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const isManager =
+    user?.role === "manager" || user?.role === "admin";
+  const isAdmin = user?.role === "admin";
+  const isInvestor = user?.role === "investor";
+
   const value: AuthContextType = {
     user,
     token,
@@ -144,6 +159,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading,
     isInitializing,
     isAuthenticated: !!user && !!token,
+    isManager,
+    isAdmin,
+    isInvestor,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
