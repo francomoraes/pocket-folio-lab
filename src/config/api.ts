@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
     update: "assets/:id",
     delete: "assets/:id",
     export: "assets/export",
+    retryPrice: "assets/:id/retry-price",
     refreshMarketPrices: "assets/refresh-market-prices",
   },
   fixedIncomeAssets: {

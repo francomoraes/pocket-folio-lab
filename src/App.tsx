@@ -16,6 +16,7 @@ import {
   ErrorFallback,
 } from "@/shared/components/ErrorBoundary";
 import { RootRedirect } from "@/components/RootRedirect";
+import { useAutoRefreshPrices } from "@/shared/hooks/useAutoRefreshPrices";
 import "@/shared/i18n/config";
 import { UserProfile } from "@/pages/UserProfile";
 import { ManagerLinksPage } from "@/features/manager/pages/ManagerLinksPage";
@@ -26,6 +27,11 @@ import { ClientTargetsPage } from "@/features/manager/pages/ClientTargetsPage";
 
 const queryClient = new QueryClient();
 
+function AutoRefreshPrices() {
+  useAutoRefreshPrices();
+  return null;
+}
+
 const App = () => (
   <ErrorBoundary
     fallback={<ErrorFallback />}
@@ -35,6 +41,7 @@ const App = () => (
   >
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <AutoRefreshPrices />
         <TooltipProvider>
           <Toaster />
           <Sonner />

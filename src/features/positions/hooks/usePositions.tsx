@@ -92,6 +92,23 @@ export const usePositions = ({
     },
   });
 
+  const retryPriceMutation = useMutation({
+    mutationFn: (id: number) => {
+      return assetService.retryPrice(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
+      toast.success(t("transaction.messages.retryPriceSuccess"));
+    },
+    onError: (error: Error) => {
+      toast.error(
+        resolveErrorMessage(error, "transaction.messages.retryPriceError"),
+      );
+    },
+  });
+
   const refreshMarketPricesMutation = useMutation({
     mutationFn: () => {
       return assetService.refreshMarketPrices();
@@ -125,11 +142,13 @@ export const usePositions = ({
     createAsset: createAssetMutation.mutateAsync,
     updateAsset: updateAssetMutation.mutateAsync,
     deleteAsset: deleteAssetMutation.mutateAsync,
+    retryPrice: retryPriceMutation.mutateAsync,
     refreshMarketPrices: refreshMarketPricesMutation.mutateAsync,
 
     isCreating: createAssetMutation.isPending,
     isUpdating: updateAssetMutation.isPending,
     isDeleting: deleteAssetMutation.isPending,
+    isRetryingPrice: retryPriceMutation.isPending,
     isRefreshingMarketPrices: refreshMarketPricesMutation.isPending,
 
     refetch,

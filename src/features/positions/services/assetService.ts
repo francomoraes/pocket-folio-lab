@@ -52,6 +52,12 @@ class AssetService {
     return response.data;
   }
 
+  async retryPrice(id: number): Promise<{ message: string; asset: Asset }> {
+    const url = API_ENDPOINTS.assets.retryPrice.replace(":id", id.toString());
+    const response = await api.post<{ message: string; asset: Asset }>(url);
+    return response.data;
+  }
+
   async refreshMarketPrices(): Promise<{
     message: string;
     updated: number;

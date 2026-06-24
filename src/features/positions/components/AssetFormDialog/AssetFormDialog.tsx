@@ -19,7 +19,7 @@ import { useAssetTypes } from "@/features/settings/hooks/useAssetTypes";
 import { useAssetForm } from "@/features/positions/components/AssetFormDialog/useAssetForm";
 import { useTranslation } from "react-i18next";
 import { Asset } from "@/shared/types/asset";
-import { Loader2 } from "lucide-react";
+import { Loader2, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
@@ -45,8 +45,10 @@ export const AssetFormDialog = ({
     formData,
     updateField,
     handleSubmit,
+    handleRetryPrice,
     resetForm,
     isSubmitting,
+    isRetryingPrice,
     isEditMode,
   } = useAssetForm(asset, () => onOpenChange(false));
 
@@ -65,16 +67,24 @@ export const AssetFormDialog = ({
   });
 
   useEffect(() => {
-    if (open && !isEditMode && assetTypes?.length) {
-      updateField("type", assetTypes[0].name);
+    if (open && assetTypes?.length) {
+      if (isEditMode && asset) {
+        updateField("type", asset.type.name);
+      } else {
+        updateField("type", assetTypes[0].name);
+      }
     }
-  }, [open, assetTypes, isEditMode]);
+  }, [open, assetTypes, isEditMode, asset]);
 
   useEffect(() => {
-    if (open && !isEditMode && !formData.institutionId && institutions?.length) {
-      updateField("institutionId", institutions[0].id.toString());
+    if (open && institutions?.length) {
+      if (isEditMode && asset) {
+        updateField("institutionId", asset.institution.id.toString());
+      } else if (!formData.institutionId) {
+        updateField("institutionId", institutions[0].id.toString());
+      }
     }
-  }, [open, institutions, isEditMode, formData.institutionId]);
+  }, [open, institutions, isEditMode, asset, formData.institutionId]);
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -263,6 +273,21 @@ export const AssetFormDialog = ({
                   date: new Date(asset.updatedAt).toLocaleDateString(),
                 })}
               </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="w-full gap-2 border-amber-500/40 text-amber-600 hover:bg-amber-500/20 dark:text-amber-400"
+                onClick={handleRetryPrice}
+                disabled={isRetryingPrice}
+              >
+                {isRetryingPrice ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="h-4 w-4" />
+                )}
+                {t("transaction.messages.retryPrice")}
+              </Button>
             </div>
           )}
 

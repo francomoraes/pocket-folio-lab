@@ -28,10 +28,17 @@ export const useAssetForm = (asset?: Asset | null, onSuccess?: () => void) => {
   const [formData, setFormData] = useState<AssetFormData>(initialState);
   const isEditMode = !!asset;
 
-  const { createAsset, updateAsset, isCreating, isUpdating, assets } =
-    usePositions({
-      skipPagination: true,
-    });
+  const {
+    createAsset,
+    updateAsset,
+    retryPrice,
+    isCreating,
+    isUpdating,
+    isRetryingPrice,
+    assets,
+  } = usePositions({
+    skipPagination: true,
+  });
 
   useEffect(() => {
     if (asset) {
@@ -151,12 +158,20 @@ export const useAssetForm = (asset?: Asset | null, onSuccess?: () => void) => {
     } catch (error) {}
   };
 
+  const handleRetryPrice = async () => {
+    if (!asset) return;
+    await retryPrice(asset.id);
+    onSuccess?.();
+  };
+
   return {
     formData,
     updateField,
     handleSubmit,
+    handleRetryPrice,
     resetForm,
     isSubmitting: isCreating || isUpdating,
+    isRetryingPrice,
     isEditMode,
   };
 };
