@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { tokenStore } from "@/lib/tokenStore";
 import { api, tryRefreshToken } from "@/lib/axios";
 import { API_ENDPOINTS } from "@/config/api";
+import { queryClient } from "@/shared/lib/queryClient";
 
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined,
@@ -52,12 +53,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setToken(newToken);
   }
 
+  function performLocalLogout() {
+    applyToken(null);
+    setUser(null);
+    clearPersistedUser();
+    queryClient.clear();
+  }
+
   // Register logout handler so the axios interceptor can force logout on refresh failure
   useEffect(() => {
     tokenStore.setLogoutHandler(() => {
-      applyToken(null);
-      setUser(null);
-      clearPersistedUser();
+      performLocalLogout();
     });
   }, []);
 
@@ -75,9 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Only clear if login hasn't already set a token concurrently.
         // Without this check, a slow tryRefreshToken resolving after a successful
         // login would wipe the freshly-set token/user (race condition).
-        applyToken(null);
-        setUser(null);
-        clearPersistedUser();
+        performLocalLogout();
       }
       setIsInitializing(false);
     });
@@ -122,9 +126,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // Proceed with local logout even if the server call fails
     }
-    applyToken(null);
-    setUser(null);
-    clearPersistedUser();
+    performLocalLogout();
     toast.success("Logout successful");
   };
 

@@ -1,7 +1,8 @@
 import { Toaster } from "@/shared/components/ui/toaster";
 import { Toaster as Sonner } from "@/shared/components/ui/sonner";
 import { TooltipProvider } from "@/shared/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/shared/lib/queryClient";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/shared/contexts/AuthContext";
 import { LoginForm } from "@/features/auth/components/LoginForm";
@@ -24,8 +25,6 @@ import { ManagerDashboardPage } from "@/features/manager/pages/ManagerDashboardP
 import { ManagerClientsPage } from "@/features/manager/pages/ManagerClientsPage";
 import { ClientPositionsPage } from "@/features/manager/pages/ClientPositionsPage";
 import { ClientTargetsPage } from "@/features/manager/pages/ClientTargetsPage";
-
-const queryClient = new QueryClient();
 
 function AutoRefreshPrices() {
   useAutoRefreshPrices();
@@ -85,11 +84,11 @@ const App = () => (
               />
               <Route path="/login" element={<LoginForm />} />
 
-              {/* Investor routes */}
+              {/* Vínculos gestor-cliente: qualquer role autenticada pode ter seus próprios gestores */}
               <Route
                 path="/my-managers"
                 element={
-                  <ProtectedRoute requiredRole="investor">
+                  <ProtectedRoute>
                     <ManagerLinksPage />
                   </ProtectedRoute>
                 }

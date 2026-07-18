@@ -3,7 +3,7 @@ import { TrendingUp, Menu } from "lucide-react";
 import { NavLink, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/shared/hooks/useAuth";
-import { usePendingLinks } from "@/features/manager/hooks/usePendingLinks";
+import { usePendingApprovals } from "@/features/manager/hooks/usePendingApprovals";
 import { useState } from "react";
 import {
   Sheet,
@@ -16,10 +16,16 @@ import { Button } from "@/shared/components/ui/button";
 
 export const Navbar = () => {
   const { t } = useTranslation();
-  const { isAuthenticated, isInitializing, isManager, isInvestor } = useAuth();
+  const { isAuthenticated, isInitializing, isManager } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  const { pendingCount } = usePendingLinks();
+  const { pendingLinks } = usePendingApprovals();
+  // Badge do link "Clientes" só conta pedidos onde EU sou o gestor aguardado
+  // (contraparte no lado investor) — pedidos que EU enviei como gestor ficam
+  // pendentes na página do outro lado, não aqui.
+  const managerPendingCount = pendingLinks.filter(
+    (link) => link.counterpartRole === "investor",
+  ).length;
 
   type NavItem = { to: string; label: string; badge?: number };
 
@@ -27,13 +33,13 @@ export const Navbar = () => {
     { to: "/dashboard", label: t("navbar.links.dashboard") },
     { to: "/positions", label: t("navbar.links.positions") },
     { to: "/settings", label: t("navbar.links.settings") },
-    ...(isInvestor ? [{ to: "/my-managers", label: t("navbar.links.managers") }] : []),
+    { to: "/my-managers", label: t("navbar.links.managers") },
     ...(isManager
       ? [
           {
             to: "/manager/clients",
             label: t("navbar.links.clients"),
-            badge: pendingCount > 0 ? pendingCount : undefined,
+            badge: managerPendingCount > 0 ? managerPendingCount : undefined,
           },
           { to: "/manager/dashboard", label: t("navbar.links.managerDashboard") },
         ]

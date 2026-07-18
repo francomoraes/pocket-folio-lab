@@ -13,7 +13,7 @@ export default {
       noLimit: "Padrão (10)",
     },
     roles: {
-      investor: "Investor",
+      investor: "Investidor",
       manager: "Gestor",
       admin: "Admin",
     },

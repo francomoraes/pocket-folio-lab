@@ -13,6 +13,9 @@ export default {
   searchManagers: "Search managers by name or email",
   noManagersFound: "No managers found",
   requestManager: "Request",
+  incomingRequests: {
+    title: "Manager Requests",
+  },
   confirmRevoke: {
     title: "End link",
     description: "Are you sure you want to end the link with this manager? This action cannot be undone.",
@@ -34,5 +37,6 @@ export default {
     activatedAt: "Active since",
     rejectedAt: "Rejected at",
     revokedAt: "Ended at",
+    cancelledAt: "Cancelled at",
   },
 };

@@ -13,6 +13,9 @@ export default {
   searchManagers: "Buscar gestores por nome ou e-mail",
   noManagersFound: "Nenhum gestor encontrado",
   requestManager: "Solicitar",
+  incomingRequests: {
+    title: "Solicitações de Gestores",
+  },
   confirmRevoke: {
     title: "Encerrar vínculo",
     description: "Tem certeza que deseja encerrar o vínculo com este gestor? Esta ação não pode ser desfeita.",
@@ -34,5 +37,6 @@ export default {
     activatedAt: "Ativo desde",
     rejectedAt: "Rejeitado em",
     revokedAt: "Encerrado em",
+    cancelledAt: "Cancelado em",
   },
 };

@@ -29,10 +29,27 @@ export default {
   approveError: "Error accepting request",
   rejectError: "Error rejecting request",
   revokeError: "Error ending link",
+  requestClient: "Request Client",
+  searchInvestors: "Search by name or email",
+  noInvestorsFound: "No investors found",
+  requestSent: "Request sent successfully",
+  requestError: "Error sending request",
+  cancelRequest: "Cancel request",
+  requestCancelled: "Request cancelled successfully",
+  cancelRequestError: "Error cancelling request",
+  sentRequests: {
+    title: "Sent Requests",
+  },
   confirmRevoke: {
     title: "End link",
     description: "Are you sure you want to end the link with this investor?",
     confirm: "End",
     cancel: "Cancel",
+  },
+  confirmCancelRequest: {
+    title: "Cancel request",
+    description: "Are you sure you want to cancel this request? This action cannot be undone.",
+    confirm: "Cancel request",
+    cancel: "Back",
   },
 };

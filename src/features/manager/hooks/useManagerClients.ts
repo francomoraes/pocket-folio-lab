@@ -25,7 +25,7 @@ export const useManagerClients = (params?: {
   const revokeMutation = useMutation({
     mutationFn: (linkId: number) => managerLinkService.revokeLink(linkId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["manager", "clients"] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.managerClientsRoot });
       toast.success(t("clients.linkRevoked"));
     },
     onError: (error) => {

@@ -1,19 +1,36 @@
 import { useManagerClients } from "@/features/manager/hooks/useManagerClients";
-import { usePendingLinks } from "@/features/manager/hooks/usePendingLinks";
+import { usePendingApprovals } from "@/features/manager/hooks/usePendingApprovals";
+import { useSentRequests } from "@/features/manager/hooks/useSentRequests";
+import { managerLinkService } from "@/features/manager/services/managerLinkService";
 import { ClientCard } from "@/features/manager/components/ClientCard";
 import { PendingLinkCard } from "@/features/manager/components/PendingLinkCard";
+import { SentRequestCard } from "@/features/manager/components/SentRequestCard";
+import { AvailableInvestorsList } from "@/features/manager/components/AvailableInvestorsList";
 import { Input } from "@/shared/components/ui/input";
+import { Button } from "@/shared/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/shared/components/ui/sheet";
 import { useTranslation } from "react-i18next";
 import { useRef, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/shared/constants/queryKeys";
+import { toast } from "sonner";
+import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 import CircularProgress from "@/shared/components/ui/circular-progress";
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert";
-import { Bell } from "lucide-react";
+import { Bell, Plus } from "lucide-react";
 
 export const ManagerClientsPage = () => {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -29,29 +46,77 @@ export const ManagerClientsPage = () => {
     order: "ASC",
   });
 
-  const { pendingLinks, pendingCount, approveLink, rejectLink, isApproving, isRejecting } =
-    usePendingLinks();
+  const { pendingLinks, approveLink, rejectLink, isApproving, isRejecting } =
+    usePendingApprovals();
+
+  // Só pedidos onde EU sou o gestor aguardado (cliente pediu vínculo comigo).
+  // Pedidos que EU enviei como gestor ficam pendentes na página do investor.
+  const incomingClientRequests = pendingLinks.filter(
+    (link) => link.counterpartRole === "investor",
+  );
+
+  const { sentRequests, cancelRequest, isCancelling } = useSentRequests();
+
+  const queryClient = useQueryClient();
+  const requestClientMutation = useMutation({
+    mutationFn: (targetUserId: number) =>
+      managerLinkService.createLink(targetUserId, "manager"),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.pendingLinks });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.sentRequests });
+      toast.success(t("clients.requestSent"));
+    },
+    onError: (error) => {
+      toast.error(resolveErrorMessage(error, "clients.requestError"));
+    },
+  });
+
+  const handleRequestClient = async (targetUserId: number) => {
+    await requestClientMutation.mutateAsync(targetUserId);
+    setSheetOpen(false);
+  };
 
   return (
     <div className="flex flex-col gap-6 p-4 max-w-4xl mx-auto">
-      <div>
-        <h1 className="text-2xl font-bold">{t("clients.title")}</h1>
-        <p className="text-muted-foreground text-sm">{t("clients.subtitle")}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">{t("clients.title")}</h1>
+          <p className="text-muted-foreground text-sm">{t("clients.subtitle")}</p>
+        </div>
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+          <SheetTrigger asChild>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              {t("clients.requestClient")}
+            </Button>
+          </SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>{t("clients.requestClient")}</SheetTitle>
+            </SheetHeader>
+            <div className="mt-6">
+              <AvailableInvestorsList
+                onRequest={handleRequestClient}
+                isRequesting={requestClientMutation.isPending}
+              />
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
 
-      {pendingCount > 0 && (
+      {incomingClientRequests.length > 0 && (
         <section>
           <Alert>
             <Bell className="h-4 w-4" />
             <AlertTitle>
-              {pendingCount}{" "}
-              {pendingCount === 1
+              {incomingClientRequests.length}{" "}
+              {incomingClientRequests.length === 1
                 ? t("clients.pending.singular")
                 : t("clients.pending.plural")}
             </AlertTitle>
             <AlertDescription>
               <div className="flex flex-col gap-2 mt-2">
-                {pendingLinks.map((link) => (
+                {incomingClientRequests.map((link) => (
                   <PendingLinkCard
                     key={link.id}
                     link={link}
@@ -64,6 +129,24 @@ export const ManagerClientsPage = () => {
               </div>
             </AlertDescription>
           </Alert>
+        </section>
+      )}
+
+      {sentRequests.length > 0 && (
+        <section>
+          <h2 className="text-lg font-semibold mb-3">
+            {t("clients.sentRequests.title")}
+          </h2>
+          <div className="flex flex-col gap-2">
+            {sentRequests.map((request) => (
+              <SentRequestCard
+                key={request.id}
+                request={request}
+                onCancel={cancelRequest}
+                isCancelling={isCancelling}
+              />
+            ))}
+          </div>
         </section>
       )}
 

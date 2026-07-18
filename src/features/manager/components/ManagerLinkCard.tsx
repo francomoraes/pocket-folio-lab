@@ -61,7 +61,10 @@ export const ManagerLinkCard = ({
             )}
             {link.revokedAt && (
               <span>
-                {t("managers.linkInfo.revokedAt")}: {fmt(link.revokedAt)}
+                {link.activatedAt
+                  ? t("managers.linkInfo.revokedAt")
+                  : t("managers.linkInfo.cancelledAt")}
+                : {fmt(link.revokedAt)}
               </span>
             )}
           </div>

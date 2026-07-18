@@ -1,10 +1,10 @@
-import { ManagerClientLink } from "@/shared/types/manager";
+import { PendingApproval } from "@/shared/types/manager";
 import { Button } from "@/shared/components/ui/button";
 import { Card } from "@/shared/components/ui/card";
 import { useTranslation } from "react-i18next";
 
 interface PendingLinkCardProps {
-  link: ManagerClientLink;
+  link: PendingApproval;
   onApprove: (linkId: number) => Promise<void>;
   onReject: (linkId: number) => Promise<void>;
   isApproving: boolean;
@@ -25,8 +25,8 @@ export const PendingLinkCard = ({
   return (
     <Card className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
       <div className="flex-1 min-w-0">
-        <p className="font-medium">{link.investorName}</p>
-        <p className="text-sm text-muted-foreground">{link.investorEmail}</p>
+        <p className="font-medium">{link.counterpartName}</p>
+        <p className="text-sm text-muted-foreground">{link.counterpartEmail}</p>
         <p className="text-xs text-muted-foreground mt-1">
           {fmt(link.createdAt)}
         </p>

@@ -84,9 +84,13 @@ export const API_ENDPOINTS = {
     myLinks: "manager-links/me",
     myHistory: "manager-links/me/history",
     pending: "manager-links/pending",
+    sent: "manager-links/sent",
     approve: (linkId: number) => `manager-links/${linkId}/approve`,
     reject: (linkId: number) => `manager-links/${linkId}/reject`,
     revoke: (linkId: number) => `manager-links/${linkId}/revoke`,
+  },
+  investors: {
+    list: "investors",
   },
   admin: {
     listUsers: "admin/users",

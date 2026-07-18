@@ -29,10 +29,27 @@ export default {
   approveError: "Erro ao aceitar solicitação",
   rejectError: "Erro ao rejeitar solicitação",
   revokeError: "Erro ao encerrar vínculo",
+  requestClient: "Solicitar Cliente",
+  searchInvestors: "Buscar por nome ou e-mail",
+  noInvestorsFound: "Nenhum investidor encontrado",
+  requestSent: "Solicitação enviada com sucesso",
+  requestError: "Erro ao enviar solicitação",
+  cancelRequest: "Cancelar solicitação",
+  requestCancelled: "Solicitação cancelada com sucesso",
+  cancelRequestError: "Erro ao cancelar solicitação",
+  sentRequests: {
+    title: "Solicitações Enviadas",
+  },
   confirmRevoke: {
     title: "Encerrar vínculo",
-    description: "Tem certeza que deseja encerrar o vínculo com este investor?",
+    description: "Tem certeza que deseja encerrar o vínculo com este investidor?",
     confirm: "Encerrar",
     cancel: "Cancelar",
+  },
+  confirmCancelRequest: {
+    title: "Cancelar solicitação",
+    description: "Tem certeza que deseja cancelar esta solicitação? Esta ação não pode ser desfeita.",
+    confirm: "Cancelar solicitação",
+    cancel: "Voltar",
   },
 };

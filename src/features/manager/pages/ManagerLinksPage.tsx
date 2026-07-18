@@ -1,6 +1,8 @@
 import { useMyLinks } from "@/features/manager/hooks/useMyLinks";
 import { useMyLinkHistory } from "@/features/manager/hooks/useMyLinkHistory";
+import { usePendingApprovals } from "@/features/manager/hooks/usePendingApprovals";
 import { ManagerLinkCard } from "@/features/manager/components/ManagerLinkCard";
+import { PendingLinkCard } from "@/features/manager/components/PendingLinkCard";
 import { AvailableManagersList } from "@/features/manager/components/AvailableManagersList";
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -40,6 +42,14 @@ export const ManagerLinksPage = () => {
     useMyLinks();
   const { history, isLoading: isLoadingHistory } = useMyLinkHistory();
 
+  const { pendingLinks, approveLink, rejectLink, isApproving, isRejecting } =
+    usePendingApprovals();
+  // Só pedidos onde EU sou o cliente aguardado (um gestor pediu pra me gerenciar).
+  // Pedidos que EU enviei como investidor ficam pendentes na página do gestor.
+  const incomingManagerRequests = pendingLinks.filter(
+    (link) => link.counterpartRole === "manager",
+  );
+
   const fmt = (d: string | null) =>
     d ? new Date(d).toLocaleDateString(locale) : "—";
 
@@ -78,6 +88,26 @@ export const ManagerLinksPage = () => {
           </SheetContent>
         </Sheet>
       </div>
+
+      {incomingManagerRequests.length > 0 && (
+        <section>
+          <h2 className="text-lg font-semibold mb-3">
+            {t("managers.incomingRequests.title")}
+          </h2>
+          <div className="flex flex-col gap-2">
+            {incomingManagerRequests.map((link) => (
+              <PendingLinkCard
+                key={link.id}
+                link={link}
+                onApprove={approveLink}
+                onReject={rejectLink}
+                isApproving={isApproving}
+                isRejecting={isRejecting}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section>
         <h2 className="text-lg font-semibold mb-3">{t("managers.myManagers")}</h2>

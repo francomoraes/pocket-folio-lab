@@ -5,7 +5,8 @@ export type LinkStatus = "pending" | "active" | "rejected" | "revoked";
 export type RevokeReason =
   | "manual_by_investor"
   | "manual_by_manager"
-  | "role_removed";
+  | "role_removed"
+  | "superseded";
 
 export interface ManagerClientLink {
   id: number;
@@ -21,6 +22,35 @@ export interface ManagerClientLink {
   revokedAt: string | null;
   revokeReason: RevokeReason | null;
   createdAt: string;
+}
+
+// counterpartRole reflete a posição da contraparte NO VÍNCULO (investorId/managerId),
+// não o UserRole dela — um admin pode aparecer como "manager" aqui.
+export interface PendingApproval {
+  id: number;
+  investorId: number;
+  managerId: number;
+  requestedByUserId: number;
+  counterpartId: number;
+  counterpartName: string;
+  counterpartEmail: string;
+  counterpartRole: "investor" | "manager";
+  createdAt: string;
+}
+
+export interface SentRequest {
+  id: number;
+  investorId: number;
+  investorName: string;
+  investorEmail: string;
+  createdAt: string;
+}
+
+export interface AvailableInvestor {
+  id: number;
+  name: string;
+  email: string;
+  role: UserRole;
 }
 
 export interface ManagerHistoryCycle {

@@ -4,25 +4,22 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "@/shared/hooks/useAuth";
 
-export const usePendingLinks = () => {
+export const usePendingApprovals = () => {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
-  const { isManager } = useAuth();
 
   const { data: pendingLinks = [], isLoading, error } = useQuery({
     queryKey: QUERY_KEYS.pendingLinks,
-    queryFn: () => managerLinkService.getPendingLinks(),
+    queryFn: () => managerLinkService.getPendingApprovals(),
     staleTime: 30 * 1000,
-    enabled: isManager,
   });
 
   const approveMutation = useMutation({
     mutationFn: (linkId: number) => managerLinkService.approveLink(linkId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.pendingLinks });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.managerClients() });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.managerClientsRoot });
       toast.success(t("clients.linkApproved"));
     },
     onError: (error) => {

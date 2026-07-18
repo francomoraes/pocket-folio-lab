@@ -1,12 +1,15 @@
 import { API_ENDPOINTS } from "@/config/api";
 import { api } from "@/lib/axios";
-import { ManagerClientLink, ManagerHistoryCycle } from "@/shared/types/manager";
+import { ManagerClientLink, ManagerHistoryCycle, PendingApproval, SentRequest } from "@/shared/types/manager";
 
 class ManagerLinkService {
-  async createLink(managerId: number): Promise<ManagerClientLink> {
+  async createLink(
+    targetUserId: number,
+    asRole: "investor" | "manager",
+  ): Promise<ManagerClientLink> {
     const response = await api.post<{ link: ManagerClientLink }>(
       API_ENDPOINTS.managerLinks.create,
-      { managerId },
+      { targetUserId, asRole },
     );
     return response.data.link;
   }
@@ -25,9 +28,16 @@ class ManagerLinkService {
     return response.data.data;
   }
 
-  async getPendingLinks(): Promise<ManagerClientLink[]> {
-    const response = await api.get<{ data: ManagerClientLink[] }>(
+  async getPendingApprovals(): Promise<PendingApproval[]> {
+    const response = await api.get<{ data: PendingApproval[] }>(
       API_ENDPOINTS.managerLinks.pending,
+    );
+    return response.data.data;
+  }
+
+  async getSentRequests(): Promise<SentRequest[]> {
+    const response = await api.get<{ data: SentRequest[] }>(
+      API_ENDPOINTS.managerLinks.sent,
     );
     return response.data.data;
   }

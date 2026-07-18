@@ -16,7 +16,7 @@ export const useMyLinks = () => {
   });
 
   const createLinkMutation = useMutation({
-    mutationFn: (managerId: number) => managerLinkService.createLink(managerId),
+    mutationFn: (managerId: number) => managerLinkService.createLink(managerId, "investor"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.myLinks });
       toast.success(t("managers.requestSent"));

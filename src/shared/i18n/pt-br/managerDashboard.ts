@@ -9,7 +9,7 @@ export default {
     percentageVariation: "Variação percentual",
   },
   topInvestors: {
-    title: "Top Investors",
+    title: "Principais Investidores",
     rank: "Posição",
     name: "Nome",
     wealth: "Patrimônio atual",

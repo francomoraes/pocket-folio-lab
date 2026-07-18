@@ -84,7 +84,7 @@ export const ClientPositionsPage = () => {
                           {t("positions.table.headers.currentPrice")}
                         </TableHead>
                         <TableHead className="text-right">
-                          {t("positions.table.headers.totalValue")}
+                          {t("positions.table.headers.total")}
                         </TableHead>
                       </TableRow>
                     </TableHeader>
