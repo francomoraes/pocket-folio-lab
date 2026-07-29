@@ -124,5 +124,13 @@ export default {
     SELF_LINK_NOT_ALLOWED: "You cannot request a link with yourself.",
     MANAGER_NOT_FOUND: "Manager not found.",
     MANAGER_NOT_ELIGIBLE: "This user no longer has the manager role.",
+    CRYPTO_ACCOUNT_CONNECTION_FAILED:
+      "Could not connect to Mercado Bitcoin. Check the ID and API secret.",
+    DUPLICATE_CONNECTED_ACCOUNT: "This Mercado Bitcoin account is already connected.",
+    ACCOUNT_SYNC_IN_PROGRESS:
+      "This account is already syncing. Try again in a moment.",
+    CRYPTO_ACCOUNT_NOT_FOUND: "Crypto account not found.",
+    CONNECTED_ASSET_QUANTITY_LOCKED:
+      "This asset is synced automatically and does not allow manual editing of quantity, ticker, or currency.",
   },
 };

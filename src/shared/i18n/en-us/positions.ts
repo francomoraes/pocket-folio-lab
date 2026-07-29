@@ -47,6 +47,9 @@ export default {
     priceUnavailable: "N/A",
     priceUnavailableTooltip:
       "Price unavailable. Edit the asset to set it manually. Last update: {{date}}",
+    syncedTooltip: "Synced via Mercado Bitcoin integration",
+    lockedFieldTooltip:
+      "This asset is synced automatically and does not allow manual editing of this field.",
   },
   fixedIncome: {
     manualMode: "Manual",

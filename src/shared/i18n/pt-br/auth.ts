@@ -124,5 +124,13 @@ export default {
     SELF_LINK_NOT_ALLOWED: "Você não pode solicitar vínculo consigo mesmo.",
     MANAGER_NOT_FOUND: "Gestor não encontrado.",
     MANAGER_NOT_ELIGIBLE: "Este usuário não tem mais o papel de gestor.",
+    CRYPTO_ACCOUNT_CONNECTION_FAILED:
+      "Não foi possível conectar à Mercado Bitcoin. Confira o ID e o segredo da API.",
+    DUPLICATE_CONNECTED_ACCOUNT: "Esta conta Mercado Bitcoin já está conectada.",
+    ACCOUNT_SYNC_IN_PROGRESS:
+      "Esta conta já está sincronizando. Tente novamente em instantes.",
+    CRYPTO_ACCOUNT_NOT_FOUND: "Conta cripto não encontrada.",
+    CONNECTED_ASSET_QUANTITY_LOCKED:
+      "Este ativo é sincronizado automaticamente e não permite edição manual de quantidade, ticker ou moeda.",
   },
 };

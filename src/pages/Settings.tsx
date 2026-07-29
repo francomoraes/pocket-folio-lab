@@ -1,6 +1,7 @@
 import { AssetClassTable } from "@/features/settings/components/AssetClassTable";
 import { AssetTypesTable } from "@/features/settings/components/AssetTypesTable";
 import { InstitutionsTable } from "@/features/settings/components/InstitutionsTable";
+import { CryptoAccountsTable } from "@/features/settings/components/CryptoAccountsTable";
 import { UsersTable } from "@/features/admin/components/UsersTable";
 import {
   Tabs,
@@ -34,6 +35,9 @@ export const Settings = () => {
             <TabsTrigger value="institutions">
               {t("settings.tabs.institutions")}
             </TabsTrigger>
+            <TabsTrigger value="cryptoAccounts">
+              {t("settings.tabs.cryptoAccounts")}
+            </TabsTrigger>
             {isAdmin && (
               <TabsTrigger value="users">
                 {t("admin.users.title")}
@@ -56,6 +60,12 @@ export const Settings = () => {
           <TabsContent value="institutions">
             <div>
               <InstitutionsTable />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="cryptoAccounts">
+            <div>
+              <CryptoAccountsTable />
             </div>
           </TabsContent>
 

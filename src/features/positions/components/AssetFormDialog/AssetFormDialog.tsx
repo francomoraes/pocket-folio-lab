@@ -14,6 +14,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/shared/components/ui/tooltip";
 import { useInstitutions } from "@/features/settings/hooks/useInstitutions";
 import { useAssetTypes } from "@/features/settings/hooks/useAssetTypes";
 import { useAssetForm } from "@/features/positions/components/AssetFormDialog/useAssetForm";
@@ -28,6 +33,26 @@ interface AssetFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
+
+const LockedFieldTooltip = ({
+  locked,
+  message,
+  children,
+}: {
+  locked: boolean;
+  message: string;
+  children: React.ReactNode;
+}) => {
+  if (!locked) return <>{children}</>;
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div>{children}</div>
+      </TooltipTrigger>
+      <TooltipContent>{message}</TooltipContent>
+    </Tooltip>
+  );
+};
 
 export const AssetFormDialog = ({
   asset,
@@ -50,7 +75,10 @@ export const AssetFormDialog = ({
     isSubmitting,
     isRetryingPrice,
     isEditMode,
+    isLocked,
   } = useAssetForm(asset, () => onOpenChange(false));
+
+  const lockedFieldMessage = t("positions.table.lockedFieldTooltip");
 
   const handleOpenChange = (isOpen: boolean) => {
     onOpenChange(isOpen);
@@ -111,30 +139,32 @@ export const AssetFormDialog = ({
 
           <div className="space-y-2">
             <Label htmlFor="type">{t("transaction.fields.assetType")}</Label>
-            <Select
-              value={formData.type}
-              onValueChange={(v) => updateField("type", v)}
-              disabled={isLoadingTypes || assetTypes.length === 0}
-            >
-              <SelectTrigger>
-                {isLoadingTypes ? (
-                  <span className="flex items-center gap-2 text-muted-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  </span>
-                ) : (
-                  <SelectValue
-                    placeholder={t("transaction.placeholders.selectType")}
-                  />
-                )}
-              </SelectTrigger>
-              <SelectContent>
-                {assetTypes.map((type) => (
-                  <SelectItem key={type.id} value={type.name}>
-                    {type.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <LockedFieldTooltip locked={isLocked} message={lockedFieldMessage}>
+              <Select
+                value={formData.type}
+                onValueChange={(v) => updateField("type", v)}
+                disabled={isLocked || isLoadingTypes || assetTypes.length === 0}
+              >
+                <SelectTrigger>
+                  {isLoadingTypes ? (
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    </span>
+                  ) : (
+                    <SelectValue
+                      placeholder={t("transaction.placeholders.selectType")}
+                    />
+                  )}
+                </SelectTrigger>
+                <SelectContent>
+                  {assetTypes.map((type) => (
+                    <SelectItem key={type.id} value={type.name}>
+                      {type.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </LockedFieldTooltip>
             {!isLoadingTypes && assetTypes.length === 0 && (
               <div className="text-sm text-muted-foreground space-y-0.5">
                 <p>{t("transaction.emptyState.noTypes")}</p>
@@ -152,14 +182,17 @@ export const AssetFormDialog = ({
 
           <div className="space-y-2">
             <Label htmlFor="quantity">{t("transaction.fields.quantity")}</Label>
-            <Input
-              id="quantity"
-              type="number"
-              step="0.01"
-              placeholder={t("transaction.placeholders.quantity")}
-              value={formData.quantity}
-              onChange={(e) => updateField("quantity", e.target.value)}
-            />
+            <LockedFieldTooltip locked={isLocked} message={lockedFieldMessage}>
+              <Input
+                id="quantity"
+                type="number"
+                step="0.01"
+                placeholder={t("transaction.placeholders.quantity")}
+                value={formData.quantity}
+                onChange={(e) => updateField("quantity", e.target.value)}
+                disabled={isLocked}
+              />
+            </LockedFieldTooltip>
           </div>
 
           <div className="space-y-2">
@@ -234,22 +267,25 @@ export const AssetFormDialog = ({
 
           <div className="space-y-2">
             <Label htmlFor="currency">{t("transaction.fields.currency")}</Label>
-            <Select
-              value={formData.currency}
-              onValueChange={(v) => updateField("currency", v)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="BRL">
-                  {t("transaction.currency.brl")}
-                </SelectItem>
-                <SelectItem value="USD">
-                  {t("transaction.currency.usd")}
-                </SelectItem>
-              </SelectContent>
-            </Select>
+            <LockedFieldTooltip locked={isLocked} message={lockedFieldMessage}>
+              <Select
+                value={formData.currency}
+                onValueChange={(v) => updateField("currency", v)}
+                disabled={isLocked}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="BRL">
+                    {t("transaction.currency.brl")}
+                  </SelectItem>
+                  <SelectItem value="USD">
+                    {t("transaction.currency.usd")}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </LockedFieldTooltip>
           </div>
 
           {isEditMode && asset?.priceUnavailable && (

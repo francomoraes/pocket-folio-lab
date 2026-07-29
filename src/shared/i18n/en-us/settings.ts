@@ -5,6 +5,7 @@ export default {
     assetClasses: "Asset Classes",
     assetTypes: "Asset Types",
     institutions: "Institutions",
+    cryptoAccounts: "Mercado Bitcoin Integration",
   },
   assetClasses: {
     title: "Asset Classes",
@@ -55,6 +56,57 @@ export default {
     table: {
       name: "Name",
       actions: "Actions",
+    },
+  },
+  cryptoAccounts: {
+    empty: "No crypto accounts connected.",
+    connect: "Connect account",
+    defaultLabel: "Mercado Bitcoin",
+    table: {
+      label: "Label",
+      status: "Status",
+      lastSyncedAt: "Last synced",
+      actions: "Actions",
+    },
+    status: {
+      active: "Active",
+      error: "Error",
+      disabled: "Disabled",
+    },
+    dialog: {
+      title: "Connect Mercado Bitcoin account",
+      helpAriaLabel: "How to generate the API key on Mercado Bitcoin",
+      helpTitle: "How to generate your API key on Mercado Bitcoin",
+      helpSteps: [
+        "Log in to Mercado Bitcoin on the web browser.",
+        "Click on the user menu (top right corner).",
+        'Scroll down to the integrations section and click "API Keys".',
+        'Click "New key".',
+        'Select "Read-only".',
+        "Give the key a name.",
+        "Enter the security code (check the app).",
+        'Click "Continue".',
+        "Copy the one-time-shown code (API secret) and save it somewhere.",
+        'Click "Finish".',
+        "Copy the ID generated on the API key management screen.",
+        "Fill in this form with the copied data.",
+      ],
+    },
+    fields: {
+      label: "Label (optional)",
+      institution: "Institution",
+      assetType: "Asset type",
+      apiKey: "ID",
+      apiKeyHint:
+        "The ID shown in the API keys list, on the Mercado Bitcoin panel.",
+      apiSecret: "API secret",
+      apiSecretHint: "Only shown once, at the moment the key is created.",
+    },
+    validation: {
+      institutionRequired: "Institution is required.",
+      assetTypeRequired: "Asset type is required.",
+      apiKeyRequired: "The ID is required.",
+      apiSecretRequired: "The API secret is required.",
     },
   },
 };

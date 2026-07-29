@@ -17,6 +17,8 @@ export interface Asset {
   institution: Institution;
   currency: string;
   priceUnavailable?: boolean;
+  source: "manual" | "mercado_bitcoin" | "ethereum";
+  connectedAccountId: number | null;
   createdAt: string;
   updatedAt: string;
 }

@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { RefreshCw, Pencil, Trash, AlertCircle } from "lucide-react";
+import { RefreshCw, Pencil, Trash, AlertCircle, Link2 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Card } from "@/shared/components/ui/card";
 import {
@@ -217,7 +217,19 @@ const VariableIncome = () => {
                     className={asset.priceUnavailable ? "bg-amber-500/10" : ""}
                   >
                     <TableCell className="font-medium">
-                      {asset.ticker}
+                      <span className="flex items-center gap-1.5">
+                        {asset.ticker}
+                        {asset.source !== "manual" && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Link2 className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              {t("positions.table.syncedTooltip")}
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
+                      </span>
                     </TableCell>
                     <TableCell>{asset.type.name}</TableCell>
                     <TableCell>

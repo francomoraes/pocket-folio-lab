@@ -47,6 +47,9 @@ export default {
     priceUnavailable: "N/D",
     priceUnavailableTooltip:
       "Cotação indisponível. Edite o ativo para informar o preço manualmente. Última atualização: {{date}}",
+    syncedTooltip: "Sincronizado via integração com Mercado Bitcoin",
+    lockedFieldTooltip:
+      "Este ativo é sincronizado automaticamente e não permite edição manual deste campo.",
   },
   fixedIncome: {
     manualMode: "Manual",

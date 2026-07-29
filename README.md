@@ -17,7 +17,7 @@ This account is provided for demo and portfolio review purposes.
 
 ## Frontend highlights
 
-- Authentication flows (login, register, auto-logout on token expiration) with JWT stored in localStorage
+- Authentication flows (login, register, auto-logout on token expiration) with the access token kept in memory and the refresh token in an HttpOnly cookie
 - Protected routes via `ProtectedRoute` component and `AuthContext`
 - Portfolio dashboard with allocation breakdown (PieChart) and multi-currency BarChart
 - Wealth evolution chart (ComposedChart) comparing portfolio growth against market indices (CDI, IPCA, S&P 500) with granularity controls (monthly, quarterly, semi-annual, annual)
@@ -77,11 +77,10 @@ VITE_API_URL=https://assetbreakdown-production.up.railway.app/api
 
 ## Next steps (portfolio roadmap)
 
-Aligned with the manager feature being built on the backend:
+The manager–investor relationship system (RBAC) described in earlier roadmaps has been fully implemented — role-aware navigation, manager dashboard, bidirectional link management screens (investor-initiated and manager-initiated, with approval flow), read-only investor view for managers, target allocation editing, and link history screen. See `docs/done/rbac-feature-frontend.md` and `docs/done/bugs-16-07-fixes.md`.
 
-1. **Role-aware navigation** — show/hide nav items and routes based on user role (investor, manager, admin).
-2. **Manager dashboard** — consolidated view of all linked investors' portfolios with summary metrics.
-3. **Link management screens** — investor flow to request a manager link; manager flow to accept, reject, or revoke.
-4. **Read-only investor view for managers** — managers can browse any linked investor's positions and dashboard.
-5. **Target allocation editing** — managers can update asset type target percentages for linked investors.
-6. **Link history screen** — display past manager–investor relationships with dates and wealth snapshots per cycle.
+Remaining work:
+
+1. **Crypto account linking UI** — connect/manage Ethereum wallets and Mercado Bitcoin accounts, view sync status. Not started — see `docs/crypto-tracking-price-refresh.md`.
+2. **CI/CD automation** — automated lint/test/build and preview deploys via GitHub Actions.
+3. **Item 6 follow-up** — reassess in production whether the "Visualizando carteira de: #id" banner ever falls back to showing the raw ID instead of the client's name (no code defect found so far, see `docs/done/bugs-16-07-fixes.md`).

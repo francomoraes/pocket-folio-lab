@@ -49,6 +49,12 @@ export const API_ENDPOINTS = {
     update: "institutions/:id",
     delete: "institutions/:id",
   },
+  cryptoAccounts: {
+    list: "crypto-accounts",
+    create: "crypto-accounts",
+    sync: "crypto-accounts/:id/sync",
+    delete: "crypto-accounts/:id",
+  },
   csv: {
     upload: "csv/upload-csv",
     downloadTemplate: "csv/csv-template",

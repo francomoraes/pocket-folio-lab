@@ -1,4 +1,4 @@
-import { API_URL } from "@/config/api";
+import { API_ENDPOINTS, API_URL } from "@/config/api";
 import axios from "axios";
 import i18n from "@/shared/i18n/config";
 import { tokenStore } from "@/lib/tokenStore";
@@ -16,9 +16,14 @@ const refreshApi = axios.create({
 });
 
 // For use in AuthContext on mount — avoids going through the 401 interceptor
-export async function tryRefreshToken(): Promise<{ token: string; user: unknown } | null> {
+export async function tryRefreshToken(): Promise<{
+  token: string;
+  user: unknown;
+} | null> {
   try {
-    const { data } = await refreshApi.post<{ token: string; user: unknown }>("/auth/refresh");
+    const { data } = await refreshApi.post<{ token: string; user: unknown }>(
+      API_ENDPOINTS.auth.refresh,
+    );
     return { token: data.token, user: data.user };
   } catch {
     return null;
@@ -32,9 +37,7 @@ let pendingRequests: Array<{
 }> = [];
 
 function processQueue(error: unknown, token: string | null) {
-  pendingRequests.forEach((p) =>
-    error ? p.reject(error) : p.resolve(token!),
-  );
+  pendingRequests.forEach((p) => (error ? p.reject(error) : p.resolve(token!)));
   pendingRequests = [];
 }
 
