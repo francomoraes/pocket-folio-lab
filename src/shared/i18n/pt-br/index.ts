@@ -15,6 +15,7 @@ import clients from "./clients";
 import managerContext from "./managerContext";
 import admin from "./admin";
 import linkStatus from "./linkStatus";
+import users from "./users";
 
 export default {
   common,
@@ -34,4 +35,5 @@ export default {
   managerContext,
   admin,
   linkStatus,
+  users,
 };

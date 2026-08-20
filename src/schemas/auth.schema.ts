@@ -2,7 +2,7 @@ import { z } from "zod";
 import i18n from "@/shared/i18n/config";
 
 // Validador de senha customizado com mensagens específicas
-const passwordSchema = z
+export const passwordSchema = z
   .string()
   .min(6, i18n.t("common.validation.minLength", { min: 6 }))
   .max(100, i18n.t("common.validation.maxLength", { max: 100 }))

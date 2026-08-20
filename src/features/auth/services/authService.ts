@@ -24,6 +24,13 @@ class AuthService {
     return response.data;
   }
 
+  async getConfig(): Promise<{ selfRegistrationEnabled: boolean }> {
+    const response = await api.get<{ selfRegistrationEnabled: boolean }>(
+      API_ENDPOINTS.auth.config,
+    );
+    return response.data;
+  }
+
   async updateUser(data: UpdateUserRequest) {
     const response = await api.put<AuthResponse>(
       API_ENDPOINTS.auth.updateUser.replace(":id", data.id.toString()),

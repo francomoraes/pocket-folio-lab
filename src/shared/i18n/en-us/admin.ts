@@ -3,6 +3,7 @@ export default {
     title: "Users",
     subtitle: "Manage user roles and manager limits",
     search: "Search by name or email",
+    newUser: "New user",
     table: {
       name: "Name",
       email: "Email",

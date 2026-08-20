@@ -30,6 +30,7 @@ export default {
   rejectError: "Error rejecting request",
   revokeError: "Error ending link",
   requestClient: "Request Client",
+  createClient: "Create client",
   searchInvestors: "Search by name or email",
   noInvestorsFound: "No investors found",
   requestSent: "Request sent successfully",

@@ -21,6 +21,7 @@ export interface AuthResponse {
 export interface LoginRequest {
   email: string;
   password: string;
+  loginAs?: "investor" | "manager";
 }
 
 export interface RegisterRequest {

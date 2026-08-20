@@ -30,13 +30,16 @@ import {
   DialogTitle,
 } from "@/shared/components/ui/dialog";
 import { ClientLimitDialog } from "./ClientLimitDialog";
-import { Pencil } from "lucide-react";
+import { CreateUserDialog } from "@/features/users/components/CreateUserDialog";
+import { Pencil, Plus } from "lucide-react";
 import CircularProgress from "@/shared/components/ui/circular-progress";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ROLES: UserRole[] = ["investor", "manager", "admin"];
 
 export const UsersTable = () => {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [pendingRoleChange, setPendingRoleChange] = useState<{
@@ -46,6 +49,7 @@ export const UsersTable = () => {
   const [limitDialogUser, setLimitDialogUser] = useState<AdminUser | null>(
     null,
   );
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const { users, isLoading, setUserRole, setManagerClientLimit, isSettingRole, isSettingLimit } =
     useAdminUsers({ search: debouncedSearch || undefined, page: 1, itemsPerPage: 50 });
@@ -81,12 +85,18 @@ export const UsersTable = () => {
 
   return (
     <div className="flex flex-col gap-3">
-      <Input
-        placeholder={t("admin.users.search")}
-        value={search}
-        onChange={(e) => handleSearchChange(e.target.value)}
-        className="max-w-sm"
-      />
+      <div className="flex items-center justify-between gap-2">
+        <Input
+          placeholder={t("admin.users.search")}
+          value={search}
+          onChange={(e) => handleSearchChange(e.target.value)}
+          className="max-w-sm"
+        />
+        <Button onClick={() => setCreateDialogOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          {t("admin.users.newUser")}
+        </Button>
+      </div>
 
       <Card>
         <Table>
@@ -189,6 +199,15 @@ export const UsersTable = () => {
           isSaving={isSettingLimit}
         />
       )}
+
+      <CreateUserDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        allowedRoles={ROLES}
+        onCreated={() =>
+          queryClient.invalidateQueries({ queryKey: ["admin", "users"] })
+        }
+      />
     </div>
   );
 };

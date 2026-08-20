@@ -6,6 +6,7 @@ import { ClientCard } from "@/features/manager/components/ClientCard";
 import { PendingLinkCard } from "@/features/manager/components/PendingLinkCard";
 import { SentRequestCard } from "@/features/manager/components/SentRequestCard";
 import { AvailableInvestorsList } from "@/features/manager/components/AvailableInvestorsList";
+import { CreateUserDialog } from "@/features/users/components/CreateUserDialog";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -31,6 +32,7 @@ export const ManagerClientsPage = () => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -83,26 +85,38 @@ export const ManagerClientsPage = () => {
           <h1 className="text-2xl font-bold">{t("clients.title")}</h1>
           <p className="text-muted-foreground text-sm">{t("clients.subtitle")}</p>
         </div>
-        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-          <SheetTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              {t("clients.requestClient")}
-            </Button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>{t("clients.requestClient")}</SheetTitle>
-            </SheetHeader>
-            <div className="mt-6">
-              <AvailableInvestorsList
-                onRequest={handleRequestClient}
-                isRequesting={requestClientMutation.isPending}
-              />
-            </div>
-          </SheetContent>
-        </Sheet>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => setCreateDialogOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            {t("clients.createClient")}
+          </Button>
+          <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+            <SheetTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                {t("clients.requestClient")}
+              </Button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>{t("clients.requestClient")}</SheetTitle>
+              </SheetHeader>
+              <div className="mt-6">
+                <AvailableInvestorsList
+                  onRequest={handleRequestClient}
+                  isRequesting={requestClientMutation.isPending}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
+
+      <CreateUserDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        allowedRoles={["investor"]}
+      />
 
       {incomingClientRequests.length > 0 && (
         <section>

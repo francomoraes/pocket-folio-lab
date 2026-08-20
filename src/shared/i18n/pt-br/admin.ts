@@ -3,6 +3,7 @@ export default {
     title: "Usuários",
     subtitle: "Gerencie roles e limites dos usuários do sistema",
     search: "Buscar por nome ou e-mail",
+    newUser: "Novo usuário",
     table: {
       name: "Nome",
       email: "E-mail",

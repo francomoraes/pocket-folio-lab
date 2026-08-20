@@ -30,6 +30,7 @@ export default {
   rejectError: "Erro ao rejeitar solicitação",
   revokeError: "Erro ao encerrar vínculo",
   requestClient: "Solicitar Cliente",
+  createClient: "Criar cliente",
   searchInvestors: "Buscar por nome ou e-mail",
   noInvestorsFound: "Nenhum investidor encontrado",
   requestSent: "Solicitação enviada com sucesso",

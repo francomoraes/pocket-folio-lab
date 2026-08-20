@@ -6,6 +6,7 @@ export const API_ENDPOINTS = {
     register: "auth/register",
     refresh: "auth/refresh",
     logout: "auth/logout",
+    config: "auth/config",
     updateUser: "auth/users/:id",
     uploadProfilePicture: "auth/upload-profile-picture",
   },
@@ -103,5 +104,8 @@ export const API_ENDPOINTS = {
     setRole: (userId: number) => `admin/users/${userId}/role`,
     setClientLimit: (managerId: number) =>
       `admin/managers/${managerId}/client-limit`,
+  },
+  users: {
+    create: "users",
   },
 } as const;

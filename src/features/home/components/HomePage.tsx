@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent } from "@/shared/components/ui/card";
+import { useAuthConfig } from "@/features/auth/hooks/useAuthConfig";
 import {
   BarChart2,
   FileSpreadsheet,
@@ -17,6 +18,7 @@ const FEATURE_ICONS = [PieChart, FileSpreadsheet, Globe2, BarChart2] as const;
 
 export const HomePage = () => {
   const { t } = useTranslation();
+  const { selfRegistrationEnabled } = useAuthConfig();
 
   const features = [
     { key: "portfolio", Icon: FEATURE_ICONS[0] },
@@ -43,13 +45,15 @@ export const HomePage = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 mt-2">
-          <Button asChild size="lg" className="text-base px-8">
-            <Link to="/login">{t("home.hero.ctaRegister")}</Link>
-          </Button>
+          {selfRegistrationEnabled && (
+            <Button asChild size="lg" className="text-base px-8">
+              <Link to="/login">{t("home.hero.ctaRegister")}</Link>
+            </Button>
+          )}
           <Button
             asChild
             size="lg"
-            variant="outline"
+            variant={selfRegistrationEnabled ? "outline" : "default"}
             className="text-base px-8"
           >
             <Link to="/login">{t("home.hero.ctaLogin")}</Link>
