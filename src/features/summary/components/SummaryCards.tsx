@@ -4,9 +4,9 @@ import { useSummary } from "@/shared/hooks/useSummary";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 
-export const SummaryCards = () => {
+export const SummaryCards = ({ investorId }: { investorId?: number } = {}) => {
   const { t } = useTranslation();
-  const { summary, exchangeRate, totalPnlCents } = useSummary();
+  const { summary, exchangeRate, totalPnlCents } = useSummary(investorId);
   const [currency, setCurrency] = useState<"BRL" | "USD">("BRL");
   const [fading, setFading] = useState(false);
 

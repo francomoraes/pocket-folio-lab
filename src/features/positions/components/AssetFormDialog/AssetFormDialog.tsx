@@ -32,6 +32,7 @@ interface AssetFormDialogProps {
   asset?: Asset | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  investorId?: number;
 }
 
 const LockedFieldTooltip = ({
@@ -58,12 +59,13 @@ export const AssetFormDialog = ({
   asset,
   open,
   onOpenChange,
+  investorId,
 }: AssetFormDialogProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const goToSettings = () => {
-    navigate("/settings");
+    navigate(investorId ? `/manager/clients/${investorId}/settings` : "/settings");
   };
 
   const {
@@ -76,7 +78,7 @@ export const AssetFormDialog = ({
     isRetryingPrice,
     isEditMode,
     isLocked,
-  } = useAssetForm(asset, () => onOpenChange(false));
+  } = useAssetForm(asset, () => onOpenChange(false), investorId);
 
   const lockedFieldMessage = t("positions.table.lockedFieldTooltip");
 
@@ -87,12 +89,14 @@ export const AssetFormDialog = ({
     }
   };
 
-  const { institutions, isLoading: isLoadingInstitutions } = useInstitutions({
-    enabled: open,
-  });
-  const { assetTypes, isLoading: isLoadingTypes } = useAssetTypes({
-    enabled: open,
-  });
+  const { institutions, isLoading: isLoadingInstitutions } = useInstitutions(
+    investorId,
+    { enabled: open },
+  );
+  const { assetTypes, isLoading: isLoadingTypes } = useAssetTypes(
+    investorId,
+    { enabled: open },
+  );
 
   useEffect(() => {
     if (open && assetTypes?.length) {
@@ -139,32 +143,30 @@ export const AssetFormDialog = ({
 
           <div className="space-y-2">
             <Label htmlFor="type">{t("transaction.fields.assetType")}</Label>
-            <LockedFieldTooltip locked={isLocked} message={lockedFieldMessage}>
-              <Select
-                value={formData.type}
-                onValueChange={(v) => updateField("type", v)}
-                disabled={isLocked || isLoadingTypes || assetTypes.length === 0}
-              >
-                <SelectTrigger>
-                  {isLoadingTypes ? (
-                    <span className="flex items-center gap-2 text-muted-foreground">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    </span>
-                  ) : (
-                    <SelectValue
-                      placeholder={t("transaction.placeholders.selectType")}
-                    />
-                  )}
-                </SelectTrigger>
-                <SelectContent>
-                  {assetTypes.map((type) => (
-                    <SelectItem key={type.id} value={type.name}>
-                      {type.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </LockedFieldTooltip>
+            <Select
+              value={formData.type}
+              onValueChange={(v) => updateField("type", v)}
+              disabled={isLoadingTypes || assetTypes.length === 0}
+            >
+              <SelectTrigger>
+                {isLoadingTypes ? (
+                  <span className="flex items-center gap-2 text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  </span>
+                ) : (
+                  <SelectValue
+                    placeholder={t("transaction.placeholders.selectType")}
+                  />
+                )}
+              </SelectTrigger>
+              <SelectContent>
+                {assetTypes.map((type) => (
+                  <SelectItem key={type.id} value={type.name}>
+                    {type.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             {!isLoadingTypes && assetTypes.length === 0 && (
               <div className="text-sm text-muted-foreground space-y-0.5">
                 <p>{t("transaction.emptyState.noTypes")}</p>

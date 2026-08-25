@@ -16,13 +16,10 @@ import { Button } from "@/shared/components/ui/button";
 
 export const Navbar = () => {
   const { t } = useTranslation();
-  const { isAuthenticated, isInitializing, isManager } = useAuth();
+  const { isAuthenticated, isInitializing, isManager, isAdmin } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   const { pendingLinks } = usePendingApprovals();
-  // Badge do link "Clientes" só conta pedidos onde EU sou o gestor aguardado
-  // (contraparte no lado investor) — pedidos que EU enviei como gestor ficam
-  // pendentes na página do outro lado, não aqui.
   const managerPendingCount = pendingLinks.filter(
     (link) => link.counterpartRole === "investor",
   ).length;
@@ -30,10 +27,6 @@ export const Navbar = () => {
   type NavItem = { to: string; label: string; badge?: number };
 
   const navItems: NavItem[] = [
-    { to: "/dashboard", label: t("navbar.links.dashboard") },
-    { to: "/positions", label: t("navbar.links.positions") },
-    { to: "/settings", label: t("navbar.links.settings") },
-    { to: "/my-managers", label: t("navbar.links.managers") },
     ...(isManager
       ? [
           {
@@ -42,8 +35,16 @@ export const Navbar = () => {
             badge: managerPendingCount > 0 ? managerPendingCount : undefined,
           },
           { to: "/manager/dashboard", label: t("navbar.links.managerDashboard") },
+          ...(isAdmin
+            ? [{ to: "/admin/users", label: t("navbar.links.adminUsers") }]
+            : []),
         ]
-      : []),
+      : [
+          { to: "/dashboard", label: t("navbar.links.dashboard") },
+          { to: "/positions", label: t("navbar.links.positions") },
+          { to: "/settings", label: t("navbar.links.settings") },
+          { to: "/my-managers", label: t("navbar.links.managers") },
+        ]),
   ];
 
   return (

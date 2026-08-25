@@ -7,6 +7,10 @@ export default {
     institutions: "Institutions",
     cryptoAccounts: "Mercado Bitcoin Integration",
   },
+  autonomy: {
+    readOnlyNotice:
+      "Your manager currently has control of your portfolio. Ask them to re-enable your autonomy if you want to edit it yourself.",
+  },
   assetClasses: {
     title: "Asset Classes",
     create: "New Asset Class",

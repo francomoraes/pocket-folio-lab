@@ -22,10 +22,12 @@ import {
   AlertDialogTitle,
 } from "@/shared/components/ui/alert-dialog";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/shared/hooks/useAuth";
 
 interface WealthHistoryListProps {
   wealthHistory: WealthHistory[];
   onEdit: (item: WealthHistory) => void;
+  investorId?: number;
 }
 
 const formatCurrency = (value: number, locale: string) => {
@@ -44,10 +46,13 @@ const formatDate = (dateString: string, locale: string) => {
 export const WealthHistoryList = ({
   wealthHistory,
   onEdit,
+  investorId,
 }: WealthHistoryListProps) => {
   const { t, i18n } = useTranslation();
   const locale = i18n.resolvedLanguage || "pt-BR";
-  const { deleteWealthHistory } = useWealthHistory();
+  const { canOperateOwnPortfolio } = useAuth();
+  const canWrite = !!investorId || canOperateOwnPortfolio;
+  const { deleteWealthHistory } = useWealthHistory(investorId);
   const [itemToDelete, setItemToDelete] = useState<WealthHistory | null>(null);
 
   const handleDelete = () => {
@@ -75,9 +80,11 @@ export const WealthHistoryList = ({
               <TableHead className="text-right">
                 {t("dashboard.wealthHistory.list.value")}
               </TableHead>
-              <TableHead className="text-right">
-                {t("dashboard.wealthHistory.list.actions")}
-              </TableHead>
+              {canWrite && (
+                <TableHead className="text-right">
+                  {t("dashboard.wealthHistory.list.actions")}
+                </TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -92,24 +99,26 @@ export const WealthHistoryList = ({
                   <TableCell className="text-right">
                     {formatCurrency(item.totalWealthCents / 100, locale)}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onEdit(item)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setItemToDelete(item)}
-                      >
-                        <Trash2 className="h-4 w-4 text-red-500" />
-                      </Button>
-                    </div>
-                  </TableCell>
+                  {canWrite && (
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onEdit(item)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setItemToDelete(item)}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
           </TableBody>

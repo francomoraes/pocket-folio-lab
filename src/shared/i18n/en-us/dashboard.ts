@@ -35,6 +35,10 @@ export default {
     fiis: "REITs",
     fixed_income: "Fixed Income",
   },
+  autonomy: {
+    readOnlyNotice:
+      "Your manager currently has control of your portfolio. Ask them to re-enable your autonomy if you want to manage it yourself.",
+  },
   wealthHistory: {
     addHistory: "+ Add History",
     loading: "Loading history...",

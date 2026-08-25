@@ -51,6 +51,10 @@ export default {
     lockedFieldTooltip:
       "Este ativo é sincronizado automaticamente e não permite edição manual deste campo.",
   },
+  autonomy: {
+    readOnlyNotice:
+      "Seu gestor está com o controle da sua carteira no momento. Peça a ele para reativar sua autonomia se quiser lançar por conta própria.",
+  },
   fixedIncome: {
     manualMode: "Manual",
     manualModeTooltip:

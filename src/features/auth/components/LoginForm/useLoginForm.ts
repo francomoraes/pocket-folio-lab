@@ -21,7 +21,8 @@ export const useLoginForm = () => {
   const navigate = useNavigate();
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [loginTab, setLoginTab] = useState<LoginTab>("investor");
-  const { login, register: registerUser, isLoading } = useAuth();
+  const { login, register: registerUser, isLoading, isAuthenticated, user } =
+    useAuth();
   const { selfRegistrationEnabled } = useAuthConfig();
 
   const {
@@ -36,21 +37,26 @@ export const useLoginForm = () => {
   const onSubmit = async (data: RegisterFormData) => {
     try {
       if (isRegisterMode) {
-        await registerUser({
+        const registeredUser = await registerUser({
           name: data.name,
           email: data.email,
           password: data.password,
         });
         toast.success(t("auth.messages.registerSuccess"));
+        navigate(
+          registeredUser.role === "investor" ? "/dashboard" : "/manager/clients",
+        );
       } else {
-        await login({
+        const loggedInUser = await login({
           email: data.email,
           password: data.password,
           loginAs: loginTab,
         });
         toast.success(t("auth.messages.loginSuccess"));
+        navigate(
+          loggedInUser.role === "investor" ? "/dashboard" : "/manager/clients",
+        );
       }
-      navigate("/dashboard");
     } catch (error) {
       const fallbackKey = isRegisterMode
         ? "auth.messages.registerError"
@@ -70,8 +76,13 @@ export const useLoginForm = () => {
     reset();
   };
 
-  // Gestor nunca teve autocadastro — registro só existe na aba cliente, e só com a flag ligada.
   const canRegister = loginTab === "investor" && selfRegistrationEnabled;
+
+  const redirectTo = isAuthenticated
+    ? user?.role === "investor"
+      ? "/dashboard"
+      : "/manager/clients"
+    : null;
 
   return {
     isRegisterMode,
@@ -84,5 +95,6 @@ export const useLoginForm = () => {
     errors,
     onSubmit,
     toggleMode,
+    redirectTo,
   };
 };

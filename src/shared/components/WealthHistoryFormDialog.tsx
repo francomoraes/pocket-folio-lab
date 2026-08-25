@@ -15,12 +15,14 @@ interface WealthHistoryFormDialogProps {
   item?: WealthHistory | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  investorId?: number;
 }
 
 export const WealthHistoryFormDialog = ({
   item,
   open,
   onOpenChange,
+  investorId,
 }: WealthHistoryFormDialogProps) => {
   const { t } = useTranslation();
 
@@ -31,7 +33,7 @@ export const WealthHistoryFormDialog = ({
     resetForm,
     isSubmitting,
     isEditMode,
-  } = useWealthHistoryForm(item, () => onOpenChange(false));
+  } = useWealthHistoryForm(item, () => onOpenChange(false), investorId);
 
   const handleOpenChange = (isOpen: boolean) => {
     onOpenChange(isOpen);

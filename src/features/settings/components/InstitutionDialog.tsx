@@ -19,16 +19,18 @@ export const InstitutionDialog = ({
   mode,
   institution,
   onClose,
+  investorId,
 }: {
   mode: "create" | "edit";
   institution?: Institution;
   onClose?: () => void;
+  investorId?: number;
 }) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(!!institution);
   const [name, setName] = useState(institution?.name || "");
   const { createInstitution, updateInstitution, isCreating, isUpdating } =
-    useInstitutions();
+    useInstitutions(investorId);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

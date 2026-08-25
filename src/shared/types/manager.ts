@@ -24,8 +24,6 @@ export interface ManagerClientLink {
   createdAt: string;
 }
 
-// counterpartRole reflete a posição da contraparte NO VÍNCULO (investorId/managerId),
-// não o UserRole dela — um admin pode aparecer como "manager" aqui.
 export interface PendingApproval {
   id: number;
   investorId: number;

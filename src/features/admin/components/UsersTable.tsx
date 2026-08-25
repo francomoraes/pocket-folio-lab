@@ -31,14 +31,16 @@ import {
 } from "@/shared/components/ui/dialog";
 import { ClientLimitDialog } from "./ClientLimitDialog";
 import { CreateUserDialog } from "@/features/users/components/CreateUserDialog";
-import { Pencil, Plus } from "lucide-react";
+import { Eye, Pencil, Plus } from "lucide-react";
 import CircularProgress from "@/shared/components/ui/circular-progress";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 const ROLES: UserRole[] = ["investor", "manager", "admin"];
 
 export const UsersTable = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -149,6 +151,18 @@ export const UsersTable = () => {
                       onClick={() => setLimitDialogUser(user)}
                     >
                       <Pencil className="h-4 w-4" />
+                    </Button>
+                  )}
+                  {user.role === "investor" && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      title={t("clients.table.viewPortfolio")}
+                      onClick={() =>
+                        navigate(`/manager/clients/${user.id}/dashboard`)
+                      }
+                    >
+                      <Eye className="h-4 w-4" />
                     </Button>
                   )}
                 </TableCell>

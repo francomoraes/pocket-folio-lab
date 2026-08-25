@@ -1,4 +1,5 @@
 import { wealthHistoryService } from "@/shared/services/wealthHistoryService";
+import { managerService } from "@/features/manager/services/managerService";
 import { QUERY_KEYS } from "@/shared/constants/queryKeys";
 import {
   CreateWealthHistoryRequest,
@@ -10,9 +11,13 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 
-export const useWealthHistory = () => {
+export const useWealthHistory = (investorId?: number) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+
+  const queryKey = investorId
+    ? QUERY_KEYS.clientWealthHistory(investorId)
+    : (["wealthHistory"] as const);
 
   const {
     data: wealthHistory,
@@ -20,18 +25,23 @@ export const useWealthHistory = () => {
     error,
     refetch,
   } = useQuery({
-    queryKey: ["wealthHistory"],
-    queryFn: () => wealthHistoryService.getWealthHistory(),
+    queryKey,
+    queryFn: () =>
+      investorId
+        ? managerService.getClientWealthHistory(investorId)
+        : wealthHistoryService.getWealthHistory(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
   });
 
   const createWealthHistoryMutation = useMutation({
     mutationFn: (data: CreateWealthHistoryRequest) => {
-      return wealthHistoryService.createWealthHistory(data);
+      return investorId
+        ? managerService.createClientWealthHistory(investorId, data)
+        : wealthHistoryService.createWealthHistory(data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["wealthHistory"] });
+      queryClient.invalidateQueries({ queryKey });
       toast.success(t("dashboard.wealthHistory.messages.created"));
     },
     onError: (error: Error) => {
@@ -52,10 +62,12 @@ export const useWealthHistory = () => {
       id: number;
       data: UpdateWealthHistoryRequest;
     }) => {
-      return wealthHistoryService.updateWealthHistory(id, data);
+      return investorId
+        ? managerService.updateClientWealthHistory(investorId, id, data)
+        : wealthHistoryService.updateWealthHistory(id, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["wealthHistory"] });
+      queryClient.invalidateQueries({ queryKey });
       toast.success(t("dashboard.wealthHistory.messages.updated"));
     },
     onError: (error: Error) => {
@@ -70,10 +82,12 @@ export const useWealthHistory = () => {
 
   const deleteWealthHistoryMutation = useMutation({
     mutationFn: (id: number) => {
-      return wealthHistoryService.deleteWealthHistory(id);
+      return investorId
+        ? managerService.deleteClientWealthHistory(investorId, id)
+        : wealthHistoryService.deleteWealthHistory(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["wealthHistory"] });
+      queryClient.invalidateQueries({ queryKey });
       toast.success(t("dashboard.wealthHistory.messages.deleted"));
     },
     onError: (error: Error) => {

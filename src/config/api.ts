@@ -72,12 +72,6 @@ export const API_ENDPOINTS = {
     clients: "managers/me/clients",
     clientSummary: (investorId: number) =>
       `managers/me/clients/${investorId}/summary`,
-    clientAssets: (investorId: number) =>
-      `managers/me/clients/${investorId}/assets`,
-    clientFixedIncome: (investorId: number) =>
-      `managers/me/clients/${investorId}/fixed-income-assets`,
-    clientWealthHistory: (investorId: number) =>
-      `managers/me/clients/${investorId}/wealth-history`,
     clientProfile: (investorId: number) =>
       `managers/me/clients/${investorId}/profile`,
     clientAssetTypeTargetPercentage: (
@@ -85,6 +79,70 @@ export const API_ENDPOINTS = {
       assetTypeId: number,
     ) =>
       `managers/me/clients/${investorId}/asset-types/${assetTypeId}/target-percentage`,
+    clientAutonomy: (investorId: number) =>
+      `managers/me/clients/${investorId}/autonomy`,
+    clientAssets: {
+      list: (investorId: number) => `managers/me/clients/${investorId}/assets`,
+      create: (investorId: number) => `managers/me/clients/${investorId}/assets`,
+      update: (investorId: number, id: number) =>
+        `managers/me/clients/${investorId}/assets/${id}`,
+      delete: (investorId: number, id: number) =>
+        `managers/me/clients/${investorId}/assets/${id}`,
+      retryPrice: (investorId: number, id: number) =>
+        `managers/me/clients/${investorId}/assets/${id}/retry-price`,
+      refreshMarketPrices: (investorId: number) =>
+        `managers/me/clients/${investorId}/assets/refresh-market-prices`,
+    },
+    clientFixedIncome: {
+      list: (investorId: number) =>
+        `managers/me/clients/${investorId}/fixed-income-assets`,
+      create: (investorId: number) =>
+        `managers/me/clients/${investorId}/fixed-income-assets`,
+      update: (investorId: number, id: number) =>
+        `managers/me/clients/${investorId}/fixed-income-assets/${id}`,
+      delete: (investorId: number, id: number) =>
+        `managers/me/clients/${investorId}/fixed-income-assets/${id}`,
+    },
+    clientAssetTypes: {
+      list: (investorId: number) =>
+        `managers/me/clients/${investorId}/asset-types`,
+      create: (investorId: number) =>
+        `managers/me/clients/${investorId}/asset-types`,
+      update: (investorId: number, id: number) =>
+        `managers/me/clients/${investorId}/asset-types/${id}`,
+      delete: (investorId: number, id: number) =>
+        `managers/me/clients/${investorId}/asset-types/${id}`,
+    },
+    clientAssetClasses: {
+      list: (investorId: number) =>
+        `managers/me/clients/${investorId}/asset-classes`,
+      create: (investorId: number) =>
+        `managers/me/clients/${investorId}/asset-classes`,
+      update: (investorId: number, id: number) =>
+        `managers/me/clients/${investorId}/asset-classes/${id}`,
+      delete: (investorId: number, id: number) =>
+        `managers/me/clients/${investorId}/asset-classes/${id}`,
+    },
+    clientInstitutions: {
+      list: (investorId: number) =>
+        `managers/me/clients/${investorId}/institutions`,
+      create: (investorId: number) =>
+        `managers/me/clients/${investorId}/institutions`,
+      update: (investorId: number, id: number) =>
+        `managers/me/clients/${investorId}/institutions/${id}`,
+      delete: (investorId: number, id: number) =>
+        `managers/me/clients/${investorId}/institutions/${id}`,
+    },
+    clientWealthHistory: {
+      list: (investorId: number) =>
+        `managers/me/clients/${investorId}/wealth-history`,
+      create: (investorId: number) =>
+        `managers/me/clients/${investorId}/wealth-history`,
+      update: (investorId: number, id: number) =>
+        `managers/me/clients/${investorId}/wealth-history/${id}`,
+      delete: (investorId: number, id: number) =>
+        `managers/me/clients/${investorId}/wealth-history/${id}`,
+    },
   },
   managerLinks: {
     create: "manager-links",

@@ -1,6 +1,9 @@
 export default {
   title: "Clientes",
   subtitle: "Gerencie seus clientes e solicitações pendentes",
+  settings: {
+    title: "Configurações do cliente",
+  },
   pending: {
     title: "Solicitações pendentes",
     singular: "solicitação pendente",
@@ -17,6 +20,10 @@ export default {
     viewPortfolio: "Ver carteira",
     endLink: "Encerrar vínculo",
     empty: "Nenhum cliente ativo no momento",
+  },
+  scope: {
+    mine: "Meus clientes",
+    all: "Todos os investidores",
   },
   search: "Buscar por nome ou e-mail",
   sortBy: {

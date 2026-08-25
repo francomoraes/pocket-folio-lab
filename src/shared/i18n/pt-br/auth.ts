@@ -140,5 +140,8 @@ export default {
       "Esta conta não é dessa aba. Tente entrar pela outra aba.",
     SELF_REGISTRATION_DISABLED: "O autocadastro está desativado no momento.",
     ROLE_NOT_ALLOWED: "Você não tem permissão para criar um usuário com esse perfil.",
+    MANAGER_CANNOT_OWN_PORTFOLIO: "Gestores não podem ter carteira própria.",
+    AUTONOMY_REQUIRED:
+      "Seu gestor está com o controle da sua carteira no momento. Peça a ele para reativar sua autonomia se quiser lançar por conta própria.",
   },
 };

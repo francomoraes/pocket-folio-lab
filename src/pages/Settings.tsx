@@ -2,7 +2,6 @@ import { AssetClassTable } from "@/features/settings/components/AssetClassTable"
 import { AssetTypesTable } from "@/features/settings/components/AssetTypesTable";
 import { InstitutionsTable } from "@/features/settings/components/InstitutionsTable";
 import { CryptoAccountsTable } from "@/features/settings/components/CryptoAccountsTable";
-import { UsersTable } from "@/features/admin/components/UsersTable";
 import {
   Tabs,
   TabsContent,
@@ -14,7 +13,7 @@ import { useAuth } from "@/shared/hooks/useAuth";
 
 export const Settings = () => {
   const { t } = useTranslation();
-  const { isAdmin } = useAuth();
+  const { canOperateOwnPortfolio } = useAuth();
 
   return (
     <div className="flex flex-col gap-3 h-[calc(100vh-61px)] p-3">
@@ -22,6 +21,11 @@ export const Settings = () => {
         <div>
           <h1 className="text-3xl font-bold">{t("settings.title")}</h1>
           <p className="text-muted-foreground">{t("settings.subtitle")}</p>
+          {!canOperateOwnPortfolio && (
+            <p className="text-sm text-muted-foreground mt-2">
+              {t("settings.autonomy.readOnlyNotice")}
+            </p>
+          )}
         </div>
 
         <Tabs defaultValue="classes">
@@ -38,11 +42,6 @@ export const Settings = () => {
             <TabsTrigger value="cryptoAccounts">
               {t("settings.tabs.cryptoAccounts")}
             </TabsTrigger>
-            {isAdmin && (
-              <TabsTrigger value="users">
-                {t("admin.users.title")}
-              </TabsTrigger>
-            )}
           </TabsList>
 
           <TabsContent value="classes">
@@ -68,14 +67,6 @@ export const Settings = () => {
               <CryptoAccountsTable />
             </div>
           </TabsContent>
-
-          {isAdmin && (
-            <TabsContent value="users">
-              <div className="pt-4">
-                <UsersTable />
-              </div>
-            </TabsContent>
-          )}
         </Tabs>
       </div>
     </div>

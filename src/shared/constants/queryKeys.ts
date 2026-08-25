@@ -25,6 +25,12 @@ export const QUERY_KEYS = {
     ["manager", "clients", investorId, "fixed-income"] as const,
   clientWealthHistory: (investorId: number) =>
     ["manager", "clients", investorId, "wealth-history"] as const,
+  clientAssetTypes: (investorId: number) =>
+    ["manager", "clients", investorId, "asset-types"] as const,
+  clientAssetClasses: (investorId: number) =>
+    ["manager", "clients", investorId, "asset-classes"] as const,
+  clientInstitutions: (investorId: number) =>
+    ["manager", "clients", investorId, "institutions"] as const,
   clientProfile: (investorId: number) =>
     ["manager", "clients", investorId, "profile"] as const,
   adminUsers: (params?: object) => ["admin", "users", params],

@@ -1,4 +1,5 @@
 import { fixedIncomeAssetService } from "@/features/positions/services/fixedIncomeassetService";
+import { managerService } from "@/features/manager/services/managerService";
 import { QUERY_KEYS } from "@/shared/constants/queryKeys";
 import {
   CreateFixedIncomeAsset,
@@ -10,15 +11,22 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 
-export const useFixedIncomePositions = ({
-  page = 1,
-  itemsPerPage = 10,
-  sortBy = "description",
-  order = "ASC",
-  skipPagination,
-}: PaginationQuery = {}) => {
+export const useFixedIncomePositions = (
+  {
+    page = 1,
+    itemsPerPage = 10,
+    sortBy = "description",
+    order = "ASC",
+    skipPagination,
+  }: PaginationQuery = {},
+  investorId?: number,
+) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+
+  const baseQueryKey = investorId
+    ? QUERY_KEYS.clientFixedIncome(investorId)
+    : QUERY_KEYS.FIXED_INCOME_ASSETS;
 
   const {
     data: fixedIncomeAssets,
@@ -26,34 +34,35 @@ export const useFixedIncomePositions = ({
     error,
     refetch,
   } = useQuery({
-    queryKey: [
-      ...QUERY_KEYS.FIXED_INCOME_ASSETS,
-      page,
-      itemsPerPage,
-      sortBy,
-      order,
-      skipPagination,
-    ],
+    queryKey: [...baseQueryKey, page, itemsPerPage, sortBy, order, skipPagination],
     queryFn: () =>
-      fixedIncomeAssetService.getAssets({
-        page,
-        itemsPerPage,
-        sortBy,
-        order,
-        skipPagination,
-      }),
+      investorId
+        ? managerService.getClientFixedIncomeAssets(investorId, {
+            page,
+            itemsPerPage,
+            sortBy,
+            order,
+            skipPagination,
+          })
+        : fixedIncomeAssetService.getAssets({
+            page,
+            itemsPerPage,
+            sortBy,
+            order,
+            skipPagination,
+          }),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
   });
 
   const createFixedIncomeAssetMutation = useMutation({
     mutationFn: ({ data }: { data: CreateFixedIncomeAsset }) => {
-      return fixedIncomeAssetService.createAsset(data);
+      return investorId
+        ? managerService.createClientFixedIncomeAsset(investorId, data)
+        : fixedIncomeAssetService.createAsset(data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.FIXED_INCOME_ASSETS,
-      });
+      queryClient.invalidateQueries({ queryKey: baseQueryKey });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       toast.success(t("transaction.messages.created"));
@@ -71,12 +80,12 @@ export const useFixedIncomePositions = ({
       id: number;
       data: UpdateFixedIncomeAsset;
     }) => {
-      return fixedIncomeAssetService.updateAsset(id, data);
+      return investorId
+        ? managerService.updateClientFixedIncomeAsset(investorId, id, data)
+        : fixedIncomeAssetService.updateAsset(id, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.FIXED_INCOME_ASSETS,
-      });
+      queryClient.invalidateQueries({ queryKey: baseQueryKey });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       toast.success(t("transaction.messages.updated"));
@@ -90,12 +99,12 @@ export const useFixedIncomePositions = ({
 
   const deleteAssetMutation = useMutation({
     mutationFn: (id: number) => {
-      return fixedIncomeAssetService.deleteAsset(id);
+      return investorId
+        ? managerService.deleteClientFixedIncomeAsset(investorId, id)
+        : fixedIncomeAssetService.deleteAsset(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.FIXED_INCOME_ASSETS,
-      });
+      queryClient.invalidateQueries({ queryKey: baseQueryKey });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       toast.success(t("transaction.messages.deleted"));

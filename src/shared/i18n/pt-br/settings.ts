@@ -7,6 +7,10 @@ export default {
     institutions: "Instituições",
     cryptoAccounts: "Integração Mercado Bitcoin",
   },
+  autonomy: {
+    readOnlyNotice:
+      "Seu gestor está com o controle da sua carteira no momento. Peça a ele para reativar sua autonomia se quiser editar por conta própria.",
+  },
   assetClasses: {
     title: "Classes de Ativos",
     create: "Nova Classe de Ativo",

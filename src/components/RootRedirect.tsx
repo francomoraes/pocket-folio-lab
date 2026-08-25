@@ -4,7 +4,7 @@ import CircularProgress from "@/shared/components/ui/circular-progress";
 import { HomePage } from "@/features/home/components/HomePage";
 
 export const RootRedirect = () => {
-  const { isAuthenticated, isInitializing } = useAuth();
+  const { isAuthenticated, isInitializing, user } = useAuth();
 
   if (isInitializing) {
     return (
@@ -15,7 +15,12 @@ export const RootRedirect = () => {
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return (
+      <Navigate
+        to={user?.role === "investor" ? "/dashboard" : "/manager/clients"}
+        replace
+      />
+    );
   }
 
   return <HomePage />;

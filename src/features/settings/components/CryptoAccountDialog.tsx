@@ -48,10 +48,11 @@ export const CryptoAccountDialog = ({
   const { t } = useTranslation();
   const [formData, setFormData] = useState(initialState);
 
-  const { institutions, isLoading: isLoadingInstitutions } = useInstitutions({
-    enabled: open,
-  });
-  const { assetTypes, isLoading: isLoadingTypes } = useAssetTypes({
+  const { institutions, isLoading: isLoadingInstitutions } = useInstitutions(
+    undefined,
+    { enabled: open },
+  );
+  const { assetTypes, isLoading: isLoadingTypes } = useAssetTypes(undefined, {
     enabled: open,
   });
   const { connectAccount, isConnecting } = useCryptoAccounts({

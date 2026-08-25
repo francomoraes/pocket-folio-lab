@@ -18,6 +18,7 @@ import {
 } from "@/shared/components/ui/sheet";
 import { useTranslation } from "react-i18next";
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/shared/constants/queryKeys";
 import { toast } from "sonner";
@@ -25,14 +26,18 @@ import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 import CircularProgress from "@/shared/components/ui/circular-progress";
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert";
 import { Bell, Plus } from "lucide-react";
+import { useAuth } from "@/shared/hooks/useAuth";
 
 export const ManagerClientsPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { isAdmin } = useAuth();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [scope, setScope] = useState<"mine" | "all">("mine");
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -51,8 +56,6 @@ export const ManagerClientsPage = () => {
   const { pendingLinks, approveLink, rejectLink, isApproving, isRejecting } =
     usePendingApprovals();
 
-  // Só pedidos onde EU sou o gestor aguardado (cliente pediu vínculo comigo).
-  // Pedidos que EU enviei como gestor ficam pendentes na página do investor.
   const incomingClientRequests = pendingLinks.filter(
     (link) => link.counterpartRole === "investor",
   );
@@ -105,6 +108,14 @@ export const ManagerClientsPage = () => {
                 <AvailableInvestorsList
                   onRequest={handleRequestClient}
                   isRequesting={requestClientMutation.isPending}
+                  onView={
+                    isAdmin
+                      ? (investorId) => {
+                          setSheetOpen(false);
+                          navigate(`/manager/clients/${investorId}/dashboard`);
+                        }
+                      : undefined
+                  }
                 />
               </div>
             </SheetContent>
@@ -164,33 +175,64 @@ export const ManagerClientsPage = () => {
         </section>
       )}
 
-      <section>
-        <Input
-          placeholder={t("clients.search")}
-          value={search}
-          onChange={(e) => handleSearch(e.target.value)}
-          className="max-w-sm mb-4"
-        />
+      {isAdmin && (
+        <div className="flex items-center gap-2">
+          <Button
+            variant={scope === "mine" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setScope("mine")}
+          >
+            {t("clients.scope.mine")}
+          </Button>
+          <Button
+            variant={scope === "all" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setScope("all")}
+          >
+            {t("clients.scope.all")}
+          </Button>
+        </div>
+      )}
 
-        {isLoading ? (
-          <CircularProgress />
-        ) : clients.length === 0 ? (
-          <p className="text-muted-foreground text-sm">
-            {t("clients.table.empty")}
-          </p>
-        ) : (
-          <div className="flex flex-col gap-2">
-            {clients.map((client) => (
-              <ClientCard
-                key={client.investorId}
-                client={client}
-                onRevoke={revokeLink}
-                isRevoking={isRevoking}
-              />
-            ))}
-          </div>
-        )}
-      </section>
+      {isAdmin && scope === "all" ? (
+        <section>
+          <AvailableInvestorsList
+            onRequest={handleRequestClient}
+            isRequesting={requestClientMutation.isPending}
+            onView={(investorId) =>
+              navigate(`/manager/clients/${investorId}/dashboard`)
+            }
+          />
+        </section>
+      ) : (
+        <section>
+          <Input
+            placeholder={t("clients.search")}
+            value={search}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="max-w-sm mb-4"
+          />
+
+          {isLoading ? (
+            <CircularProgress />
+          ) : clients.length === 0 ? (
+            <p className="text-muted-foreground text-sm">
+              {t("clients.table.empty")}
+            </p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {clients.map((client) => (
+                <ClientCard
+                  key={client.investorId}
+                  client={client}
+                  onRevoke={revokeLink}
+                  isRevoking={isRevoking}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
     </div>
   );
 };

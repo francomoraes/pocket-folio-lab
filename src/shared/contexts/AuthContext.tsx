@@ -70,6 +70,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // On mount: try to restore session via the refresh token cookie (HttpOnly)
   useEffect(() => {
     tryRefreshToken().then((result) => {
+      // Se um login/register manual já rodou enquanto esse refresh (disparado
+      // no mount) ainda estava em voo, ignora o resultado dele por completo —
+      // tanto sucesso quanto falha. Sem isso, um /auth/refresh lento que
+      // resolve DEPOIS de um login rápido pode sobrescrever a sessão recém
+      // criada (sucesso com dados de outra sessão) ou até derrubá-la (falha
+      // limpando o token que o login acabou de setar) — a causa do bug
+      // intermitente de "login funciona mas não redireciona".
+      if (tokenRef.current) {
+        setIsInitializing(false);
+        return;
+      }
+
       if (result) {
         applyToken(result.token);
         // Refresh response carries fresh user data (including current role).
@@ -77,10 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const freshUser = result.user as User;
         setUser(freshUser);
         persistUser(freshUser);
-      } else if (!tokenRef.current) {
-        // Only clear if login hasn't already set a token concurrently.
-        // Without this check, a slow tryRefreshToken resolving after a successful
-        // login would wipe the freshly-set token/user (race condition).
+      } else {
         performLocalLogout();
       }
       setIsInitializing(false);
@@ -100,6 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       applyToken(response.token);
       setUser(response.user);
       persistUser(response.user);
+      return response.user;
     } finally {
       setIsLoading(false);
     }
@@ -112,6 +122,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       applyToken(response.token);
       setUser(response.user);
       persistUser(response.user);
+      return response.user;
     } catch (error) {
       console.error(error);
       throw error;
@@ -150,6 +161,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user?.role === "manager" || user?.role === "admin";
   const isAdmin = user?.role === "admin";
   const isInvestor = user?.role === "investor";
+  const canOperateOwnPortfolio =
+    user?.role === "investor" && user?.selfServiceEnabled !== false;
 
   const value: AuthContextType = {
     user,
@@ -164,6 +177,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isManager,
     isAdmin,
     isInvestor,
+    canOperateOwnPortfolio,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

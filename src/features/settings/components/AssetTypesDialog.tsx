@@ -27,10 +27,12 @@ export const AssetTypesDialog = ({
   mode,
   assetType,
   onClose,
+  investorId,
 }: {
   mode: "create" | "edit";
   assetType?: AssetType;
   onClose?: () => void;
+  investorId?: number;
 }) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(!!assetType);
@@ -42,9 +44,9 @@ export const AssetTypesDialog = ({
     assetType?.assetClass?.id || null,
   );
   const { createAssetType, updateAssetType, isCreating, isUpdating } =
-    useAssetTypes();
+    useAssetTypes(investorId);
 
-  const { assetClasses } = useAssetClasses();
+  const { assetClasses } = useAssetClasses(investorId);
 
   useEffect(() => {
     if (assetType) {

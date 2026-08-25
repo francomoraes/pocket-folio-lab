@@ -9,6 +9,7 @@ export interface User {
   profilePictureUrl?: string;
   locale?: string;
   role: UserRole;
+  selfServiceEnabled: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -43,8 +44,8 @@ export interface UpdateUserRequest {
 export interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (data: LoginRequest) => Promise<void>;
-  register: (data: RegisterRequest) => Promise<void>;
+  login: (data: LoginRequest) => Promise<User>;
+  register: (data: RegisterRequest) => Promise<User>;
   logout: () => Promise<void>;
   updateUser: (updatedUser: UpdateUserRequest) => Promise<void>;
   isLoading: boolean;
@@ -53,4 +54,5 @@ export interface AuthContextType {
   isManager: boolean;
   isAdmin: boolean;
   isInvestor: boolean;
+  canOperateOwnPortfolio: boolean;
 }

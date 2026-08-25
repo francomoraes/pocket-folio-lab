@@ -41,6 +41,7 @@ const toInputDate = (value: string | Date): string => {
 export const useFixedIncomeForm = (
   asset?: FixedIncomeAsset | null,
   onSuccess?: () => void,
+  investorId?: number,
 ) => {
   const [formData, setFormData] = useState<FixedIncomeFormData>(initialState);
   const isEditMode = !!asset;
@@ -50,9 +51,12 @@ export const useFixedIncomeForm = (
     updateFixedIncomeAsset,
     isCreatingFixedIncomeAsset,
     isUpdatingFixedIncomeAsset,
-  } = useFixedIncomePositions({
-    skipPagination: true,
-  });
+  } = useFixedIncomePositions(
+    {
+      skipPagination: true,
+    },
+    investorId,
+  );
 
   // Preenche o formulário quando um asset é passado
   useEffect(() => {

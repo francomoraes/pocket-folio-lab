@@ -1,6 +1,9 @@
 export default {
   title: "Clients",
   subtitle: "Manage your clients and pending requests",
+  settings: {
+    title: "Client settings",
+  },
   pending: {
     title: "Pending requests",
     singular: "pending request",
@@ -17,6 +20,10 @@ export default {
     viewPortfolio: "View portfolio",
     endLink: "End link",
     empty: "No active clients at the moment",
+  },
+  scope: {
+    mine: "My clients",
+    all: "All investors",
   },
   search: "Search by name or email",
   sortBy: {

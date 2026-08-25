@@ -1,4 +1,5 @@
 import { assetService } from "@/features/positions/services/assetService";
+import { managerService } from "@/features/manager/services/managerService";
 import { QUERY_KEYS } from "@/shared/constants/queryKeys";
 import { CreateAssetRequest, UpdateAssetRequest } from "@/shared/types/asset";
 import { PaginationQuery } from "@/shared/types/pagination";
@@ -7,15 +8,22 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 
-export const usePositions = ({
-  page = 1,
-  itemsPerPage = 10,
-  sortBy = "ticker",
-  order = "ASC",
-  skipPagination,
-}: PaginationQuery = {}) => {
+export const usePositions = (
+  {
+    page = 1,
+    itemsPerPage = 10,
+    sortBy = "ticker",
+    order = "ASC",
+    skipPagination,
+  }: PaginationQuery = {},
+  investorId?: number,
+) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+
+  const baseQueryKey = investorId
+    ? QUERY_KEYS.clientAssets(investorId)
+    : QUERY_KEYS.ASSETS;
 
   const {
     data: assets,
@@ -23,32 +31,35 @@ export const usePositions = ({
     error,
     refetch,
   } = useQuery({
-    queryKey: [
-      ...QUERY_KEYS.ASSETS,
-      page,
-      itemsPerPage,
-      sortBy,
-      order,
-      skipPagination,
-    ],
+    queryKey: [...baseQueryKey, page, itemsPerPage, sortBy, order, skipPagination],
     queryFn: () =>
-      assetService.getAssets({
-        page,
-        itemsPerPage,
-        sortBy,
-        order,
-        skipPagination,
-      }),
+      investorId
+        ? managerService.getClientAssets(investorId, {
+            page,
+            itemsPerPage,
+            sortBy,
+            order,
+            skipPagination,
+          })
+        : assetService.getAssets({
+            page,
+            itemsPerPage,
+            sortBy,
+            order,
+            skipPagination,
+          }),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
   });
 
   const createAssetMutation = useMutation({
     mutationFn: (data: CreateAssetRequest) => {
-      return assetService.createAsset(data);
+      return investorId
+        ? managerService.createClientAsset(investorId, data)
+        : assetService.createAsset(data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
+      queryClient.invalidateQueries({ queryKey: baseQueryKey });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       toast.success(t("transaction.messages.success"));
@@ -60,10 +71,12 @@ export const usePositions = ({
 
   const updateAssetMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: UpdateAssetRequest }) => {
-      return assetService.updateAsset(id, data);
+      return investorId
+        ? managerService.updateClientAsset(investorId, id, data)
+        : assetService.updateAsset(id, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
+      queryClient.invalidateQueries({ queryKey: baseQueryKey });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       toast.success(t("transaction.messages.updated"));
@@ -77,10 +90,12 @@ export const usePositions = ({
 
   const deleteAssetMutation = useMutation({
     mutationFn: (id: number) => {
-      return assetService.deleteAsset(id);
+      return investorId
+        ? managerService.deleteClientAsset(investorId, id)
+        : assetService.deleteAsset(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
+      queryClient.invalidateQueries({ queryKey: baseQueryKey });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       toast.success(t("transaction.messages.deleted"));
@@ -94,10 +109,12 @@ export const usePositions = ({
 
   const retryPriceMutation = useMutation({
     mutationFn: (id: number) => {
-      return assetService.retryPrice(id);
+      return investorId
+        ? managerService.retryClientAssetPrice(investorId, id)
+        : assetService.retryPrice(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
+      queryClient.invalidateQueries({ queryKey: baseQueryKey });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       toast.success(t("transaction.messages.retryPriceSuccess"));
@@ -111,10 +128,12 @@ export const usePositions = ({
 
   const refreshMarketPricesMutation = useMutation({
     mutationFn: () => {
-      return assetService.refreshMarketPrices();
+      return investorId
+        ? managerService.refreshClientMarketPrices(investorId)
+        : assetService.refreshMarketPrices();
     },
     onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
+      queryClient.invalidateQueries({ queryKey: baseQueryKey });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
 

@@ -32,9 +32,11 @@ import { PaginationControls } from "@/shared/components/ui/pagination-control";
 import { Asset } from "@/shared/types/asset";
 import { ConfirmDeleteDialog } from "@/shared/components/ConfirmDeleteDialog";
 import { SortableTableHead } from "@/shared/components/ui/sortable-table-head";
+import { useAuth } from "@/shared/hooks/useAuth";
 
 const VariableIncome = () => {
   const { t } = useTranslation();
+  const { canOperateOwnPortfolio } = useAuth();
   const pagination = usePagination();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAsset, setEditingAsset] = useState<Asset | undefined>(
@@ -91,21 +93,28 @@ const VariableIncome = () => {
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
-      <div className="flex flex-col sm:flex-row gap-2 justify-start mb-2 shrink-0">
-        <CsvUploadDialog />
-        <Button
-          onClick={() => refreshMarketPrices()}
-          variant="secondary"
-          className="w-full sm:w-min gap-2"
-          disabled={isRefreshingMarketPrices}
-        >
-          <RefreshCw className="h-4 w-4" />
-          {t("positions.actions.refreshPrices")}
-        </Button>
-        <Button className="w-full sm:w-min" onClick={handleCreateAsset}>
-          {t("positions.actions.addAsset")}
-        </Button>
-      </div>
+      {!canOperateOwnPortfolio && (
+        <p className="text-sm text-muted-foreground mb-2 shrink-0">
+          {t("positions.autonomy.readOnlyNotice")}
+        </p>
+      )}
+      {canOperateOwnPortfolio && (
+        <div className="flex flex-col sm:flex-row gap-2 justify-start mb-2 shrink-0">
+          <CsvUploadDialog />
+          <Button
+            onClick={() => refreshMarketPrices()}
+            variant="secondary"
+            className="w-full sm:w-min gap-2"
+            disabled={isRefreshingMarketPrices}
+          >
+            <RefreshCw className="h-4 w-4" />
+            {t("positions.actions.refreshPrices")}
+          </Button>
+          <Button className="w-full sm:w-min" onClick={handleCreateAsset}>
+            {t("positions.actions.addAsset")}
+          </Button>
+        </div>
+      )}
 
       <AssetFormDialog
         asset={editingAsset}
@@ -195,16 +204,18 @@ const VariableIncome = () => {
                   currentOrder={order}
                   onSort={toggleSort}
                 />
-                <TableHead className="w-[80px]">
-                  {t("positions.table.headers.actions")}
-                </TableHead>
+                {canOperateOwnPortfolio && (
+                  <TableHead className="w-[80px]">
+                    {t("positions.table.headers.actions")}
+                  </TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
               {!assets || assets?.data?.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={10}
+                    colSpan={canOperateOwnPortfolio ? 10 : 9}
                     className="text-center text-muted-foreground py-8"
                   >
                     {t("positions.table.empty")}
@@ -294,28 +305,30 @@ const VariableIncome = () => {
                     <TableCell>
                       {formatPercentage(Number(asset.portfolioPercentage))}
                     </TableCell>
-                    <TableCell>
-                      <div className="flex">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEditAsset(asset)}
-                          className="h-8 w-8"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            setAssetToDelete(asset);
-                          }}
-                          className="h-8 w-8"
-                        >
-                          <Trash className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+                    {canOperateOwnPortfolio && (
+                      <TableCell>
+                        <div className="flex">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEditAsset(asset)}
+                            className="h-8 w-8"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setAssetToDelete(asset);
+                            }}
+                            className="h-8 w-8"
+                          >
+                            <Trash className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))
               )}

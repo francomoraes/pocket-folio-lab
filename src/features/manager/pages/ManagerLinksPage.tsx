@@ -44,8 +44,6 @@ export const ManagerLinksPage = () => {
 
   const { pendingLinks, approveLink, rejectLink, isApproving, isRejecting } =
     usePendingApprovals();
-  // Só pedidos onde EU sou o cliente aguardado (um gestor pediu pra me gerenciar).
-  // Pedidos que EU enviei como investidor ficam pendentes na página do gestor.
   const incomingManagerRequests = pendingLinks.filter(
     (link) => link.counterpartRole === "manager",
   );

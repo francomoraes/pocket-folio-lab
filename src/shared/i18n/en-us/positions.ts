@@ -51,6 +51,10 @@ export default {
     lockedFieldTooltip:
       "This asset is synced automatically and does not allow manual editing of this field.",
   },
+  autonomy: {
+    readOnlyNotice:
+      "Your manager currently has control of your portfolio. Ask them to re-enable your autonomy if you want to manage it yourself.",
+  },
   fixedIncome: {
     manualMode: "Manual",
     manualModeTooltip:

@@ -21,7 +21,11 @@ import CircularProgress from "@/shared/components/ui/circular-progress";
 import { useState } from "react";
 import { ClientAssetTypeTarget } from "@/shared/types/manager";
 import { SummaryData } from "@/shared/types/summary";
-import { formatCentsToCurrency } from "@/shared/utils/formatters";
+import {
+  formatCentsToCurrency,
+  getPercentageBgColor,
+  getPercentageColor,
+} from "@/shared/utils/formatters";
 
 export const ClientTargetsPage = () => {
   const { investorId } = useParams<{ investorId: string }>();
@@ -89,6 +93,12 @@ export const ClientTargetsPage = () => {
     return (assetType.targetPercentage * 100).toFixed(1);
   };
 
+  const totalPercentage =
+    assetTypes.reduce((sum, assetType) => {
+      const parsed = parseFloat(getDisplayValue(assetType));
+      return sum + (isNaN(parsed) ? 0 : parsed);
+    }, 0) / 100;
+
   const handleSave = async (assetTypeId: number) => {
     const raw = editValues[assetTypeId];
     if (raw === undefined) return;
@@ -113,15 +123,33 @@ export const ClientTargetsPage = () => {
       <ManagerContextBanner investorId={id} />
 
       <div className="flex flex-col gap-4 p-4">
-        <h1 className="text-xl font-semibold">
-          {t("managerContext.nav.targets")}
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          {t(
-            "clients.targets.description",
-            "Edite os percentuais meta de cada tipo de ativo deste investidor.",
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 className="text-xl font-semibold">
+              {t("managerContext.nav.targets")}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              {t(
+                "clients.targets.description",
+                "Edite os percentuais meta de cada tipo de ativo deste investidor.",
+              )}
+            </p>
+          </div>
+          {assetTypes.length > 0 && (
+            <Card
+              className={`p-3 border-2 flex flex-row sm:flex-col items-center justify-between sm:justify-center gap-2 w-full sm:w-auto ${getPercentageBgColor(totalPercentage)}`}
+            >
+              <div className="text-xs sm:text-sm font-medium whitespace-nowrap">
+                {t("settings.assetTypes.summary.totalAllocated")}
+              </div>
+              <div
+                className={`text-xl font-bold ${getPercentageColor(totalPercentage)}`}
+              >
+                {(totalPercentage * 100).toFixed(1)}%
+              </div>
+            </Card>
           )}
-        </p>
+        </div>
 
         {isLoading ? (
           <CircularProgress />

@@ -5,5 +5,14 @@ export default {
     dashboard: "Dashboard",
     positions: "Posições",
     targets: "Metas",
+    settings: "Configurações",
+  },
+  autonomy: {
+    label: "Autonomia",
+    updated: "Autonomia do cliente atualizada",
+  },
+  scope: {
+    mine: "Meus",
+    all: "Todos",
   },
 };

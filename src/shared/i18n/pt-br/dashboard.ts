@@ -35,6 +35,10 @@ export default {
     fiis: "FIIs",
     fixed_income: "Renda Fixa",
   },
+  autonomy: {
+    readOnlyNotice:
+      "Seu gestor está com o controle da sua carteira no momento. Peça a ele para reativar sua autonomia se quiser lançar por conta própria.",
+  },
   wealthHistory: {
     addHistory: "+ Adicionar Histórico",
     loading: "Carregando histórico...",

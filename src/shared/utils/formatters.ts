@@ -46,14 +46,16 @@ export const formatPercentage = (value: number): string => {
   return `${value.toFixed(2)}%`;
 };
 
+const PERCENTAGE_TOLERANCE = 0.0005;
+
 export const getPercentageColor = (percentage: number): string => {
-  if (percentage.toPrecision(2) === "1.0") return "text-green-600";
+  if (Math.abs(percentage - 1) < PERCENTAGE_TOLERANCE) return "text-green-600";
   if (percentage > 0 && percentage < 1) return "text-orange-600";
   return "text-red-600";
 };
 
 export const getPercentageBgColor = (percentage: number): string => {
-  if (percentage.toPrecision(2) === "1.0")
+  if (Math.abs(percentage - 1) < PERCENTAGE_TOLERANCE)
     return "bg-green-50 border-green-500";
   if (percentage > 0 && percentage < 1) return "bg-orange-50 border-orange-500";
   return "bg-red-50 border-red-500";

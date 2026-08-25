@@ -16,12 +16,13 @@ const initialState: WealthHistoryFormData = {
 export const useWealthHistoryForm = (
   item?: WealthHistory | null,
   onSuccess?: () => void,
+  investorId?: number,
 ) => {
   const [formData, setFormData] = useState<WealthHistoryFormData>(initialState);
   const isEditMode = !!item;
 
   const { createWealthHistory, updateWealthHistory, isCreating, isUpdating } =
-    useWealthHistory();
+    useWealthHistory(investorId);
 
   useEffect(() => {
     if (item) {

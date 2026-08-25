@@ -26,6 +26,7 @@ import { WealthHistoryList } from "@/shared/components/WealthHistoryList";
 import { WealthHistory } from "@/shared/types/wealthHistory";
 import { useState, useCallback } from "react";
 import { SummaryCards } from "@/features/summary/components/SummaryCards";
+import { useAuth } from "@/shared/hooks/useAuth";
 import {
   DndContext,
   closestCenter,
@@ -122,6 +123,7 @@ const COLORS = [
 ];
 
 export const Dashboard = () => {
+  const { canOperateOwnPortfolio } = useAuth();
   const { summary, isLoadingSummary, exchangeRate } = useSummary();
   const { wealthHistory, isLoading: isLoadingWealthHistory } =
     useWealthHistory();
@@ -570,11 +572,17 @@ export const Dashboard = () => {
                       <AccordionContent className="p-0">
                         <Card className="p-4 sm:p-6 rounded-none border-t">
                           <div className="space-y-4">
-                            <div className="flex justify-end">
-                              <Button size="sm" onClick={handleOpenDialog}>
-                                {t("dashboard.wealthHistory.addHistory")}
-                              </Button>
-                            </div>
+                            {canOperateOwnPortfolio ? (
+                              <div className="flex justify-end">
+                                <Button size="sm" onClick={handleOpenDialog}>
+                                  {t("dashboard.wealthHistory.addHistory")}
+                                </Button>
+                              </div>
+                            ) : (
+                              <p className="text-sm text-muted-foreground text-right">
+                                {t("dashboard.autonomy.readOnlyNotice")}
+                              </p>
+                            )}
                             {isLoadingWealthHistory ? (
                               <p className="text-center text-muted-foreground">
                                 {t("dashboard.wealthHistory.loading")}

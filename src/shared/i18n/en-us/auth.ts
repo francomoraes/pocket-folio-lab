@@ -139,5 +139,8 @@ export default {
     ROLE_TAB_MISMATCH: "This account doesn't belong to this tab. Try the other tab.",
     SELF_REGISTRATION_DISABLED: "Self-registration is currently disabled.",
     ROLE_NOT_ALLOWED: "You don't have permission to create a user with this role.",
+    MANAGER_CANNOT_OWN_PORTFOLIO: "Managers cannot have their own portfolio.",
+    AUTONOMY_REQUIRED:
+      "Your manager currently has control of your portfolio. Ask them to re-enable your autonomy if you want to manage it yourself.",
   },
 };

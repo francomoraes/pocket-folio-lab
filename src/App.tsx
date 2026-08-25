@@ -25,6 +25,9 @@ import { ManagerDashboardPage } from "@/features/manager/pages/ManagerDashboardP
 import { ManagerClientsPage } from "@/features/manager/pages/ManagerClientsPage";
 import { ClientPositionsPage } from "@/features/manager/pages/ClientPositionsPage";
 import { ClientTargetsPage } from "@/features/manager/pages/ClientTargetsPage";
+import { ClientDashboardPage } from "@/features/manager/pages/ClientDashboardPage";
+import { ClientSettingsPage } from "@/features/manager/pages/ClientSettingsPage";
+import { AdminUsersPage } from "@/features/admin/pages/AdminUsersPage";
 
 function AutoRefreshPrices() {
   useAutoRefreshPrices();
@@ -52,7 +55,7 @@ const App = () => (
               <Route
                 path="/positions"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requiredRole="investor">
                     <Positions />
                   </ProtectedRoute>
                 }
@@ -60,7 +63,7 @@ const App = () => (
               <Route
                 path="/dashboard"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requiredRole="investor">
                     <Dashboard />
                   </ProtectedRoute>
                 }
@@ -68,7 +71,7 @@ const App = () => (
               <Route
                 path="/settings"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requiredRole="investor">
                     <Settings />
                   </ProtectedRoute>
                 }
@@ -124,6 +127,30 @@ const App = () => (
                 element={
                   <ProtectedRoute requiredRole="manager">
                     <ClientTargetsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/manager/clients/:investorId/dashboard"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <ClientDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/manager/clients/:investorId/settings"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <ClientSettingsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/users"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminUsersPage />
                   </ProtectedRoute>
                 }
               />

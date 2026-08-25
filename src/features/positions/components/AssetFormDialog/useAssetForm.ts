@@ -24,7 +24,11 @@ const initialState: AssetFormData = {
   currentPrice: "",
 };
 
-export const useAssetForm = (asset?: Asset | null, onSuccess?: () => void) => {
+export const useAssetForm = (
+  asset?: Asset | null,
+  onSuccess?: () => void,
+  investorId?: number,
+) => {
   const [formData, setFormData] = useState<AssetFormData>(initialState);
   const isEditMode = !!asset;
   const isLocked = isEditMode && asset!.source !== "manual";
@@ -37,9 +41,12 @@ export const useAssetForm = (asset?: Asset | null, onSuccess?: () => void) => {
     isUpdating,
     isRetryingPrice,
     assets,
-  } = usePositions({
-    skipPagination: true,
-  });
+  } = usePositions(
+    {
+      skipPagination: true,
+    },
+    investorId,
+  );
 
   useEffect(() => {
     if (asset) {

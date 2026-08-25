@@ -35,13 +35,16 @@ import {
   SheetTrigger,
 } from "@/shared/components/ui/sheet";
 import { SortableTableHead } from "@/shared/components/ui/sortable-table-head";
+import { useAuth } from "@/shared/hooks/useAuth";
 
 type SortBy = "name" | "targetPercentage" | "class";
 type SortOrder = "ASC" | "DESC";
 
-export const AssetTypesTable = () => {
+export const AssetTypesTable = ({ investorId }: { investorId?: number } = {}) => {
+  const { canOperateOwnPortfolio } = useAuth();
+  const canWrite = !!investorId || canOperateOwnPortfolio;
   const { assetTypes, isLoading, deleteAssetType, isDeleting } =
-    useAssetTypes();
+    useAssetTypes(investorId);
   const [editingClass, setEditingClass] = useState<AssetType | null>(null);
   const [deletingClass, setDeletingClass] = useState<AssetType | null>(null);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
@@ -118,7 +121,7 @@ export const AssetTypesTable = () => {
     return (
       <div>
         <p>{t("common.status.noData")}</p>
-        <AssetTypesDialog mode="create" />
+        <AssetTypesDialog mode="create" investorId={investorId} />
       </div>
     );
   }
@@ -210,7 +213,7 @@ export const AssetTypesTable = () => {
               </Button>
             )}
 
-            <AssetTypesDialog mode="create" />
+            {canWrite && <AssetTypesDialog mode="create" investorId={investorId} />}
           </div>
 
           <div className="hidden sm:flex items-end gap-3">
@@ -257,7 +260,7 @@ export const AssetTypesTable = () => {
                 <X className="h-4 w-4" />
               </Button>
             )}
-            <AssetTypesDialog mode="create" />
+            {canWrite && <AssetTypesDialog mode="create" investorId={investorId} />}
           </div>
         </div>
 
@@ -300,9 +303,11 @@ export const AssetTypesTable = () => {
                 currentOrder={order}
                 onSort={toggleSort}
               />
-              <TableHead className="text-right">
-                {t("settings.assetTypes.table.actions")}
-              </TableHead>
+              {canWrite && (
+                <TableHead className="text-right">
+                  {t("settings.assetTypes.table.actions")}
+                </TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -311,24 +316,26 @@ export const AssetTypesTable = () => {
                 <TableCell>{assetType.name}</TableCell>
                 <TableCell>{assetType.targetPercentage * 100 + "%"}</TableCell>
                 <TableCell>{assetType.assetClass.name}</TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setEditingClass(assetType)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setDeletingClass(assetType)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
+                {canWrite && (
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setEditingClass(assetType)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setDeletingClass(assetType)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>
@@ -340,6 +347,7 @@ export const AssetTypesTable = () => {
           mode="edit"
           assetType={editingClass}
           onClose={() => setEditingClass(null)}
+          investorId={investorId}
         />
       )}
 

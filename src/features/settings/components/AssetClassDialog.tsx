@@ -19,16 +19,18 @@ export const AssetClassDialog = ({
   mode,
   assetClass,
   onClose,
+  investorId,
 }: {
   mode: "create" | "edit";
   assetClass?: AssetClass;
   onClose?: () => void;
+  investorId?: number;
 }) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(!!assetClass);
   const [name, setName] = useState(assetClass?.name || "");
   const { createAssetClass, updateAssetClass, isCreating, isUpdating } =
-    useAssetClasses();
+    useAssetClasses(investorId);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
