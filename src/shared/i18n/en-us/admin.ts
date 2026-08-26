@@ -1,4 +1,23 @@
 export default {
+  dashboard: {
+    title: "Platform dashboard",
+    subtitle: "Consolidated view of all managers and clients",
+    empty: "No data available yet",
+    metrics: {
+      managersCount: "Managers",
+      activeClients: "Active clients",
+      totalWealth: "Wealth under management",
+    },
+    ranking: {
+      title: "Manager ranking",
+      empty: "No manager with active clients",
+      columns: {
+        manager: "Manager",
+        clients: "Clients",
+        wealth: "Wealth",
+      },
+    },
+  },
   users: {
     title: "Users",
     subtitle: "Manage user roles and manager limits",

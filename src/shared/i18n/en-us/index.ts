@@ -16,6 +16,7 @@ import managerContext from "./managerContext";
 import admin from "./admin";
 import linkStatus from "./linkStatus";
 import users from "./users";
+import riskProfile from "./riskProfile";
 
 export default {
   common,
@@ -36,4 +37,5 @@ export default {
   admin,
   linkStatus,
   users,
+  riskProfile,
 };

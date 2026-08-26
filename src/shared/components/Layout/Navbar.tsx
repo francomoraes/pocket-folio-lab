@@ -26,7 +26,10 @@ export const Navbar = () => {
           { to: "/manager/clients", label: t("navbar.links.clients") },
           { to: "/manager/dashboard", label: t("navbar.links.managerDashboard") },
           ...(isAdmin
-            ? [{ to: "/admin/users", label: t("navbar.links.adminUsers") }]
+            ? [
+                { to: "/admin/dashboard", label: t("navbar.links.adminDashboard") },
+                { to: "/admin/users", label: t("navbar.links.adminUsers") },
+              ]
             : []),
         ]
       : [

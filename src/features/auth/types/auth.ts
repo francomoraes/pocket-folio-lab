@@ -1,4 +1,5 @@
 import { UserRole } from "@/shared/types/roles";
+import { RiskProfile } from "@/shared/types/riskProfile";
 
 export { UserRole };
 
@@ -10,6 +11,7 @@ export interface User {
   locale?: string;
   role: UserRole;
   selfServiceEnabled: boolean;
+  riskProfile: RiskProfile | null;
   createdAt: string;
   updatedAt: string;
 }

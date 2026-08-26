@@ -26,6 +26,7 @@ import { WealthHistoryList } from "@/shared/components/WealthHistoryList";
 import { WealthHistory } from "@/shared/types/wealthHistory";
 import { useState, useCallback } from "react";
 import { SummaryCards } from "@/features/summary/components/SummaryCards";
+import { RiskProfileBadge } from "@/shared/components/RiskProfileBadge";
 import { useAuth } from "@/shared/hooks/useAuth";
 import {
   DndContext,
@@ -123,7 +124,7 @@ const COLORS = [
 ];
 
 export const Dashboard = () => {
-  const { canOperateOwnPortfolio } = useAuth();
+  const { user, canOperateOwnPortfolio } = useAuth();
   const { summary, isLoadingSummary, exchangeRate } = useSummary();
   const { wealthHistory, isLoading: isLoadingWealthHistory } =
     useWealthHistory();
@@ -313,7 +314,13 @@ export const Dashboard = () => {
         <div>{t("dashboard.table.empty")}</div>
       ) : (
       <>
-      <h2 className="text-2xl font-semibold mb-2">{t("dashboard.title")}</h2>
+      <div className="flex items-center gap-3 mb-2">
+        <h2 className="text-2xl font-semibold">{t("dashboard.title")}</h2>
+        <span className="flex items-center gap-2 text-sm text-muted-foreground">
+          {t("riskProfile.label")}
+          <RiskProfileBadge riskProfile={user?.riskProfile ?? null} />
+        </span>
+      </div>
 
       <DndContext
         sensors={sensors}

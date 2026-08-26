@@ -1,6 +1,7 @@
 import { ManagerClient } from "@/shared/types/manager";
 import { Button } from "@/shared/components/ui/button";
 import { Card } from "@/shared/components/ui/card";
+import { RiskProfileBadge } from "@/shared/components/RiskProfileBadge";
 import { formatCentsToCurrency } from "@/shared/utils/formatters";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -40,7 +41,7 @@ export const ClientCard = ({
           <p className="text-sm text-muted-foreground">
             {client.investorEmail}
           </p>
-          <div className="text-xs text-muted-foreground mt-1 flex flex-wrap gap-3">
+          <div className="text-xs text-muted-foreground mt-1 flex flex-wrap items-center gap-3">
             <span>
               {t("clients.table.linkedAt")}: {fmt(client.activatedAt)}
             </span>
@@ -48,6 +49,7 @@ export const ClientCard = ({
               {t("clients.table.wealth")}:{" "}
               {formatCentsToCurrency(client.currentWealthCents, "BRL")}
             </span>
+            <RiskProfileBadge riskProfile={client.riskProfile} />
           </div>
         </div>
         <div className="flex gap-2">

@@ -1,4 +1,23 @@
 export default {
+  dashboard: {
+    title: "Dashboard da plataforma",
+    subtitle: "Visão consolidada de todos os gestores e clientes",
+    empty: "Nenhum dado disponível ainda",
+    metrics: {
+      managersCount: "Gestores",
+      activeClients: "Clientes ativos",
+      totalWealth: "Patrimônio sob gestão",
+    },
+    ranking: {
+      title: "Ranking de gestores",
+      empty: "Nenhum gestor com clientes ativos",
+      columns: {
+        manager: "Gestor",
+        clients: "Clientes",
+        wealth: "Patrimônio",
+      },
+    },
+  },
   users: {
     title: "Usuários",
     subtitle: "Gerencie roles e limites dos usuários do sistema",

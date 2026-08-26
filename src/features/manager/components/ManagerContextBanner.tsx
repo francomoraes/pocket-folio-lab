@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/shared/components/ui/select";
 import { User, ArrowLeft } from "lucide-react";
+import { RiskProfile } from "@/shared/types/riskProfile";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { managerService } from "@/features/manager/services/managerService";
 import { QUERY_KEYS } from "@/shared/constants/queryKeys";
@@ -72,6 +73,20 @@ export const ManagerContextBanner = ({
         queryKey: QUERY_KEYS.clientProfile(investorId),
       });
       toast.success(t("managerContext.autonomy.updated"));
+    },
+    onError: (error) => {
+      toast.error(resolveErrorMessage(error, "common.status.error"));
+    },
+  });
+
+  const riskProfileMutation = useMutation({
+    mutationFn: (riskProfile: RiskProfile) =>
+      managerService.updateClientRiskProfile(investorId, riskProfile),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.clientProfile(investorId),
+      });
+      toast.success(t("managerContext.riskProfile.updated"));
     },
     onError: (error) => {
       toast.error(resolveErrorMessage(error, "common.status.error"));
@@ -176,6 +191,36 @@ export const ManagerContextBanner = ({
             disabled={autonomyMutation.isPending}
             onCheckedChange={(checked) => autonomyMutation.mutate(checked)}
           />
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-sm text-amber-700 whitespace-nowrap">
+            {t("managerContext.riskProfile.label")}
+          </span>
+          <Select
+            value={profile?.user.riskProfile ?? undefined}
+            disabled={riskProfileMutation.isPending}
+            onValueChange={(value) =>
+              riskProfileMutation.mutate(value as RiskProfile)
+            }
+          >
+            <SelectTrigger className="h-7 w-auto min-w-[140px] border-amber-300 bg-amber-100/50 text-sm font-semibold text-amber-900">
+              <SelectValue
+                placeholder={t("managerContext.riskProfile.placeholder")}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="conservative">
+                {t("riskProfile.conservative")}
+              </SelectItem>
+              <SelectItem value="moderate">
+                {t("riskProfile.moderate")}
+              </SelectItem>
+              <SelectItem value="aggressive">
+                {t("riskProfile.aggressive")}
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <Button

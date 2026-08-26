@@ -1,9 +1,16 @@
 import { API_ENDPOINTS } from "@/config/api";
 import { api } from "@/lib/axios";
-import { AdminUser, PaginationMeta } from "@/shared/types/manager";
+import { AdminDashboard, AdminUser, PaginationMeta } from "@/shared/types/manager";
 import { UserRole } from "@/shared/types/roles";
 
 class AdminService {
+  async getDashboard(): Promise<AdminDashboard> {
+    const response = await api.get<AdminDashboard>(
+      API_ENDPOINTS.admin.dashboard,
+    );
+    return response.data;
+  }
+
   async listUsers(params: {
     search?: string;
     page?: number;

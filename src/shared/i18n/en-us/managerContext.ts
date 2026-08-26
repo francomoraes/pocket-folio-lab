@@ -11,6 +11,11 @@ export default {
     label: "Autonomy",
     updated: "Client autonomy updated",
   },
+  riskProfile: {
+    label: "Risk profile",
+    placeholder: "Not defined",
+    updated: "Client risk profile updated",
+  },
   scope: {
     mine: "Mine",
     all: "All",

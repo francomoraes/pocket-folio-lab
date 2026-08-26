@@ -28,6 +28,7 @@ import { ClientTargetsPage } from "@/features/manager/pages/ClientTargetsPage";
 import { ClientDashboardPage } from "@/features/manager/pages/ClientDashboardPage";
 import { ClientSettingsPage } from "@/features/manager/pages/ClientSettingsPage";
 import { AdminUsersPage } from "@/features/admin/pages/AdminUsersPage";
+import { AdminDashboardPage } from "@/features/admin/pages/AdminDashboardPage";
 
 function AutoRefreshPrices() {
   useAutoRefreshPrices();
@@ -151,6 +152,14 @@ const App = () => (
                 element={
                   <ProtectedRoute requiredRole="admin">
                     <AdminUsersPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/dashboard"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminDashboardPage />
                   </ProtectedRoute>
                 }
               />

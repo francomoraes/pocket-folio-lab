@@ -37,4 +37,5 @@ export const QUERY_KEYS = {
   clientProfile: (investorId: number) =>
     ["manager", "clients", investorId, "profile"] as const,
   adminUsers: (params?: object) => ["admin", "users", params],
+  adminDashboard: ["admin", "dashboard"] as const,
 };

@@ -6,6 +6,7 @@ import {
   ManagerDashboard,
   PaginationMeta,
   ClientAssetTypeTarget,
+  RiskProfile,
 } from "@/shared/types/manager";
 import { SummaryData, SummaryResponse } from "@/shared/types/summary";
 import {
@@ -357,6 +358,8 @@ class ManagerService {
       locale: string | null;
       profilePictureUrl: string | null;
       selfServiceEnabled: boolean;
+      riskProfile: RiskProfile | null;
+      riskProfileUpdatedAt: string | null;
     };
     assetTypes: ClientAssetTypeTarget[];
   }> {
@@ -368,6 +371,8 @@ class ManagerService {
         locale: string | null;
         profilePictureUrl: string | null;
         selfServiceEnabled: boolean;
+        riskProfile: RiskProfile | null;
+        riskProfileUpdatedAt: string | null;
       };
       assetTypes: ClientAssetTypeTarget[];
     }>(API_ENDPOINTS.managers.clientProfile(investorId));
@@ -395,6 +400,18 @@ class ManagerService {
     const response = await api.patch<{
       user: { id: number; selfServiceEnabled: boolean };
     }>(API_ENDPOINTS.managers.clientAutonomy(investorId), { enabled });
+    return response.data;
+  }
+
+  async updateClientRiskProfile(
+    investorId: number,
+    riskProfile: RiskProfile,
+  ): Promise<{
+    user: { id: number; riskProfile: RiskProfile; riskProfileUpdatedAt: string };
+  }> {
+    const response = await api.patch<{
+      user: { id: number; riskProfile: RiskProfile; riskProfileUpdatedAt: string };
+    }>(API_ENDPOINTS.managers.clientRiskProfile(investorId), { riskProfile });
     return response.data;
   }
 }

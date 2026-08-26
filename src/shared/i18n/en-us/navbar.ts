@@ -7,6 +7,7 @@ export default {
     managers: "Managers",
     clients: "Clients",
     managerDashboard: "Manager Dashboard",
+    adminDashboard: "Admin Dashboard",
     adminUsers: "Users",
   },
 };

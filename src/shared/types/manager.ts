@@ -1,4 +1,7 @@
 import { UserRole } from "@/shared/types/roles";
+import { RiskProfile } from "@/shared/types/riskProfile";
+
+export type { RiskProfile };
 
 export type LinkStatus = "pending" | "active" | "rejected" | "revoked";
 
@@ -50,6 +53,7 @@ export interface ManagerClient {
   activatedAt: string;
   currentWealthCents: number;
   linkId: number;
+  riskProfile: RiskProfile | null;
 }
 
 export interface ManagerDashboard {
@@ -92,4 +96,19 @@ export interface ClientAssetTypeTarget {
   assetClassId: number;
   assetClassName: string;
   targetPercentage: number;
+}
+
+export interface ManagerRankingRow {
+  managerId: number;
+  managerName: string;
+  managerEmail: string;
+  activeClientsCount: number;
+  totalWealthCents: number;
+}
+
+export interface AdminDashboard {
+  managersCount: number;
+  totalActiveClientsCount: number;
+  totalWealthUnderManagementCents: number;
+  managerRanking: ManagerRankingRow[];
 }

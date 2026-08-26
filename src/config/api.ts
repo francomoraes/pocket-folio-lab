@@ -81,6 +81,8 @@ export const API_ENDPOINTS = {
       `managers/me/clients/${investorId}/asset-types/${assetTypeId}/target-percentage`,
     clientAutonomy: (investorId: number) =>
       `managers/me/clients/${investorId}/autonomy`,
+    clientRiskProfile: (investorId: number) =>
+      `managers/me/clients/${investorId}/risk-profile`,
     clientAssets: {
       list: (investorId: number) => `managers/me/clients/${investorId}/assets`,
       create: (investorId: number) => `managers/me/clients/${investorId}/assets`,
@@ -154,6 +156,7 @@ export const API_ENDPOINTS = {
     list: "investors",
   },
   admin: {
+    dashboard: "admin/dashboard",
     listUsers: "admin/users",
     setRole: (userId: number) => `admin/users/${userId}/role`,
     setClientLimit: (managerId: number) =>
