@@ -9,11 +9,14 @@ export const QUERY_KEYS = {
   OVERVIEW: ["overview"],
 
   availableManagers: (search?: string) => ["managers", "available", search],
-  availableInvestors: (search?: string) => ["investors", "available", search],
+  availableInvestors: (search?: string, excludeManagerId?: number) => [
+    "investors",
+    "available",
+    search,
+    excludeManagerId,
+  ],
   myLinks: ["manager-links", "me"] as const,
   myLinkHistory: ["manager-links", "me", "history"] as const,
-  pendingLinks: ["manager-links", "pending"] as const,
-  sentRequests: ["manager-links", "sent"] as const,
   managerClientsRoot: ["manager", "clients"] as const,
   managerClients: (params?: object) => ["manager", "clients", params],
   managerDashboard: ["manager", "dashboard"] as const,

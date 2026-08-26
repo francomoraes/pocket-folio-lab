@@ -24,31 +24,12 @@ export interface ManagerClientLink {
   createdAt: string;
 }
 
-export interface PendingApproval {
-  id: number;
-  investorId: number;
-  managerId: number;
-  requestedByUserId: number;
-  counterpartId: number;
-  counterpartName: string;
-  counterpartEmail: string;
-  counterpartRole: "investor" | "manager";
-  createdAt: string;
-}
-
-export interface SentRequest {
-  id: number;
-  investorId: number;
-  investorName: string;
-  investorEmail: string;
-  createdAt: string;
-}
-
 export interface AvailableInvestor {
   id: number;
   name: string;
   email: string;
   role: UserRole;
+  currentManagers: { id: number; name: string; email: string }[];
 }
 
 export interface ManagerHistoryCycle {

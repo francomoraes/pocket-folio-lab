@@ -22,6 +22,23 @@ export const useManagerClients = (params?: {
     staleTime: 30 * 1000,
   });
 
+  const createLinkMutation = useMutation({
+    mutationFn: ({
+      investorId,
+      managerId,
+    }: {
+      investorId: number;
+      managerId?: number;
+    }) => managerLinkService.createLink(investorId, managerId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.managerClientsRoot });
+      toast.success(t("clients.clientAdded"));
+    },
+    onError: (error) => {
+      toast.error(resolveErrorMessage(error, "clients.addClientError"));
+    },
+  });
+
   const revokeMutation = useMutation({
     mutationFn: (linkId: number) => managerLinkService.revokeLink(linkId),
     onSuccess: () => {
@@ -38,6 +55,8 @@ export const useManagerClients = (params?: {
     meta: data?.meta,
     isLoading,
     error,
+    createLink: createLinkMutation.mutateAsync,
+    isCreating: createLinkMutation.isPending,
     revokeLink: revokeMutation.mutateAsync,
     isRevoking: revokeMutation.isPending,
   };

@@ -1,27 +1,8 @@
 export default {
   title: "Gestores",
-  subtitle: "Gerencie seus vínculos com gestores de carteira",
+  subtitle: "Veja seus vínculos com gestores de carteira",
   myManagers: "Meus Gestores",
-  addManager: "Adicionar Gestor",
-  requestSent: "Solicitação enviada com sucesso",
-  requestError: "Erro ao enviar solicitação",
-  linkRevoked: "Vínculo encerrado com sucesso",
-  revokeError: "Erro ao encerrar vínculo",
-  cancelRequest: "Cancelar solicitação",
-  endLink: "Encerrar vínculo",
-  noLinks: "Você ainda não tem vínculos com gestores",
-  searchManagers: "Buscar gestores por nome ou e-mail",
-  noManagersFound: "Nenhum gestor encontrado",
-  requestManager: "Solicitar",
-  incomingRequests: {
-    title: "Solicitações de Gestores",
-  },
-  confirmRevoke: {
-    title: "Encerrar vínculo",
-    description: "Tem certeza que deseja encerrar o vínculo com este gestor? Esta ação não pode ser desfeita.",
-    confirm: "Encerrar",
-    cancel: "Cancelar",
-  },
+  noLinks: "Você ainda não tem gestores vinculados",
   history: {
     title: "Histórico de Gestão",
     manager: "Gestor",
@@ -33,7 +14,7 @@ export default {
     noHistory: "Nenhum histórico de gestão encontrado",
   },
   linkInfo: {
-    requestedAt: "Solicitado em",
+    requestedAt: "Criado em",
     activatedAt: "Ativo desde",
     rejectedAt: "Rejeitado em",
     revokedAt: "Encerrado em",

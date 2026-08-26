@@ -120,7 +120,7 @@ export default {
       "A wealth history record already exists for this date",
     WEALTH_HISTORY_NOT_FOUND: "Wealth history record not found",
     PENDING_LINK_EXISTS: "A pending request already exists for this manager.",
-    ACTIVE_LINK_EXISTS: "You already have an active link with this manager.",
+    ACTIVE_LINK_EXISTS: "You already have an active link with this client.",
     MANAGER_CLIENT_LIMIT_REACHED: "This manager has reached the client limit.",
     NO_ACTIVE_LINK: "You have no active link with this investor.",
     INVALID_STATUS_TRANSITION:

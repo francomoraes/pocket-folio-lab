@@ -1,17 +1,6 @@
 import { useMyLinks } from "@/features/manager/hooks/useMyLinks";
 import { useMyLinkHistory } from "@/features/manager/hooks/useMyLinkHistory";
-import { usePendingApprovals } from "@/features/manager/hooks/usePendingApprovals";
 import { ManagerLinkCard } from "@/features/manager/components/ManagerLinkCard";
-import { PendingLinkCard } from "@/features/manager/components/PendingLinkCard";
-import { AvailableManagersList } from "@/features/manager/components/AvailableManagersList";
-import { Button } from "@/shared/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/shared/components/ui/sheet";
 import {
   Accordion,
   AccordionContent,
@@ -29,24 +18,14 @@ import {
 import { Card } from "@/shared/components/ui/card";
 import { formatCentsToCurrency } from "@/shared/utils/formatters";
 import { useTranslation } from "react-i18next";
-import { Plus } from "lucide-react";
 import CircularProgress from "@/shared/components/ui/circular-progress";
-import { useState } from "react";
 
 export const ManagerLinksPage = () => {
   const { t, i18n } = useTranslation();
   const locale = i18n.resolvedLanguage || "pt-BR";
-  const [sheetOpen, setSheetOpen] = useState(false);
 
-  const { links, isLoading, createLink, revokeLink, isCreating, isRevoking } =
-    useMyLinks();
+  const { links, isLoading } = useMyLinks();
   const { history, isLoading: isLoadingHistory } = useMyLinkHistory();
-
-  const { pendingLinks, approveLink, rejectLink, isApproving, isRejecting } =
-    usePendingApprovals();
-  const incomingManagerRequests = pendingLinks.filter(
-    (link) => link.counterpartRole === "manager",
-  );
 
   const fmt = (d: string | null) =>
     d ? new Date(d).toLocaleDateString(locale) : "—";
@@ -54,58 +33,12 @@ export const ManagerLinksPage = () => {
   const formatWealth = (cents: number | null) =>
     cents != null ? formatCentsToCurrency(cents, "BRL") : "—";
 
-  const handleRequest = async (managerId: number) => {
-    await createLink(managerId);
-    setSheetOpen(false);
-  };
-
   return (
     <div className="flex flex-col gap-6 p-4 max-w-3xl mx-auto">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">{t("managers.title")}</h1>
-          <p className="text-muted-foreground text-sm">{t("managers.subtitle")}</p>
-        </div>
-        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-          <SheetTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              {t("managers.addManager")}
-            </Button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>{t("managers.addManager")}</SheetTitle>
-            </SheetHeader>
-            <div className="mt-6">
-              <AvailableManagersList
-                onRequest={handleRequest}
-                isRequesting={isCreating}
-              />
-            </div>
-          </SheetContent>
-        </Sheet>
+      <div>
+        <h1 className="text-2xl font-bold">{t("managers.title")}</h1>
+        <p className="text-muted-foreground text-sm">{t("managers.subtitle")}</p>
       </div>
-
-      {incomingManagerRequests.length > 0 && (
-        <section>
-          <h2 className="text-lg font-semibold mb-3">
-            {t("managers.incomingRequests.title")}
-          </h2>
-          <div className="flex flex-col gap-2">
-            {incomingManagerRequests.map((link) => (
-              <PendingLinkCard
-                key={link.id}
-                link={link}
-                onApprove={approveLink}
-                onReject={rejectLink}
-                isApproving={isApproving}
-                isRejecting={isRejecting}
-              />
-            ))}
-          </div>
-        </section>
-      )}
 
       <section>
         <h2 className="text-lg font-semibold mb-3">{t("managers.myManagers")}</h2>
@@ -116,12 +49,7 @@ export const ManagerLinksPage = () => {
         ) : (
           <div className="flex flex-col gap-2">
             {links.map((link) => (
-              <ManagerLinkCard
-                key={link.id}
-                link={link}
-                onRevoke={revokeLink}
-                isRevoking={isRevoking}
-              />
+              <ManagerLinkCard key={link.id} link={link} />
             ))}
           </div>
         )}

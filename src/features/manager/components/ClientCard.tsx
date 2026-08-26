@@ -16,7 +16,7 @@ import {
 
 interface ClientCardProps {
   client: ManagerClient;
-  onRevoke: (linkId: number) => Promise<void>;
+  onRevoke: (linkId: number) => Promise<unknown>;
   isRevoking: boolean;
 }
 

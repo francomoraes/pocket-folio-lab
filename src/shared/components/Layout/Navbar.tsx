@@ -3,7 +3,6 @@ import { TrendingUp, Menu } from "lucide-react";
 import { NavLink, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/shared/hooks/useAuth";
-import { usePendingApprovals } from "@/features/manager/hooks/usePendingApprovals";
 import { useState } from "react";
 import {
   Sheet,
@@ -19,21 +18,12 @@ export const Navbar = () => {
   const { isAuthenticated, isInitializing, isManager, isAdmin } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  const { pendingLinks } = usePendingApprovals();
-  const managerPendingCount = pendingLinks.filter(
-    (link) => link.counterpartRole === "investor",
-  ).length;
-
-  type NavItem = { to: string; label: string; badge?: number };
+  type NavItem = { to: string; label: string };
 
   const navItems: NavItem[] = [
     ...(isManager
       ? [
-          {
-            to: "/manager/clients",
-            label: t("navbar.links.clients"),
-            badge: managerPendingCount > 0 ? managerPendingCount : undefined,
-          },
+          { to: "/manager/clients", label: t("navbar.links.clients") },
           { to: "/manager/dashboard", label: t("navbar.links.managerDashboard") },
           ...(isAdmin
             ? [{ to: "/admin/users", label: t("navbar.links.adminUsers") }]
@@ -76,11 +66,6 @@ export const Navbar = () => {
                     }
                   >
                     {item.label}
-                    {item.badge != null && (
-                      <span className="ml-1 rounded-full bg-destructive px-1.5 py-0.5 text-xs text-white leading-none">
-                        {item.badge}
-                      </span>
-                    )}
                   </NavLink>
                 ))}
               </div>
@@ -112,11 +97,6 @@ export const Navbar = () => {
                         }
                       >
                         {item.label}
-                        {item.badge != null && (
-                          <span className="ml-1 rounded-full bg-destructive px-1.5 py-0.5 text-xs text-white leading-none">
-                            {item.badge}
-                          </span>
-                        )}
                       </NavLink>
                     ))}
                     <div className="border-t pt-4 mt-4">

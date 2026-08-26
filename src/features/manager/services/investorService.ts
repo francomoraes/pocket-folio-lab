@@ -7,6 +7,7 @@ class InvestorService {
     search?: string;
     page?: number;
     itemsPerPage?: number;
+    excludeManagerId?: number;
   }): Promise<{ data: AvailableInvestor[]; meta: PaginationMeta }> {
     const response = await api.get<{
       data: AvailableInvestor[];

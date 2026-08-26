@@ -1,27 +1,8 @@
 export default {
   title: "Managers",
-  subtitle: "Manage your links with portfolio managers",
+  subtitle: "See your links with portfolio managers",
   myManagers: "My Managers",
-  addManager: "Add Manager",
-  requestSent: "Request sent successfully",
-  requestError: "Error sending request",
-  linkRevoked: "Link ended successfully",
-  revokeError: "Error ending link",
-  cancelRequest: "Cancel request",
-  endLink: "End link",
-  noLinks: "You have no links with managers yet",
-  searchManagers: "Search managers by name or email",
-  noManagersFound: "No managers found",
-  requestManager: "Request",
-  incomingRequests: {
-    title: "Manager Requests",
-  },
-  confirmRevoke: {
-    title: "End link",
-    description: "Are you sure you want to end the link with this manager? This action cannot be undone.",
-    confirm: "End",
-    cancel: "Cancel",
-  },
+  noLinks: "You don't have any linked managers yet",
   history: {
     title: "Management History",
     manager: "Manager",
@@ -33,7 +14,7 @@ export default {
     noHistory: "No management history found",
   },
   linkInfo: {
-    requestedAt: "Requested at",
+    requestedAt: "Created at",
     activatedAt: "Active since",
     rejectedAt: "Rejected at",
     revokedAt: "Ended at",

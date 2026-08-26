@@ -120,7 +120,7 @@ export default {
       "Já existe um registro de patrimônio para esta data",
     WEALTH_HISTORY_NOT_FOUND: "Registro de patrimônio não encontrado",
     PENDING_LINK_EXISTS: "Já existe uma solicitação pendente para este gestor.",
-    ACTIVE_LINK_EXISTS: "Você já tem um vínculo ativo com este gestor.",
+    ACTIVE_LINK_EXISTS: "Você já tem um vínculo ativo com este cliente.",
     MANAGER_CLIENT_LIMIT_REACHED: "Este gestor atingiu o limite de clientes.",
     NO_ACTIVE_LINK: "Você não tem vínculo ativo com este investidor.",
     INVALID_STATUS_TRANSITION:
