@@ -33,7 +33,7 @@ export const ProtectedRoute = ({ children, requiredRole }: ProtectedRoutesProps)
   if (requiredRole && !hasAccess(user?.role, requiredRole)) {
     return (
       <Navigate
-        to={user?.role === "investor" ? "/dashboard" : "/manager/clients"}
+        to={user?.role === "investor" ? "/dashboard" : "/manager/dashboard"}
         replace
       />
     );

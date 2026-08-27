@@ -2,7 +2,12 @@ import { managerService } from "@/features/manager/services/managerService";
 import { managerLinkService } from "@/features/manager/services/managerLinkService";
 import { QUERY_KEYS } from "@/shared/constants/queryKeys";
 import { ClientSortBy } from "@/shared/types/manager";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { toast } from "sonner";
 import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 import { useTranslation } from "react-i18next";
@@ -21,6 +26,7 @@ export const useManagerClients = (params?: {
     queryKey: QUERY_KEYS.managerClients(params),
     queryFn: () => managerService.getMyClients(params ?? {}),
     staleTime: 30 * 1000,
+    placeholderData: keepPreviousData,
   });
 
   const createLinkMutation = useMutation({

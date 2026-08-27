@@ -3,7 +3,7 @@ import { api } from "@/lib/axios";
 import {
   AvailableManager,
   ClientSortBy,
-  ManagerClient,
+  ManagerClientsResponse,
   ManagerDashboard,
   PaginationMeta,
   ClientAssetTypeTarget,
@@ -76,11 +76,11 @@ class ManagerService {
     itemsPerPage?: number;
     sortBy?: ClientSortBy;
     order?: string;
-  }): Promise<{ data: ManagerClient[]; meta: PaginationMeta }> {
-    const response = await api.get<{
-      data: ManagerClient[];
-      meta: PaginationMeta;
-    }>(API_ENDPOINTS.managers.clients, { params });
+  }): Promise<ManagerClientsResponse> {
+    const response = await api.get<ManagerClientsResponse>(
+      API_ENDPOINTS.managers.clients,
+      { params },
+    );
     return response.data;
   }
 

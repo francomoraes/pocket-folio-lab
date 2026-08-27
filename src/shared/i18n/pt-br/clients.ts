@@ -8,6 +8,7 @@ export default {
     name: "Nome",
     email: "E-mail",
     linkedAt: "Vínculo desde",
+    riskProfile: "Perfil",
     wealth: "Patrimônio atual",
     actions: "Ações",
     viewPortfolio: "Ver carteira",

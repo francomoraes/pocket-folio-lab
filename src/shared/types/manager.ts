@@ -99,6 +99,18 @@ export interface PaginationMeta {
   itemsPerPage: number;
 }
 
+export interface ManagerClientsResponse {
+  data: ManagerClient[];
+  meta: {
+    totalItems: number;
+    currentPage: number;
+    itemsPerPage: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
 export interface ClientAssetTypeTarget {
   assetTypeId: number;
   assetTypeName: string;

@@ -44,7 +44,7 @@ export const useLoginForm = () => {
         });
         toast.success(t("auth.messages.registerSuccess"));
         navigate(
-          registeredUser.role === "investor" ? "/dashboard" : "/manager/clients",
+          registeredUser.role === "investor" ? "/dashboard" : "/manager/dashboard",
         );
       } else {
         const loggedInUser = await login({
@@ -54,7 +54,7 @@ export const useLoginForm = () => {
         });
         toast.success(t("auth.messages.loginSuccess"));
         navigate(
-          loggedInUser.role === "investor" ? "/dashboard" : "/manager/clients",
+          loggedInUser.role === "investor" ? "/dashboard" : "/manager/dashboard",
         );
       }
     } catch (error) {
@@ -81,7 +81,7 @@ export const useLoginForm = () => {
   const redirectTo = isAuthenticated
     ? user?.role === "investor"
       ? "/dashboard"
-      : "/manager/clients"
+      : "/manager/dashboard"
     : null;
 
   return {

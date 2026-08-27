@@ -22,7 +22,6 @@ import "@/shared/i18n/config";
 import { UserProfile } from "@/pages/UserProfile";
 import { ManagerLinksPage } from "@/features/manager/pages/ManagerLinksPage";
 import { ManagerDashboardPage } from "@/features/manager/pages/ManagerDashboardPage";
-import { ManagerClientsPage } from "@/features/manager/pages/ManagerClientsPage";
 import { ClientPositionsPage } from "@/features/manager/pages/ClientPositionsPage";
 import { ClientTargetsPage } from "@/features/manager/pages/ClientTargetsPage";
 import { ClientDashboardPage } from "@/features/manager/pages/ClientDashboardPage";
@@ -104,14 +103,6 @@ const App = () => (
                 element={
                   <ProtectedRoute requiredRole="manager">
                     <ManagerDashboardPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/manager/clients"
-                element={
-                  <ProtectedRoute requiredRole="manager">
-                    <ManagerClientsPage />
                   </ProtectedRoute>
                 }
               />

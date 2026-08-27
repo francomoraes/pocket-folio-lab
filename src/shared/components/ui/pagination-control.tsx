@@ -31,7 +31,10 @@ interface PaginationControlsProps {
     goToPage: (page: number) => void;
     changeItemsPerPage: (limit: number) => void;
   };
+  itemsPerPageOptions?: number[];
 }
+
+const DEFAULT_ITEMS_PER_PAGE_OPTIONS = [5, 10, 25];
 
 const getPageNumbers = (
   current: number,
@@ -66,7 +69,10 @@ const getPageNumbers = (
   return pages;
 };
 
-export const PaginationControls = ({ pagination }: PaginationControlsProps) => {
+export const PaginationControls = ({
+  pagination,
+  itemsPerPageOptions = DEFAULT_ITEMS_PER_PAGE_OPTIONS,
+}: PaginationControlsProps) => {
   const {
     page,
     itemsPerPage,
@@ -107,9 +113,11 @@ export const PaginationControls = ({ pagination }: PaginationControlsProps) => {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="5">5</SelectItem>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="25">25</SelectItem>
+              {itemsPerPageOptions.map((option) => (
+                <SelectItem key={option} value={String(option)}>
+                  {option}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

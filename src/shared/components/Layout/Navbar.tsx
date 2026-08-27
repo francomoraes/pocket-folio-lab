@@ -23,7 +23,6 @@ export const Navbar = () => {
   const navItems: NavItem[] = [
     ...(isManager
       ? [
-          { to: "/manager/clients", label: t("navbar.links.clients") },
           { to: "/manager/dashboard", label: t("navbar.links.managerDashboard") },
           ...(isAdmin
             ? [

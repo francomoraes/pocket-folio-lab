@@ -227,7 +227,7 @@ export const ManagerContextBanner = ({
           variant="ghost"
           size="sm"
           className="text-amber-700 hover:text-amber-900 hover:bg-amber-100 shrink-0"
-          onClick={() => navigate("/manager/clients")}
+          onClick={() => navigate("/manager/dashboard")}
         >
           <ArrowLeft className="h-4 w-4 mr-1" />
           {t("managerContext.exitContext")}

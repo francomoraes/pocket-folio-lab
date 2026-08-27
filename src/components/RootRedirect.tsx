@@ -17,7 +17,7 @@ export const RootRedirect = () => {
   if (isAuthenticated) {
     return (
       <Navigate
-        to={user?.role === "investor" ? "/dashboard" : "/manager/clients"}
+        to={user?.role === "investor" ? "/dashboard" : "/manager/dashboard"}
         replace
       />
     );
