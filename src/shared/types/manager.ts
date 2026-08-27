@@ -54,7 +54,16 @@ export interface ManagerClient {
   currentWealthCents: number;
   linkId: number;
   riskProfile: RiskProfile | null;
+  adherenceIndexPp: number | null;
+  monthlyVariationPct: number | null;
 }
+
+export type ClientSortBy =
+  | "name"
+  | "activatedAt"
+  | "wealth"
+  | "adherenceIndex"
+  | "monthlyVariation";
 
 export interface ManagerDashboard {
   activeClientsCount: number;

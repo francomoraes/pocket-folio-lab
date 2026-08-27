@@ -20,8 +20,22 @@ export default {
   },
   search: "Buscar por nome ou e-mail",
   sortBy: {
+    label: "Ordenar por",
     name: "Nome",
     activatedAt: "Data de vínculo",
+    wealth: "Patrimônio",
+    adherenceIndex: "Aderência",
+    monthlyVariation: "Variação mensal",
+  },
+  adherence: {
+    label: "Aderência",
+    noData: "—",
+    tooltipNoData: "Sem metas configuradas",
+  },
+  variation: {
+    label: "Variação mensal",
+    noData: "—",
+    tooltipNoData: "Sem dado do mês anterior",
   },
   linkRevoked: "Vínculo encerrado com sucesso",
   revokeError: "Erro ao encerrar vínculo",

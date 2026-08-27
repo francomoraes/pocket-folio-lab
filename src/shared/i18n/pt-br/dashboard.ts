@@ -30,6 +30,10 @@ export default {
     axisValueBrl: "Valor (R$)",
     insufficientData: "Dados insuficientes para gerar gráfico",
   },
+  adherence: {
+    badge: "Desvio total: {{value}} pp",
+    rowDeviation: "desvio {{value}} pp",
+  },
   assetClasses: {
     stocks: "Ações",
     fiis: "FIIs",

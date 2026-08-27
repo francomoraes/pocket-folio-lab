@@ -30,6 +30,10 @@ export default {
     axisValueBrl: "Value (BRL)",
     insufficientData: "Insufficient data to render chart",
   },
+  adherence: {
+    badge: "Total deviation: {{value}} pp",
+    rowDeviation: "deviation {{value}} pp",
+  },
   assetClasses: {
     stocks: "Stocks",
     fiis: "REITs",

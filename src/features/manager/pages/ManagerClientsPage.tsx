@@ -5,6 +5,13 @@ import { CreateUserDialog } from "@/features/users/components/CreateUserDialog";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/components/ui/select";
+import {
   Sheet,
   SheetContent,
   SheetHeader,
@@ -17,6 +24,15 @@ import { useNavigate } from "react-router-dom";
 import CircularProgress from "@/shared/components/ui/circular-progress";
 import { Plus } from "lucide-react";
 import { useAuth } from "@/shared/hooks/useAuth";
+import { ClientSortBy } from "@/shared/types/manager";
+
+const SORT_OPTIONS: ClientSortBy[] = [
+  "name",
+  "wealth",
+  "adherenceIndex",
+  "monthlyVariation",
+  "activatedAt",
+];
 
 export const ManagerClientsPage = () => {
   const { t } = useTranslation();
@@ -28,6 +44,7 @@ export const ManagerClientsPage = () => {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [scope, setScope] = useState<"mine" | "all">("mine");
+  const [sortBy, setSortBy] = useState<ClientSortBy>("name");
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -46,8 +63,8 @@ export const ManagerClientsPage = () => {
     search: debouncedSearch || undefined,
     page: 1,
     itemsPerPage: 50,
-    sortBy: "name",
-    order: "ASC",
+    sortBy,
+    order: sortBy === "name" ? "ASC" : "DESC",
   });
 
   const handleAddClient = async (investorId: number, managerId?: number) => {
@@ -133,12 +150,29 @@ export const ManagerClientsPage = () => {
         </section>
       ) : (
         <section>
-          <Input
-            placeholder={t("clients.search")}
-            value={search}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="max-w-sm mb-4"
-          />
+          <div className="flex items-center gap-2 mb-4">
+            <Input
+              placeholder={t("clients.search")}
+              value={search}
+              onChange={(e) => handleSearch(e.target.value)}
+              className="max-w-sm"
+            />
+            <Select
+              value={sortBy}
+              onValueChange={(value) => setSortBy(value as ClientSortBy)}
+            >
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder={t("clients.sortBy.label")} />
+              </SelectTrigger>
+              <SelectContent>
+                {SORT_OPTIONS.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {t(`clients.sortBy.${option}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
           {isLoading ? (
             <CircularProgress />

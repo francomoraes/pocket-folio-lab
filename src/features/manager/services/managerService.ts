@@ -2,6 +2,7 @@ import { API_ENDPOINTS } from "@/config/api";
 import { api } from "@/lib/axios";
 import {
   AvailableManager,
+  ClientSortBy,
   ManagerClient,
   ManagerDashboard,
   PaginationMeta,
@@ -73,7 +74,7 @@ class ManagerService {
     search?: string;
     page?: number;
     itemsPerPage?: number;
-    sortBy?: string;
+    sortBy?: ClientSortBy;
     order?: string;
   }): Promise<{ data: ManagerClient[]; meta: PaginationMeta }> {
     const response = await api.get<{

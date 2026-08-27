@@ -11,7 +11,10 @@ import { SortableTableHead } from "@/shared/components/ui/sortable-table-head";
 import { useSummary } from "@/shared/hooks/useSummary";
 import { useWealthHistory } from "@/shared/hooks/useWealthHistory";
 import { AllocationByClass } from "@/shared/types/investment";
-import { formatCentsToCurrency } from "@/shared/utils/formatters";
+import {
+  formatCentsToCurrency,
+  getAdherenceColor,
+} from "@/shared/utils/formatters";
 import { useTranslation } from "react-i18next";
 import {
   Accordion,
@@ -125,7 +128,7 @@ const COLORS = [
 
 export const Dashboard = () => {
   const { user, canOperateOwnPortfolio } = useAuth();
-  const { summary, isLoadingSummary, exchangeRate } = useSummary();
+  const { summary, isLoadingSummary, exchangeRate, adherence } = useSummary();
   const { wealthHistory, isLoading: isLoadingWealthHistory } =
     useWealthHistory();
   const { t, i18n } = useTranslation();
@@ -200,34 +203,50 @@ export const Dashboard = () => {
     setEditingWealthHistory(null);
   };
 
-  const rawAllocItems = summary
+  // actualPercentage já vem convertido por câmbio do backend (getSummary
+  // corrige a mistura de moedas antes de calcular o total) — não recalcula
+  // mais aqui, só reaproveita.
+  const summaryAllocation: AllocationByClass[] = summary
     ? summary.map((item) => ({
         class: item.assetClassName,
         type: item.assetTypeName,
         currency: item.currency,
         targetPercentage: item.targetPercentage,
+        actualPercentage: item.actualPercentage,
         actualValue: item.totalValueCents,
       }))
     : [];
 
-  const totalBRL = rawAllocItems.reduce((acc, item) => {
-    const valueBRL =
-      item.currency === "USD"
-        ? item.actualValue * usdToBrlRate
-        : item.actualValue;
-    return acc + valueBRL;
-  }, 0);
+  // `summary` só traz tipos com posição atual (parte de Asset, não de
+  // AssetType) — um tipo com meta mas zero posição fica de fora e faria o
+  // "Desvio total" do header não bater com a soma das linhas da tabela.
+  const typesWithData = new Set(
+    summaryAllocation.map((item) => `${item.class}|${item.type}`),
+  );
+  const zeroPositionAllocation: AllocationByClass[] = (adherence?.byType ?? [])
+    .filter(
+      (t) => !typesWithData.has(`${t.assetClassName}|${t.assetTypeName}`),
+    )
+    .map((t) => ({
+      class: t.assetClassName,
+      type: t.assetTypeName,
+      currency: "BRL",
+      targetPercentage: t.targetPercentage,
+      actualPercentage: 0,
+      actualValue: 0,
+    }));
 
-  const allocationByClass: AllocationByClass[] = rawAllocItems.map((item) => {
-    const valueBRL =
-      item.currency === "USD"
-        ? item.actualValue * usdToBrlRate
-        : item.actualValue;
-    return {
-      ...item,
-      actualPercentage: totalBRL > 0 ? valueBRL / totalBRL : 0,
-    };
-  });
+  const allocationByClass = [...summaryAllocation, ...zeroPositionAllocation];
+
+  const deviationByClass = new Map(
+    (adherence?.byClass ?? []).map((c) => [c.assetClassName, c.deviationPp]),
+  );
+  const deviationByType = new Map(
+    (adherence?.byType ?? []).map((t) => [
+      `${t.assetClassName}|${t.assetTypeName}`,
+      t.deviationPp,
+    ]),
+  );
 
   const classGroups = allocationByClass.reduce(
     (acc, item) => {
@@ -345,9 +364,20 @@ export const Dashboard = () => {
                       className="border rounded-lg mt-2"
                     >
                       <AccordionTrigger className="pl-10 pr-4 hover:no-underline">
-                        <span className="text-lg font-semibold">
-                          {t("dashboard.sections.allocationByClass")}
-                        </span>
+                        <div className="flex items-center justify-between w-full pr-2">
+                          <span className="text-lg font-semibold">
+                            {t("dashboard.sections.allocationByClass")}
+                          </span>
+                          {adherence && adherence.totalPp !== null && (
+                            <span
+                              className={`text-sm font-normal ${getAdherenceColor(adherence.totalPp)}`}
+                            >
+                              {t("dashboard.adherence.badge", {
+                                value: adherence.totalPp.toFixed(2),
+                              })}
+                            </span>
+                          )}
+                        </div>
                       </AccordionTrigger>
                       <AccordionContent className="p-0">
                         <Card className="rounded-none border-t">
@@ -418,6 +448,15 @@ export const Dashboard = () => {
                                                 {(data.actualPercentage * 100).toFixed(1)}%
                                               </span>
                                             </div>
+                                            {deviationByClass.has(className) && (
+                                              <span
+                                                className={`text-xs ${getAdherenceColor(deviationByClass.get(className)!)}`}
+                                              >
+                                                {t("dashboard.adherence.rowDeviation", {
+                                                  value: deviationByClass.get(className)!.toFixed(1),
+                                                })}
+                                              </span>
+                                            )}
                                           </div>
                                         </TableCell>
                                         <TableCell className="text-right text-sm whitespace-nowrap">
@@ -537,6 +576,17 @@ export const Dashboard = () => {
                                               {(item.actualPercentage * 100).toFixed(1)}%
                                             </span>
                                           </div>
+                                          {deviationByType.has(`${item.class}|${item.type}`) && (
+                                            <span
+                                              className={`text-xs ${getAdherenceColor(deviationByType.get(`${item.class}|${item.type}`)!)}`}
+                                            >
+                                              {t("dashboard.adherence.rowDeviation", {
+                                                value: deviationByType
+                                                  .get(`${item.class}|${item.type}`)!
+                                                  .toFixed(1),
+                                              })}
+                                            </span>
+                                          )}
                                         </div>
                                       </TableCell>
                                       <TableCell className="text-right text-sm whitespace-nowrap">

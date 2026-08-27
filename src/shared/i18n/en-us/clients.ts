@@ -20,8 +20,22 @@ export default {
   },
   search: "Search by name or email",
   sortBy: {
+    label: "Sort by",
     name: "Name",
     activatedAt: "Link date",
+    wealth: "Wealth",
+    adherenceIndex: "Adherence",
+    monthlyVariation: "Monthly variation",
+  },
+  adherence: {
+    label: "Adherence",
+    noData: "—",
+    tooltipNoData: "No targets configured",
+  },
+  variation: {
+    label: "Monthly variation",
+    noData: "—",
+    tooltipNoData: "No data for the previous month",
   },
   linkRevoked: "Link ended successfully",
   revokeError: "Error ending link",

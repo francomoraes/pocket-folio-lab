@@ -2,7 +2,13 @@ import { ManagerClient } from "@/shared/types/manager";
 import { Button } from "@/shared/components/ui/button";
 import { Card } from "@/shared/components/ui/card";
 import { RiskProfileBadge } from "@/shared/components/RiskProfileBadge";
-import { formatCentsToCurrency } from "@/shared/utils/formatters";
+import {
+  formatAdherence,
+  formatCentsToCurrency,
+  formatVariation,
+  getAdherenceColor,
+  getVariationColor,
+} from "@/shared/utils/formatters";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -50,6 +56,28 @@ export const ClientCard = ({
               {formatCentsToCurrency(client.currentWealthCents, "BRL")}
             </span>
             <RiskProfileBadge riskProfile={client.riskProfile} />
+            <span
+              className={getAdherenceColor(client.adherenceIndexPp)}
+              title={
+                client.adherenceIndexPp === null
+                  ? t("clients.adherence.tooltipNoData")
+                  : undefined
+              }
+            >
+              {t("clients.adherence.label")}:{" "}
+              {formatAdherence(client.adherenceIndexPp)}
+            </span>
+            <span
+              className={getVariationColor(client.monthlyVariationPct)}
+              title={
+                client.monthlyVariationPct === null
+                  ? t("clients.variation.tooltipNoData")
+                  : undefined
+              }
+            >
+              {t("clients.variation.label")}:{" "}
+              {formatVariation(client.monthlyVariationPct)}
+            </span>
           </div>
         </div>
         <div className="flex gap-2">

@@ -1,6 +1,7 @@
 import { managerService } from "@/features/manager/services/managerService";
 import { managerLinkService } from "@/features/manager/services/managerLinkService";
 import { QUERY_KEYS } from "@/shared/constants/queryKeys";
+import { ClientSortBy } from "@/shared/types/manager";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
@@ -10,7 +11,7 @@ export const useManagerClients = (params?: {
   search?: string;
   page?: number;
   itemsPerPage?: number;
-  sortBy?: string;
+  sortBy?: ClientSortBy;
   order?: string;
 }) => {
   const queryClient = useQueryClient();
