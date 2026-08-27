@@ -1,7 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { RefreshCw, Pencil, Trash, AlertCircle, Link2 } from "lucide-react";
+import { RefreshCw, Pencil, Trash, AlertCircle, Link2, History } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import { Button } from "@/shared/components/ui/button";
 import { Card } from "@/shared/components/ui/card";
+import { Checkbox } from "@/shared/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -34,10 +36,12 @@ import { ConfirmDeleteDialog } from "@/shared/components/ConfirmDeleteDialog";
 import { SortableTableHead } from "@/shared/components/ui/sortable-table-head";
 import { useAuth } from "@/shared/hooks/useAuth";
 
-const VariableIncome = () => {
+const VariableIncome = ({ investorId }: { investorId?: number } = {}) => {
   const { t } = useTranslation();
   const { canOperateOwnPortfolio } = useAuth();
+  const canOperate = !!investorId || canOperateOwnPortfolio;
   const pagination = usePagination();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAsset, setEditingAsset] = useState<Asset | undefined>(
     undefined,
@@ -45,6 +49,7 @@ const VariableIncome = () => {
   const [assetToDelete, setAssetToDelete] = useState<Asset | undefined>(
     undefined,
   );
+  const [hideZeroQuantity, setHideZeroQuantity] = useState(false);
 
   const { page, itemsPerPage, sortBy, order, setMeta, toggleSort } = pagination;
 
@@ -55,12 +60,23 @@ const VariableIncome = () => {
     isRefreshingMarketPrices,
     deleteAsset,
     isDeleting,
-  } = usePositions({
-    page,
-    itemsPerPage,
-    sortBy,
-    order,
-  });
+  } = usePositions(
+    {
+      page,
+      itemsPerPage,
+      sortBy,
+      order,
+      includeZeroQuantity: !hideZeroQuantity,
+    },
+    investorId,
+  );
+
+  const viewHistory = (assetId: number) => {
+    const next = new URLSearchParams(searchParams);
+    next.set("tab", "transactions");
+    next.set("assetId", String(assetId));
+    setSearchParams(next);
+  };
 
   useEffect(() => {
     if (assets && assets.meta) {
@@ -93,14 +109,14 @@ const VariableIncome = () => {
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
-      {!canOperateOwnPortfolio && (
+      {!canOperate && (
         <p className="text-sm text-muted-foreground mb-2 shrink-0">
           {t("positions.autonomy.readOnlyNotice")}
         </p>
       )}
-      {canOperateOwnPortfolio && (
+      {canOperate && (
         <div className="flex flex-col sm:flex-row gap-2 justify-start mb-2 shrink-0">
-          <CsvUploadDialog />
+          <CsvUploadDialog investorId={investorId} />
           <Button
             onClick={() => refreshMarketPrices()}
             variant="secondary"
@@ -116,10 +132,22 @@ const VariableIncome = () => {
         </div>
       )}
 
+      <div className="flex items-center gap-2 mb-2 shrink-0">
+        <Checkbox
+          id="hideZeroQuantity"
+          checked={hideZeroQuantity}
+          onCheckedChange={(checked) => setHideZeroQuantity(checked === true)}
+        />
+        <label htmlFor="hideZeroQuantity" className="text-sm text-muted-foreground cursor-pointer">
+          {t("positions.actions.hideZeroQuantity")}
+        </label>
+      </div>
+
       <AssetFormDialog
         asset={editingAsset}
         open={dialogOpen}
         onOpenChange={handleCloseDialog}
+        investorId={investorId}
       />
 
       <ConfirmDeleteDialog
@@ -184,6 +212,13 @@ const VariableIncome = () => {
                   onSort={toggleSort}
                 />
                 <SortableTableHead
+                  label={t("positions.table.headers.dividends")}
+                  sortKey="dividendsCentsAccumulated"
+                  currentSortBy={sortBy}
+                  currentOrder={order}
+                  onSort={toggleSort}
+                />
+                <SortableTableHead
                   label={t("positions.table.headers.profitLoss")}
                   sortKey="resultCents"
                   currentSortBy={sortBy}
@@ -204,7 +239,10 @@ const VariableIncome = () => {
                   currentOrder={order}
                   onSort={toggleSort}
                 />
-                {canOperateOwnPortfolio && (
+                <TableHead className="w-[50px]">
+                  {t("positions.actions.viewHistory")}
+                </TableHead>
+                {canOperate && (
                   <TableHead className="w-[80px]">
                     {t("positions.table.headers.actions")}
                   </TableHead>
@@ -215,7 +253,7 @@ const VariableIncome = () => {
               {!assets || assets?.data?.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={canOperateOwnPortfolio ? 10 : 9}
+                    colSpan={canOperate ? 12 : 11}
                     className="text-center text-muted-foreground py-8"
                   >
                     {t("positions.table.empty")}
@@ -224,7 +262,7 @@ const VariableIncome = () => {
               ) : (
                 assets?.data?.map((asset) => (
                   <TableRow
-                    key={asset.ticker}
+                    key={asset.id}
                     className={asset.priceUnavailable ? "bg-amber-500/10" : ""}
                   >
                     <TableCell className="font-medium">
@@ -289,6 +327,12 @@ const VariableIncome = () => {
                       )}
                     </TableCell>
                     <TableCell>
+                      {formatCentsToCurrency(
+                        asset.dividendsCentsAccumulated,
+                        asset.currency,
+                      )}
+                    </TableCell>
+                    <TableCell>
                       <span
                         className={
                           +asset.returnPercentage >= 0
@@ -305,7 +349,18 @@ const VariableIncome = () => {
                     <TableCell>
                       {formatPercentage(Number(asset.portfolioPercentage))}
                     </TableCell>
-                    {canOperateOwnPortfolio && (
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => viewHistory(asset.id)}
+                        className="h-8 w-8"
+                        title={t("positions.actions.viewHistory")}
+                      >
+                        <History className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                    {canOperate && (
                       <TableCell>
                         <div className="flex">
                           <Button

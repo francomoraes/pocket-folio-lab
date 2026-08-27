@@ -1,7 +1,7 @@
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
-import { RefreshCw, Pencil, Trash } from "lucide-react";
+import { Pencil, Trash } from "lucide-react";
 import { ManagerContextBanner } from "@/features/manager/components/ManagerContextBanner";
 import {
   Tabs,
@@ -10,6 +10,7 @@ import {
   TabsTrigger,
 } from "@/shared/components/ui/tabs";
 import { Card } from "@/shared/components/ui/card";
+import { AssetTransactionHistory } from "@/features/positions/components";
 import {
   Table,
   TableBody,
@@ -22,162 +23,12 @@ import { Button } from "@/shared/components/ui/button";
 import CircularProgress from "@/shared/components/ui/circular-progress";
 import { PaginationControls } from "@/shared/components/ui/pagination-control";
 import { ConfirmDeleteDialog } from "@/shared/components/ConfirmDeleteDialog";
-import { AssetFormDialog } from "@/features/positions/components/AssetFormDialog/AssetFormDialog";
 import { FixedIncomeFormDialog } from "@/features/positions/components/FixedIncomeFormDialog/FixedIncomeFormDialog";
-import { usePositions } from "@/features/positions/hooks/usePositions";
+import VariableIncome from "@/features/positions/components/VariableIncome/VariableIncome";
 import { useFixedIncomePositions } from "@/features/positions/hooks/useFixedIncomePositions";
 import { usePagination } from "@/shared/hooks/usePagination";
-import { formatCentsToCurrency, formatQuantity } from "@/shared/utils/formatters";
-import { Asset } from "@/shared/types/asset";
+import { formatCentsToCurrency } from "@/shared/utils/formatters";
 import { FixedIncomeAsset } from "@/shared/types/fixedIncomeAsset";
-
-const ClientVariableIncome = ({ investorId }: { investorId: number }) => {
-  const { t } = useTranslation();
-  const pagination = usePagination();
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingAsset, setEditingAsset] = useState<Asset | undefined>(undefined);
-  const [assetToDelete, setAssetToDelete] = useState<Asset | undefined>(undefined);
-
-  const { page, itemsPerPage, sortBy, order, setMeta } = pagination;
-
-  const { assets, isLoading, refreshMarketPrices, isRefreshingMarketPrices, deleteAsset, isDeleting } =
-    usePositions({ page, itemsPerPage, sortBy, order }, investorId);
-
-  useEffect(() => {
-    if (assets && assets.meta) {
-      setMeta(assets.meta);
-    }
-  }, [assets, setMeta]);
-
-  const handleEditAsset = (asset: Asset) => {
-    setEditingAsset(asset);
-    setDialogOpen(true);
-  };
-
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
-    setEditingAsset(undefined);
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <CircularProgress size="xl" />
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col flex-1 min-h-0">
-      <div className="flex flex-col sm:flex-row gap-2 justify-start mb-2 shrink-0">
-        <Button
-          onClick={() => refreshMarketPrices()}
-          variant="secondary"
-          className="w-full sm:w-min gap-2"
-          disabled={isRefreshingMarketPrices}
-        >
-          <RefreshCw className="h-4 w-4" />
-          {t("positions.actions.refreshPrices")}
-        </Button>
-        <Button
-          className="w-full sm:w-min"
-          onClick={() => {
-            setEditingAsset(undefined);
-            setDialogOpen(true);
-          }}
-        >
-          {t("positions.actions.addAsset")}
-        </Button>
-      </div>
-
-      <AssetFormDialog
-        asset={editingAsset}
-        open={dialogOpen}
-        onOpenChange={handleCloseDialog}
-        investorId={investorId}
-      />
-
-      <ConfirmDeleteDialog
-        open={!!assetToDelete}
-        onOpenChange={(open) => {
-          if (!open) setAssetToDelete(undefined);
-        }}
-        onConfirm={async () => {
-          if (assetToDelete) {
-            await deleteAsset(assetToDelete.id);
-            setAssetToDelete(undefined);
-          }
-        }}
-        isLoading={isDeleting}
-      />
-
-      <Card className="flex-1 flex flex-col min-h-0 overflow-hidden">
-        <div className="overflow-auto flex-1 min-h-0">
-          <Table wrapperClassName="overflow-visible">
-            <TableHeader className="sticky top-0 bg-background z-10">
-              <TableRow>
-                <TableHead>{t("positions.table.headers.ticker")}</TableHead>
-                <TableHead>{t("positions.table.headers.type")}</TableHead>
-                <TableHead>{t("positions.table.headers.quantity")}</TableHead>
-                <TableHead>{t("positions.table.headers.currentPrice")}</TableHead>
-                <TableHead>{t("positions.table.headers.total")}</TableHead>
-                <TableHead>{t("positions.table.headers.institution")}</TableHead>
-                <TableHead className="w-[80px]">
-                  {t("positions.table.headers.actions")}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {!assets || assets?.data?.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                    {t("positions.table.empty")}
-                  </TableCell>
-                </TableRow>
-              ) : (
-                assets?.data?.map((asset) => (
-                  <TableRow key={asset.id}>
-                    <TableCell className="font-medium">{asset.ticker}</TableCell>
-                    <TableCell>{asset.type.name}</TableCell>
-                    <TableCell>{formatQuantity(Number(asset.quantity))}</TableCell>
-                    <TableCell>
-                      {formatCentsToCurrency(asset.currentPriceCents, asset.currency)}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {formatCentsToCurrency(asset.currentValueCents, asset.currency)}
-                    </TableCell>
-                    <TableCell>{asset.institution ? asset.institution.name : "-"}</TableCell>
-                    <TableCell>
-                      <div className="flex">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEditAsset(asset)}
-                          className="h-8 w-8"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setAssetToDelete(asset)}
-                          className="h-8 w-8"
-                        >
-                          <Trash className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <PaginationControls pagination={pagination} />
-      </Card>
-    </div>
-  );
-};
 
 const ClientFixedIncome = ({ investorId }: { investorId: number }) => {
   const { t } = useTranslation();
@@ -323,6 +174,17 @@ export const ClientPositionsPage = () => {
   const { investorId } = useParams<{ investorId: string }>();
   const id = Number(investorId);
   const { t } = useTranslation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get("tab") ?? "positions";
+
+  const handleTabChange = (value: string) => {
+    const next = new URLSearchParams(searchParams);
+    next.set("tab", value);
+    if (value !== "transactions") {
+      next.delete("assetId");
+    }
+    setSearchParams(next);
+  };
 
   return (
     <div className="flex flex-col h-[calc(100vh-61px)]">
@@ -330,7 +192,8 @@ export const ClientPositionsPage = () => {
 
       <div className="flex flex-col gap-3 flex-1 min-h-0 p-3 overflow-hidden">
         <Tabs
-          defaultValue="positions"
+          value={activeTab}
+          onValueChange={handleTabChange}
           className="w-full flex flex-col flex-1 min-h-0"
         >
           <div className="flex flex-col sm:flex-row gap-3 sm:justify-between items-start sm:items-center mb-4 shrink-0">
@@ -341,14 +204,20 @@ export const ClientPositionsPage = () => {
               <TabsTrigger className="flex-1 sm:flex-none" value="allocation">
                 {t("positions.tabs.fixedIncome")}
               </TabsTrigger>
+              <TabsTrigger className="flex-1 sm:flex-none" value="transactions">
+                {t("positions.tabs.transactions")}
+              </TabsTrigger>
             </TabsList>
           </div>
 
           <TabsContent value="positions" className="w-full flex flex-col flex-1 min-h-0 mt-0">
-            <ClientVariableIncome investorId={id} />
+            <VariableIncome investorId={id} />
           </TabsContent>
           <TabsContent value="allocation" className="w-full flex flex-col flex-1 min-h-0 mt-0">
             <ClientFixedIncome investorId={id} />
+          </TabsContent>
+          <TabsContent value="transactions" className="w-full flex flex-col flex-1 min-h-0 mt-0">
+            <AssetTransactionHistory investorId={id} />
           </TabsContent>
         </Tabs>
       </div>

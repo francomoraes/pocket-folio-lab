@@ -12,7 +12,7 @@ import { Input } from "@/shared/components/ui/input";
 import { Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-export const CsvUploadDialog = () => {
+export const CsvUploadDialog = ({ investorId }: { investorId?: number } = {}) => {
   const {
     isOpen,
     setIsOpen,
@@ -22,7 +22,7 @@ export const CsvUploadDialog = () => {
     handleUpload,
     isUploading,
     isDownloading,
-  } = useCsvUpload();
+  } = useCsvUpload(investorId);
   const { t } = useTranslation();
 
   return (

@@ -143,5 +143,8 @@ export default {
     MANAGER_CANNOT_OWN_PORTFOLIO: "Gestores não podem ter carteira própria.",
     AUTONOMY_REQUIRED:
       "Seu gestor está com o controle da sua carteira no momento. Peça a ele para reativar sua autonomia se quiser lançar por conta própria.",
+    TRANSACTION_NOT_FOUND: "Operação não encontrada",
+    INSUFFICIENT_QUANTITY_FOR_SALE:
+      "Essa alteração deixaria uma venda sem quantidade suficiente. Ajuste ou remova a venda antes de editar esta operação.",
   },
 };

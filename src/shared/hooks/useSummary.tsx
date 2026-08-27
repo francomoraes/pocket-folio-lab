@@ -38,6 +38,7 @@ export const useSummary = (investorId?: number) => {
     summary: summaryResponse?.data,
     exchangeRate: summaryResponse?.exchangeRate,
     totalPnlCents: summaryResponse?.totalPnlCents,
+    cashFlow: summaryResponse?.cashFlow,
     isLoadingSummary,
     errorSummary,
     refetchSummary,

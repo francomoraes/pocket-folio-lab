@@ -12,6 +12,7 @@ export interface Asset {
   investedValueCents: number;
   currentValueCents: number;
   resultCents: number;
+  dividendsCentsAccumulated: number;
   returnPercentage: number;
   portfolioPercentage: number;
   institution: Institution;

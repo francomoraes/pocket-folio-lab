@@ -15,6 +15,7 @@ export const usePositions = (
     sortBy = "ticker",
     order = "ASC",
     skipPagination,
+    includeZeroQuantity = true,
   }: PaginationQuery = {},
   investorId?: number,
 ) => {
@@ -31,7 +32,15 @@ export const usePositions = (
     error,
     refetch,
   } = useQuery({
-    queryKey: [...baseQueryKey, page, itemsPerPage, sortBy, order, skipPagination],
+    queryKey: [
+      ...baseQueryKey,
+      page,
+      itemsPerPage,
+      sortBy,
+      order,
+      skipPagination,
+      includeZeroQuantity,
+    ],
     queryFn: () =>
       investorId
         ? managerService.getClientAssets(investorId, {
@@ -40,6 +49,7 @@ export const usePositions = (
             sortBy,
             order,
             skipPagination,
+            includeZeroQuantity,
           })
         : assetService.getAssets({
             page,
@@ -47,6 +57,7 @@ export const usePositions = (
             sortBy,
             order,
             skipPagination,
+            includeZeroQuantity,
           }),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
@@ -98,6 +109,11 @@ export const usePositions = (
       queryClient.invalidateQueries({ queryKey: baseQueryKey });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
+      queryClient.invalidateQueries({
+        queryKey: investorId
+          ? QUERY_KEYS.clientAssetTransactions(investorId)
+          : QUERY_KEYS.ASSET_TRANSACTIONS,
+      });
       toast.success(t("transaction.messages.deleted"));
     },
     onError: (error: Error) => {

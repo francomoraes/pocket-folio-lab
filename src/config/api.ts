@@ -19,6 +19,12 @@ export const API_ENDPOINTS = {
     retryPrice: "assets/:id/retry-price",
     refreshMarketPrices: "assets/refresh-market-prices",
   },
+  assetTransactions: {
+    list: "asset-transactions",
+    create: "asset-transactions",
+    update: "asset-transactions/:transactionId",
+    delete: "asset-transactions/:transactionId",
+  },
   fixedIncomeAssets: {
     list: "fixed-income-assets",
     create: "fixed-income-assets",
@@ -134,6 +140,21 @@ export const API_ENDPOINTS = {
         `managers/me/clients/${investorId}/institutions/${id}`,
       delete: (investorId: number, id: number) =>
         `managers/me/clients/${investorId}/institutions/${id}`,
+    },
+    clientAssetTransactions: {
+      list: (investorId: number) =>
+        `managers/me/clients/${investorId}/asset-transactions`,
+      create: (investorId: number) =>
+        `managers/me/clients/${investorId}/asset-transactions`,
+      update: (investorId: number, transactionId: number) =>
+        `managers/me/clients/${investorId}/asset-transactions/${transactionId}`,
+      delete: (investorId: number, transactionId: number) =>
+        `managers/me/clients/${investorId}/asset-transactions/${transactionId}`,
+    },
+    clientCsv: {
+      upload: (investorId: number) => `managers/me/clients/${investorId}/csv/upload-csv`,
+      downloadTemplate: (investorId: number) =>
+        `managers/me/clients/${investorId}/csv/csv-template`,
     },
     clientWealthHistory: {
       list: (investorId: number) =>

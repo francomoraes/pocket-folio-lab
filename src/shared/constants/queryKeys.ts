@@ -4,9 +4,13 @@ export const QUERY_KEYS = {
   INSTITUTIONS: ["institutions"],
   CRYPTO_ACCOUNTS: ["crypto-accounts"],
   ASSETS: ["assets"],
+  ASSET_TRANSACTIONS: ["asset-transactions"],
   FIXED_INCOME_ASSETS: ["fixed-income-assets"],
   SUMMARY: ["summary"],
   OVERVIEW: ["overview"],
+
+  assetTransactions: (params?: object) =>
+    params ? ["asset-transactions", params] : ["asset-transactions"],
 
   availableManagers: (search?: string) => ["managers", "available", search],
   availableInvestors: (search?: string, excludeManagerId?: number) => [
@@ -24,6 +28,10 @@ export const QUERY_KEYS = {
     ["manager", "clients", investorId, "summary"] as const,
   clientAssets: (investorId: number) =>
     ["manager", "clients", investorId, "assets"] as const,
+  clientAssetTransactions: (investorId: number, params?: object) =>
+    params
+      ? (["manager", "clients", investorId, "asset-transactions", params] as const)
+      : (["manager", "clients", investorId, "asset-transactions"] as const),
   clientFixedIncome: (investorId: number) =>
     ["manager", "clients", investorId, "fixed-income"] as const,
   clientWealthHistory: (investorId: number) =>

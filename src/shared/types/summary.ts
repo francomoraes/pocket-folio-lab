@@ -12,10 +12,17 @@ export type ExchangeRate = {
   brlToUsd: number;
 };
 
+export type CashFlow = {
+  netContributionCents: number;
+  unreinvestedDividendsCents: number;
+  totalDividendsCents: number;
+};
+
 export type SummaryResponse = {
   data: SummaryData[];
   exchangeRate: ExchangeRate;
   totalPnlCents: number;
+  cashFlow: CashFlow;
 };
 
 export type OverviewData = {

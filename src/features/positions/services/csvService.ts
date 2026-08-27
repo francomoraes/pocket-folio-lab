@@ -11,8 +11,11 @@ interface CsvUploadResponse {
 }
 
 class CsvService {
-  async downloadTemplate(): Promise<Blob> {
-    const response = await api.get<Blob>(API_ENDPOINTS.csv.downloadTemplate, {
+  async downloadTemplate(investorId?: number): Promise<Blob> {
+    const url = investorId
+      ? API_ENDPOINTS.managers.clientCsv.downloadTemplate(investorId)
+      : API_ENDPOINTS.csv.downloadTemplate;
+    const response = await api.get<Blob>(url, {
       responseType: "blob",
     });
     const a = document.createElement("a");
@@ -24,13 +27,13 @@ class CsvService {
     return response.data;
   }
 
-  async uploadCsv(file: File): Promise<CsvUploadResponse> {
+  async uploadCsv(file: File, investorId?: number): Promise<CsvUploadResponse> {
+    const url = investorId
+      ? API_ENDPOINTS.managers.clientCsv.upload(investorId)
+      : API_ENDPOINTS.csv.upload;
     const formData = new FormData();
     formData.append("file", file);
-    const response = await api.post<CsvUploadResponse>(
-      API_ENDPOINTS.csv.upload,
-      formData,
-    );
+    const response = await api.post<CsvUploadResponse>(url, formData);
     return response.data;
   }
 }

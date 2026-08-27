@@ -142,5 +142,8 @@ export default {
     MANAGER_CANNOT_OWN_PORTFOLIO: "Managers cannot have their own portfolio.",
     AUTONOMY_REQUIRED:
       "Your manager currently has control of your portfolio. Ask them to re-enable your autonomy if you want to manage it yourself.",
+    TRANSACTION_NOT_FOUND: "Operation not found",
+    INSUFFICIENT_QUANTITY_FOR_SALE:
+      "This change would leave a sale without enough quantity. Adjust or remove the sale before editing this operation.",
   },
 };

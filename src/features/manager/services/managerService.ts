@@ -42,6 +42,12 @@ import {
   Institution,
   UpdateInstitution,
 } from "@/shared/types/institution";
+import {
+  AssetTransaction,
+  AssetTransactionListParams,
+  CreateAssetTransactionRequest,
+  UpdateAssetTransactionRequest,
+} from "@/shared/types/assetTransaction";
 
 class ManagerService {
   async getAvailableManagers(params: {
@@ -153,6 +159,55 @@ class ManagerService {
       nextYahooCallAt: string | null;
     }>(API_ENDPOINTS.managers.clientAssets.refreshMarketPrices(investorId));
     return response.data;
+  }
+
+  async getClientTransactions(
+    investorId: number,
+    params: AssetTransactionListParams = {},
+  ): Promise<PaginatedResponse<AssetTransaction>> {
+    const response = await api.get<PaginatedResponse<AssetTransaction>>(
+      API_ENDPOINTS.managers.clientAssetTransactions.list(investorId),
+      { params },
+    );
+    return response.data;
+  }
+
+  async createClientTransaction(
+    investorId: number,
+    data: CreateAssetTransactionRequest,
+  ): Promise<AssetTransaction> {
+    const response = await api.post<{ transaction: AssetTransaction }>(
+      API_ENDPOINTS.managers.clientAssetTransactions.create(investorId),
+      data,
+    );
+    return response.data.transaction;
+  }
+
+  async updateClientTransaction(
+    investorId: number,
+    transactionId: number,
+    data: UpdateAssetTransactionRequest,
+  ): Promise<AssetTransaction> {
+    const response = await api.put<{ transaction: AssetTransaction }>(
+      API_ENDPOINTS.managers.clientAssetTransactions.update(
+        investorId,
+        transactionId,
+      ),
+      data,
+    );
+    return response.data.transaction;
+  }
+
+  async deleteClientTransaction(
+    investorId: number,
+    transactionId: number,
+  ): Promise<void> {
+    await api.delete<void>(
+      API_ENDPOINTS.managers.clientAssetTransactions.delete(
+        investorId,
+        transactionId,
+      ),
+    );
   }
 
   async getClientFixedIncomeAssets(

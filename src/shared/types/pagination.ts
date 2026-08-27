@@ -4,4 +4,5 @@ export interface PaginationQuery {
   sortBy?: string;
   order?: "ASC" | "DESC";
   skipPagination?: boolean;
+  includeZeroQuantity?: boolean;
 }

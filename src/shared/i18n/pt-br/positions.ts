@@ -6,6 +6,8 @@ export default {
     refreshPrices: "Atualizar Cotações",
     uploadCsv: "Importar CSV",
     downloadCsv: "Baixar CSV",
+    hideZeroQuantity: "Ocultar posições zeradas",
+    viewHistory: "Ver histórico",
   },
   summary: {
     patrimonyUSD: "Patromônio (parte em dólares)",
@@ -13,6 +15,9 @@ export default {
     consolidatedPatrimony: "Patrimônio Consolidado",
     patrimony: "Patrimônio",
     pnlBalance: "Saldo L/P",
+    netContribution: "Aporte Líquido",
+    unreinvestedDividends: "Proventos Não Reinvestidos",
+    totalDividends: "Proventos",
     currencyTitles: {
       brl: "Real Brasileiro",
       usd: "Dólar Americano",
@@ -21,6 +26,7 @@ export default {
   tabs: {
     variableIncome: "Renda Variável",
     fixedIncome: "Renda Fixa",
+    transactions: "Operações",
   },
   table: {
     headers: {
@@ -30,6 +36,7 @@ export default {
       averagePrice: "PM Compra",
       currentPrice: "Cotação",
       total: "Total",
+      dividends: "Proventos",
       profitLoss: "L/P",
       institution: "Instituição",
       portfolioPercentage: "% Carteira",

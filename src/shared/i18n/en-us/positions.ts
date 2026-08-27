@@ -6,6 +6,8 @@ export default {
     refreshPrices: "Refresh Prices",
     uploadCsv: "Import CSV",
     downloadCsv: "Download CSV",
+    hideZeroQuantity: "Hide zero-quantity positions",
+    viewHistory: "View history",
   },
   summary: {
     patrimonyUSD: "Net Worth (USD portion)",
@@ -13,6 +15,9 @@ export default {
     consolidatedPatrimony: "Consolidated Net Worth",
     patrimony: "Net Worth",
     pnlBalance: "P&L Balance",
+    netContribution: "Net Contribution",
+    unreinvestedDividends: "Unreinvested Dividends",
+    totalDividends: "Dividends",
     currencyTitles: {
       brl: "Brazilian Real",
       usd: "US Dollar",
@@ -21,6 +26,7 @@ export default {
   tabs: {
     variableIncome: "Variable Income",
     fixedIncome: "Fixed Income",
+    transactions: "Operations",
   },
   table: {
     headers: {
@@ -30,6 +36,7 @@ export default {
       averagePrice: "Avg. Price",
       currentPrice: "Price",
       total: "Total",
+      dividends: "Dividends",
       profitLoss: "P/L",
       institution: "Institution",
       portfolioPercentage: "% Portfolio",

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
-export const useCsvUpload = () => {
+export const useCsvUpload = (investorId?: number) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
@@ -13,7 +13,7 @@ export const useCsvUpload = () => {
   const [file, setFile] = useState<File | null>(null);
 
   const uploadMutation = useMutation({
-    mutationFn: (file: File) => csvService.uploadCsv(file),
+    mutationFn: (file: File) => csvService.uploadCsv(file, investorId),
     onSuccess: (data) => {
       const { autoCreated } = data;
       const totalCreated =
@@ -27,11 +27,21 @@ export const useCsvUpload = () => {
           : t("csv.upload.uploadedSuccess");
 
       toast.success(message);
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSETS });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.INSTITUTIONS });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_CLASSES });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_TYPES });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
+      queryClient.invalidateQueries({
+        queryKey: investorId ? QUERY_KEYS.clientAssets(investorId) : QUERY_KEYS.ASSETS,
+      });
+      queryClient.invalidateQueries({
+        queryKey: investorId ? QUERY_KEYS.clientInstitutions(investorId) : QUERY_KEYS.INSTITUTIONS,
+      });
+      queryClient.invalidateQueries({
+        queryKey: investorId ? QUERY_KEYS.clientAssetClasses(investorId) : QUERY_KEYS.ASSET_CLASSES,
+      });
+      queryClient.invalidateQueries({
+        queryKey: investorId ? QUERY_KEYS.clientAssetTypes(investorId) : QUERY_KEYS.ASSET_TYPES,
+      });
+      queryClient.invalidateQueries({
+        queryKey: investorId ? QUERY_KEYS.clientSummary(investorId) : QUERY_KEYS.SUMMARY,
+      });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
       setIsOpen(false);
       setFile(null);
@@ -43,7 +53,7 @@ export const useCsvUpload = () => {
   });
 
   const downloadMutation = useMutation({
-    mutationFn: () => csvService.downloadTemplate(),
+    mutationFn: () => csvService.downloadTemplate(investorId),
     onSuccess: () => {
       toast.success(t("csv.upload.downloadedSuccess"));
     },

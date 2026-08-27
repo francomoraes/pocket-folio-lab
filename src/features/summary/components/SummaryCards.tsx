@@ -6,7 +6,7 @@ import { useState } from "react";
 
 export const SummaryCards = ({ investorId }: { investorId?: number } = {}) => {
   const { t } = useTranslation();
-  const { summary, exchangeRate, totalPnlCents } = useSummary(investorId);
+  const { summary, exchangeRate, totalPnlCents, cashFlow } = useSummary(investorId);
   const [currency, setCurrency] = useState<"BRL" | "USD">("BRL");
   const [fading, setFading] = useState(false);
 
@@ -137,6 +137,39 @@ export const SummaryCards = ({ investorId }: { investorId?: number } = {}) => {
           >
             {pnlDisplay < 0 ? "- " : ""}
             {formatCentsToCurrency(Math.abs(pnlDisplay), currency)}
+          </p>
+        </Card>
+      )}
+
+      {cashFlow && (
+        <Card className="p-3 sm:p-4">
+          <p className="text-xs sm:text-sm text-muted-foreground mb-1">
+            {t("positions.summary.netContribution")}
+          </p>
+          <p className="text-lg sm:text-xl font-semibold truncate">
+            {formatCentsToCurrency(cashFlow.netContributionCents, "BRL")}
+          </p>
+        </Card>
+      )}
+
+      {cashFlow && cashFlow.totalDividendsCents > 0 && (
+        <Card className="p-3 sm:p-4">
+          <p className="text-xs sm:text-sm text-muted-foreground mb-1">
+            {t("positions.summary.totalDividends")}
+          </p>
+          <p className="text-lg sm:text-xl font-semibold truncate">
+            {formatCentsToCurrency(cashFlow.totalDividendsCents, "BRL")}
+          </p>
+        </Card>
+      )}
+
+      {cashFlow && cashFlow.unreinvestedDividendsCents > 0 && (
+        <Card className="p-3 sm:p-4">
+          <p className="text-xs sm:text-sm text-muted-foreground mb-1">
+            {t("positions.summary.unreinvestedDividends")}
+          </p>
+          <p className="text-lg sm:text-xl font-semibold truncate">
+            {formatCentsToCurrency(cashFlow.unreinvestedDividendsCents, "BRL")}
           </p>
         </Card>
       )}

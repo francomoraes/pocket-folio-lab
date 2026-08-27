@@ -14,13 +14,22 @@ class AssetService {
     sortBy = "ticker",
     order = "ASC",
     skipPagination = false,
-  }): Promise<PaginatedResponse<Asset>> {
+    includeZeroQuantity = true,
+  }: {
+    page?: number;
+    itemsPerPage?: number;
+    sortBy?: string;
+    order?: string;
+    skipPagination?: boolean;
+    includeZeroQuantity?: boolean;
+  } = {}): Promise<PaginatedResponse<Asset>> {
     const params = new URLSearchParams({
       page: String(page),
       itemsPerPage: String(itemsPerPage),
       sortBy,
       order,
       ...(skipPagination && { skipPagination: "true" }),
+      ...(!includeZeroQuantity && { includeZeroQuantity: "false" }),
     });
 
     const requestUrl = `${API_ENDPOINTS.assets.list}?${params.toString()}`;
