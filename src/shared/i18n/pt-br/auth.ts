@@ -7,6 +7,10 @@ export default {
     submit: "Entrar",
     noAccount: "Não tem uma conta?",
     createAccount: "Criar conta",
+    tabs: {
+      client: "Sou cliente",
+      manager: "Sou gestor",
+    },
     placeholders: {
       name: "Seu nome",
       email: "seu@email.com",
@@ -115,5 +119,32 @@ export default {
     WEALTH_HISTORY_DATE_CONFLICT:
       "Já existe um registro de patrimônio para esta data",
     WEALTH_HISTORY_NOT_FOUND: "Registro de patrimônio não encontrado",
+    PENDING_LINK_EXISTS: "Já existe uma solicitação pendente para este gestor.",
+    ACTIVE_LINK_EXISTS: "Você já tem um vínculo ativo com este cliente.",
+    MANAGER_CLIENT_LIMIT_REACHED: "Este gestor atingiu o limite de clientes.",
+    NO_ACTIVE_LINK: "Você não tem vínculo ativo com este investidor.",
+    INVALID_STATUS_TRANSITION:
+      "Esta ação não é permitida no estado atual do vínculo.",
+    SELF_LINK_NOT_ALLOWED: "Você não pode solicitar vínculo consigo mesmo.",
+    MANAGER_NOT_FOUND: "Gestor não encontrado.",
+    MANAGER_NOT_ELIGIBLE: "Este usuário não tem mais o papel de gestor.",
+    CRYPTO_ACCOUNT_CONNECTION_FAILED:
+      "Não foi possível conectar à Mercado Bitcoin. Confira o ID e o segredo da API.",
+    DUPLICATE_CONNECTED_ACCOUNT: "Esta conta Mercado Bitcoin já está conectada.",
+    ACCOUNT_SYNC_IN_PROGRESS:
+      "Esta conta já está sincronizando. Tente novamente em instantes.",
+    CRYPTO_ACCOUNT_NOT_FOUND: "Conta cripto não encontrada.",
+    CONNECTED_ASSET_QUANTITY_LOCKED:
+      "Este ativo é sincronizado automaticamente e não permite edição manual de quantidade, ticker ou moeda.",
+    ROLE_TAB_MISMATCH:
+      "Esta conta não é dessa aba. Tente entrar pela outra aba.",
+    SELF_REGISTRATION_DISABLED: "O autocadastro está desativado no momento.",
+    ROLE_NOT_ALLOWED: "Você não tem permissão para criar um usuário com esse perfil.",
+    MANAGER_CANNOT_OWN_PORTFOLIO: "Gestores não podem ter carteira própria.",
+    AUTONOMY_REQUIRED:
+      "Seu gestor está com o controle da sua carteira no momento. Peça a ele para reativar sua autonomia se quiser lançar por conta própria.",
+    TRANSACTION_NOT_FOUND: "Operação não encontrada",
+    INSUFFICIENT_QUANTITY_FOR_SALE:
+      "Essa alteração deixaria uma venda sem quantidade suficiente. Ajuste ou remova a venda antes de editar esta operação.",
   },
 };

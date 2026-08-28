@@ -4,5 +4,10 @@ export default {
     positions: "Positions",
     dashboard: "Dashboard",
     settings: "Settings",
+    managers: "Managers",
+    clients: "Clients",
+    managerDashboard: "Manager Dashboard",
+    adminDashboard: "Admin Dashboard",
+    adminUsers: "Users",
   },
 };

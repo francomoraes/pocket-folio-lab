@@ -19,6 +19,7 @@ import { useAssetTypes } from "@/features/settings/hooks/useAssetTypes";
 import { useFixedIncomeForm } from "@/features/positions/components/FixedIncomeFormDialog/useFixedIncomeForm";
 import { useTranslation } from "react-i18next";
 import { FixedIncomeAsset } from "@/shared/types/fixedIncomeAsset";
+import { useEffect } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -30,12 +31,14 @@ interface FixedIncomeFormDialogProps {
   asset?: FixedIncomeAsset | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  investorId?: number;
 }
 
 export const FixedIncomeFormDialog = ({
   asset,
   open,
   onOpenChange,
+  investorId,
 }: FixedIncomeFormDialogProps) => {
   const { t } = useTranslation();
 
@@ -46,7 +49,7 @@ export const FixedIncomeFormDialog = ({
     resetForm,
     isSubmitting,
     isEditMode,
-  } = useFixedIncomeForm(asset, () => onOpenChange(false));
+  } = useFixedIncomeForm(asset, () => onOpenChange(false), investorId);
 
   const handleOpenChange = (isOpen: boolean) => {
     onOpenChange(isOpen);
@@ -55,8 +58,32 @@ export const FixedIncomeFormDialog = ({
     }
   };
 
-  const { institutions } = useInstitutions({ enabled: open });
-  const { assetTypes } = useAssetTypes({ enabled: open });
+  const { institutions } = useInstitutions(investorId, { enabled: open });
+  const { assetTypes } = useAssetTypes(investorId, { enabled: open });
+
+  // institutions/assetTypes só carregam quando o dialog abre (enabled: open),
+  // então no primeiro open o formData já foi preenchido com o id do asset
+  // antes da lista chegar — reaplica assim que a lista estiver disponível
+  // (mesmo padrão do AssetFormDialog).
+  useEffect(() => {
+    if (open && institutions?.length) {
+      if (isEditMode && asset) {
+        updateField("institutionId", asset.institution.id);
+      } else if (!formData.institutionId) {
+        updateField("institutionId", institutions[0].id);
+      }
+    }
+  }, [open, institutions, isEditMode, asset, formData.institutionId]);
+
+  useEffect(() => {
+    if (open && assetTypes?.length) {
+      if (isEditMode && asset) {
+        updateField("typeId", asset.type.id);
+      } else if (!formData.typeId) {
+        updateField("typeId", assetTypes[0].id);
+      }
+    }
+  }, [open, assetTypes, isEditMode, asset, formData.typeId]);
 
   const hasRate = formData.interestRate.trim() !== "";
   const hasCurrentValue = formData.currentValue.trim() !== "";

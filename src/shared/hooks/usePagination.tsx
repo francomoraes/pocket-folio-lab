@@ -1,5 +1,13 @@
 import { useState } from "react";
 
+const STORAGE_KEY = "pagination-items-per-page";
+
+function readStoredItemsPerPage(defaultValue: number): number {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  const parsed = Number(stored);
+  return stored && !isNaN(parsed) && parsed > 0 ? parsed : defaultValue;
+}
+
 export const usePagination = ({
   initialPage = 1,
   initialItemsPerPage = 10,
@@ -7,7 +15,9 @@ export const usePagination = ({
   initialOrder = "ASC" as "ASC" | "DESC",
 } = {}) => {
   const [page, setPage] = useState(initialPage);
-  const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
+  const [itemsPerPage, setItemsPerPage] = useState(() =>
+    readStoredItemsPerPage(initialItemsPerPage),
+  );
   const [sortBy, setSortBy] = useState(initialSortBy);
   const [order, setOrder] = useState<"ASC" | "DESC">(initialOrder);
 
@@ -37,6 +47,7 @@ export const usePagination = ({
   };
 
   const changeItemsPerPage = (newItemsPerPage: number) => {
+    localStorage.setItem(STORAGE_KEY, String(newItemsPerPage));
     setItemsPerPage(newItemsPerPage);
     setPage(1);
   };

@@ -7,6 +7,10 @@ export default {
     submit: "Sign In",
     noAccount: "Don't have an account?",
     createAccount: "Create account",
+    tabs: {
+      client: "I'm a client",
+      manager: "I'm a manager",
+    },
     placeholders: {
       name: "Your name",
       email: "your@email.com",
@@ -115,5 +119,31 @@ export default {
     WEALTH_HISTORY_DATE_CONFLICT:
       "A wealth history record already exists for this date",
     WEALTH_HISTORY_NOT_FOUND: "Wealth history record not found",
+    PENDING_LINK_EXISTS: "A pending request already exists for this manager.",
+    ACTIVE_LINK_EXISTS: "You already have an active link with this client.",
+    MANAGER_CLIENT_LIMIT_REACHED: "This manager has reached the client limit.",
+    NO_ACTIVE_LINK: "You have no active link with this investor.",
+    INVALID_STATUS_TRANSITION:
+      "This action is not allowed in the current link state.",
+    SELF_LINK_NOT_ALLOWED: "You cannot request a link with yourself.",
+    MANAGER_NOT_FOUND: "Manager not found.",
+    MANAGER_NOT_ELIGIBLE: "This user no longer has the manager role.",
+    CRYPTO_ACCOUNT_CONNECTION_FAILED:
+      "Could not connect to Mercado Bitcoin. Check the ID and API secret.",
+    DUPLICATE_CONNECTED_ACCOUNT: "This Mercado Bitcoin account is already connected.",
+    ACCOUNT_SYNC_IN_PROGRESS:
+      "This account is already syncing. Try again in a moment.",
+    CRYPTO_ACCOUNT_NOT_FOUND: "Crypto account not found.",
+    CONNECTED_ASSET_QUANTITY_LOCKED:
+      "This asset is synced automatically and does not allow manual editing of quantity, ticker, or currency.",
+    ROLE_TAB_MISMATCH: "This account doesn't belong to this tab. Try the other tab.",
+    SELF_REGISTRATION_DISABLED: "Self-registration is currently disabled.",
+    ROLE_NOT_ALLOWED: "You don't have permission to create a user with this role.",
+    MANAGER_CANNOT_OWN_PORTFOLIO: "Managers cannot have their own portfolio.",
+    AUTONOMY_REQUIRED:
+      "Your manager currently has control of your portfolio. Ask them to re-enable your autonomy if you want to manage it yourself.",
+    TRANSACTION_NOT_FOUND: "Operation not found",
+    INSUFFICIENT_QUANTITY_FOR_SALE:
+      "This change would leave a sale without enough quantity. Adjust or remove the sale before editing this operation.",
   },
 };

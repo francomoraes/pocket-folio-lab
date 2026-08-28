@@ -8,6 +8,15 @@ import auth from "./auth";
 import pagination from "./pagination";
 import csv from "./csv";
 import global from "./global";
+import home from "./home";
+import managers from "./managers";
+import managerDashboard from "./managerDashboard";
+import clients from "./clients";
+import managerContext from "./managerContext";
+import admin from "./admin";
+import linkStatus from "./linkStatus";
+import users from "./users";
+import riskProfile from "./riskProfile";
 
 export default {
   common,
@@ -20,4 +29,13 @@ export default {
   pagination,
   csv,
   global,
+  home,
+  managers,
+  managerDashboard,
+  clients,
+  managerContext,
+  admin,
+  linkStatus,
+  users,
+  riskProfile,
 };

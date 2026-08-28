@@ -15,13 +15,28 @@ import { Button } from "@/shared/components/ui/button";
 
 export const Navbar = () => {
   const { t } = useTranslation();
-  const { isAuthenticated, isInitializing } = useAuth();
+  const { isAuthenticated, isInitializing, isManager, isAdmin } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  const navItems = [
-    { to: "/positions", label: t("navbar.links.positions") },
-    { to: "/dashboard", label: t("navbar.links.dashboard") },
-    { to: "/settings", label: t("navbar.links.settings") },
+  type NavItem = { to: string; label: string };
+
+  const navItems: NavItem[] = [
+    ...(isManager
+      ? [
+          { to: "/manager/dashboard", label: t("navbar.links.managerDashboard") },
+          ...(isAdmin
+            ? [
+                { to: "/admin/dashboard", label: t("navbar.links.adminDashboard") },
+                { to: "/admin/users", label: t("navbar.links.adminUsers") },
+              ]
+            : []),
+        ]
+      : [
+          { to: "/dashboard", label: t("navbar.links.dashboard") },
+          { to: "/positions", label: t("navbar.links.positions") },
+          { to: "/settings", label: t("navbar.links.settings") },
+          { to: "/my-managers", label: t("navbar.links.managers") },
+        ]),
   ];
 
   return (

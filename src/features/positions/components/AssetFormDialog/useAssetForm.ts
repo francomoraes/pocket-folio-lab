@@ -24,14 +24,29 @@ const initialState: AssetFormData = {
   currentPrice: "",
 };
 
-export const useAssetForm = (asset?: Asset | null, onSuccess?: () => void) => {
+export const useAssetForm = (
+  asset?: Asset | null,
+  onSuccess?: () => void,
+  investorId?: number,
+) => {
   const [formData, setFormData] = useState<AssetFormData>(initialState);
   const isEditMode = !!asset;
+  const isLocked = isEditMode && asset!.source !== "manual";
 
-  const { createAsset, updateAsset, isCreating, isUpdating, assets } =
-    usePositions({
+  const {
+    createAsset,
+    updateAsset,
+    retryPrice,
+    isCreating,
+    isUpdating,
+    isRetryingPrice,
+    assets,
+  } = usePositions(
+    {
       skipPagination: true,
-    });
+    },
+    investorId,
+  );
 
   useEffect(() => {
     if (asset) {
@@ -57,11 +72,14 @@ export const useAssetForm = (asset?: Asset | null, onSuccess?: () => void) => {
   };
 
   const validateForm = (): boolean => {
-    if (!formData.ticker.trim()) {
+    if (!isLocked && !formData.ticker.trim()) {
       toast.error("O ticker é obrigatório.");
       return false;
     }
-    if (!formData.quantity.trim() || parseFloat(formData.quantity) <= 0) {
+    if (
+      !isLocked &&
+      (!formData.quantity.trim() || parseFloat(formData.quantity) <= 0)
+    ) {
       toast.error("A quantidade deve ser maior do que zero");
       return false;
     }
@@ -69,7 +87,7 @@ export const useAssetForm = (asset?: Asset | null, onSuccess?: () => void) => {
       toast.error("O preço deve ser maior do que zero");
       return false;
     }
-    if (!formData.currency.trim()) {
+    if (!isLocked && !formData.currency.trim()) {
       toast.error("A moeda é obrigatória.");
       return false;
     }
@@ -122,12 +140,13 @@ export const useAssetForm = (asset?: Asset | null, onSuccess?: () => void) => {
         await updateAsset({
           id: asset.id,
           data: {
-            ticker,
-            quantity,
+            // Ativos com source != "manual" são recusados pelo backend (409
+            // CONNECTED_ASSET_QUANTITY_LOCKED) se ticker/quantity/currency
+            // aparecerem no payload, mesmo com o valor inalterado.
+            ...(!isLocked && { ticker, quantity, currency: formData.currency }),
             averagePriceCents,
             type: formData.type,
             institutionId,
-            currency: formData.currency,
             ...(asset.priceUnavailable &&
               currentPriceValue > 0 && {
                 manualCurrentPriceCents:
@@ -151,12 +170,21 @@ export const useAssetForm = (asset?: Asset | null, onSuccess?: () => void) => {
     } catch (error) {}
   };
 
+  const handleRetryPrice = async () => {
+    if (!asset) return;
+    await retryPrice(asset.id);
+    onSuccess?.();
+  };
+
   return {
     formData,
     updateField,
     handleSubmit,
+    handleRetryPrice,
     resetForm,
     isSubmitting: isCreating || isUpdating,
+    isRetryingPrice,
     isEditMode,
+    isLocked,
   };
 };

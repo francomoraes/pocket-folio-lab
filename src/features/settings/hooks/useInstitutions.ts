@@ -1,4 +1,5 @@
 import { institutionService } from "@/features/settings/services/institutionService";
+import { managerService } from "@/features/manager/services/managerService";
 import { QUERY_KEYS } from "@/shared/constants/queryKeys";
 import {
   CreateInstitution,
@@ -8,8 +9,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 
-export const useInstitutions = (options?: { enabled?: boolean }) => {
+export const useInstitutions = (
+  investorId?: number,
+  options?: { enabled?: boolean },
+) => {
   const queryClient = useQueryClient();
+
+  const queryKey = investorId
+    ? QUERY_KEYS.clientInstitutions(investorId)
+    : QUERY_KEYS.INSTITUTIONS;
 
   const {
     data: rawInstitutions,
@@ -17,8 +25,11 @@ export const useInstitutions = (options?: { enabled?: boolean }) => {
     error,
     refetch,
   } = useQuery({
-    queryKey: QUERY_KEYS.INSTITUTIONS,
-    queryFn: async () => institutionService.list(),
+    queryKey,
+    queryFn: async () =>
+      investorId
+        ? managerService.listClientInstitutions(investorId)
+        : institutionService.list(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
     enabled: options?.enabled ?? true,
@@ -28,10 +39,12 @@ export const useInstitutions = (options?: { enabled?: boolean }) => {
 
   const createInstitutionMutation = useMutation({
     mutationFn: (data: CreateInstitution) => {
-      return institutionService.create(data);
+      return investorId
+        ? managerService.createClientInstitution(investorId, data)
+        : institutionService.create(data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.INSTITUTIONS });
+      queryClient.invalidateQueries({ queryKey });
     },
     onError: (error: Error) => {
       toast.error(
@@ -45,10 +58,12 @@ export const useInstitutions = (options?: { enabled?: boolean }) => {
 
   const updateInstitutionMutation = useMutation({
     mutationFn: (data: UpdateInstitution) => {
-      return institutionService.update(data.id, data);
+      return investorId
+        ? managerService.updateClientInstitution(investorId, data.id, data)
+        : institutionService.update(data.id, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.INSTITUTIONS });
+      queryClient.invalidateQueries({ queryKey });
     },
     onError: (error: Error) => {
       toast.error(resolveErrorMessage(error, "auth.messages.updateError"));
@@ -57,10 +72,12 @@ export const useInstitutions = (options?: { enabled?: boolean }) => {
 
   const deleteInstitutionMutation = useMutation({
     mutationFn: (id: number) => {
-      return institutionService.delete(id);
+      return investorId
+        ? managerService.deleteClientInstitution(investorId, id)
+        : institutionService.delete(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.INSTITUTIONS });
+      queryClient.invalidateQueries({ queryKey });
     },
     onError: (error: Error) => {
       toast.error(

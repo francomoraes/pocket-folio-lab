@@ -1,12 +1,20 @@
 import { assetTypeService } from "@/features/settings/services/assetTypeService";
+import { managerService } from "@/features/manager/services/managerService";
 import { QUERY_KEYS } from "@/shared/constants/queryKeys";
 import { CreateAssetType, UpdateAssetType } from "@/shared/types/assetType";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 
-export const useAssetTypes = (options?: { enabled?: boolean }) => {
+export const useAssetTypes = (
+  investorId?: number,
+  options?: { enabled?: boolean },
+) => {
   const queryClient = useQueryClient();
+
+  const queryKey = investorId
+    ? QUERY_KEYS.clientAssetTypes(investorId)
+    : QUERY_KEYS.ASSET_TYPES;
 
   const {
     data: rawAssetTypes,
@@ -14,8 +22,11 @@ export const useAssetTypes = (options?: { enabled?: boolean }) => {
     error,
     refetch,
   } = useQuery({
-    queryKey: QUERY_KEYS.ASSET_TYPES,
-    queryFn: async () => assetTypeService.list(),
+    queryKey,
+    queryFn: async () =>
+      investorId
+        ? managerService.listClientAssetTypes(investorId)
+        : assetTypeService.list(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
     enabled: options?.enabled ?? true,
@@ -25,10 +36,12 @@ export const useAssetTypes = (options?: { enabled?: boolean }) => {
 
   const createAssetTypeMutation = useMutation({
     mutationFn: (data: CreateAssetType) => {
-      return assetTypeService.create(data);
+      return investorId
+        ? managerService.createClientAssetType(investorId, data)
+        : assetTypeService.create(data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_TYPES });
+      queryClient.invalidateQueries({ queryKey });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
     },
@@ -41,10 +54,12 @@ export const useAssetTypes = (options?: { enabled?: boolean }) => {
 
   const updateAssetTypeMutation = useMutation({
     mutationFn: (data: UpdateAssetType) => {
-      return assetTypeService.update(Number(data.id), data);
+      return investorId
+        ? managerService.updateClientAssetType(investorId, Number(data.id), data)
+        : assetTypeService.update(Number(data.id), data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_TYPES });
+      queryClient.invalidateQueries({ queryKey });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
     },
@@ -55,10 +70,12 @@ export const useAssetTypes = (options?: { enabled?: boolean }) => {
 
   const deleteAssetTypeMutation = useMutation({
     mutationFn: (id: number) => {
-      return assetTypeService.delete(id);
+      return investorId
+        ? managerService.deleteClientAssetType(investorId, id)
+        : assetTypeService.delete(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ASSET_TYPES });
+      queryClient.invalidateQueries({ queryKey });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
     },

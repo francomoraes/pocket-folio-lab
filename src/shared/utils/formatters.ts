@@ -46,15 +46,49 @@ export const formatPercentage = (value: number): string => {
   return `${value.toFixed(2)}%`;
 };
 
+const PERCENTAGE_TOLERANCE = 0.0005;
+
 export const getPercentageColor = (percentage: number): string => {
-  if (percentage.toPrecision(2) === "1.0") return "text-green-600";
+  if (Math.abs(percentage - 1) < PERCENTAGE_TOLERANCE) return "text-green-600";
   if (percentage > 0 && percentage < 1) return "text-orange-600";
   return "text-red-600";
 };
 
 export const getPercentageBgColor = (percentage: number): string => {
-  if (percentage.toPrecision(2) === "1.0")
+  if (Math.abs(percentage - 1) < PERCENTAGE_TOLERANCE)
     return "bg-green-50 border-green-500";
   if (percentage > 0 && percentage < 1) return "bg-orange-50 border-orange-500";
   return "bg-red-50 border-red-500";
+};
+
+// Faixas de severidade do índice de aderência — decisão de produto (spec
+// "índice de aderência"), sem base numérica do PRD, ajustável aqui se precisar.
+export const ADHERENCE_THRESHOLDS_PP = {
+  GREEN_MAX: 10,
+  YELLOW_MAX: 25,
+};
+
+export const formatAdherence = (pp: number | null): string => {
+  if (pp === null) return "—";
+  return `${pp.toFixed(2)} pp`;
+};
+
+export const getAdherenceColor = (pp: number | null): string => {
+  if (pp === null) return "text-muted-foreground";
+  if (pp <= ADHERENCE_THRESHOLDS_PP.GREEN_MAX) return "text-green-600";
+  if (pp <= ADHERENCE_THRESHOLDS_PP.YELLOW_MAX) return "text-yellow-600";
+  return "text-red-600";
+};
+
+export const formatVariation = (pct: number | null): string => {
+  if (pct === null) return "—";
+  const sign = pct > 0 ? "+" : "";
+  return `${sign}${pct.toFixed(2)}%`;
+};
+
+export const getVariationColor = (pct: number | null): string => {
+  if (pct === null) return "text-muted-foreground";
+  if (pct > 0) return "text-green-600";
+  if (pct < 0) return "text-red-600";
+  return "text-muted-foreground";
 };

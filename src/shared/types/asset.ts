@@ -12,11 +12,14 @@ export interface Asset {
   investedValueCents: number;
   currentValueCents: number;
   resultCents: number;
+  dividendsCentsAccumulated: number;
   returnPercentage: number;
   portfolioPercentage: number;
   institution: Institution;
   currency: string;
   priceUnavailable?: boolean;
+  source: "manual" | "mercado_bitcoin" | "ethereum";
+  connectedAccountId: number | null;
   createdAt: string;
   updatedAt: string;
 }

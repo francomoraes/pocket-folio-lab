@@ -18,6 +18,7 @@ export default {
       percentage: "%",
       actualPercentage: "% Atual",
       targetPercentage: "% Meta",
+      deviation: "Desvio",
     },
     empty: "Nenhum dado disponível",
   },
@@ -30,10 +31,18 @@ export default {
     axisValueBrl: "Valor (R$)",
     insufficientData: "Dados insuficientes para gerar gráfico",
   },
+  adherence: {
+    badge: "Desvio total: {{value}} pp",
+    rowDeviation: "desvio {{value}} pp",
+  },
   assetClasses: {
     stocks: "Ações",
     fiis: "FIIs",
     fixed_income: "Renda Fixa",
+  },
+  autonomy: {
+    readOnlyNotice:
+      "Seu gestor está com o controle da sua carteira no momento. Peça a ele para reativar sua autonomia se quiser lançar por conta própria.",
   },
   wealthHistory: {
     addHistory: "+ Adicionar Histórico",

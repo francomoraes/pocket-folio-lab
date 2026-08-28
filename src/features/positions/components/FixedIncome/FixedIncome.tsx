@@ -31,6 +31,7 @@ import {
 } from "@/shared/types/fixedIncomeAsset";
 import { ConfirmDeleteDialog } from "@/shared/components/ConfirmDeleteDialog";
 import { SortableTableHead } from "@/shared/components/ui/sortable-table-head";
+import { useAuth } from "@/shared/hooks/useAuth";
 
 const getIndexationLabel = (
   mode: IndexationMode,
@@ -60,6 +61,7 @@ const formatDateOnly = (value: string | Date) => {
 
 const FixedIncome = () => {
   const { t } = useTranslation();
+  const { canOperateOwnPortfolio } = useAuth();
   const pagination = usePagination({ initialSortBy: "description" });
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAsset, setEditingAsset] = useState<
@@ -112,12 +114,19 @@ const FixedIncome = () => {
     );
   }
   return (
-    <div>
-      <div className="flex gap-2 justify-start mb-2">
-        <Button onClick={handleCreateAsset}>
-          {t("positions.actions.addAsset")}
-        </Button>
-      </div>
+    <div className="flex flex-col flex-1 min-h-0">
+      {!canOperateOwnPortfolio && (
+        <p className="text-sm text-muted-foreground mb-2 shrink-0">
+          {t("positions.autonomy.readOnlyNotice")}
+        </p>
+      )}
+      {canOperateOwnPortfolio && (
+        <div className="flex gap-2 justify-start mb-2 shrink-0">
+          <Button onClick={handleCreateAsset}>
+            {t("positions.actions.addAsset")}
+          </Button>
+        </div>
+      )}
 
       <FixedIncomeFormDialog
         asset={editingAsset}
@@ -139,8 +148,9 @@ const FixedIncome = () => {
         isLoading={isDeletingFixedIncomeAsset}
       />
 
-      <Card className="flex-1 flex flex-col min-h-0 h-full">
-        <Table>
+      <Card className="flex-1 flex flex-col min-h-0 overflow-hidden">
+        <div className="overflow-auto flex-1 min-h-0">
+        <Table wrapperClassName="overflow-visible">
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
               <SortableTableHead
@@ -220,16 +230,18 @@ const FixedIncome = () => {
                 currentOrder={order}
                 onSort={toggleSort}
               />
-              <TableHead className="w-[80px]">
-                {t("positions.table.headers.actions")}
-              </TableHead>
+              {canOperateOwnPortfolio && (
+                <TableHead className="w-[80px]">
+                  {t("positions.table.headers.actions")}
+                </TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
             {!fixedIncomeAssets || fixedIncomeAssets?.data?.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={12}
+                  colSpan={canOperateOwnPortfolio ? 12 : 11}
                   className="text-center text-muted-foreground py-8"
                 >
                   {t("positions.table.empty")}
@@ -324,34 +336,36 @@ const FixedIncome = () => {
                       Number(fixedIncomeAsset.portfolioPercentage),
                     )}
                   </TableCell>
-                  <TableCell>
-                    <div className="flex">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleEditAsset(fixedIncomeAsset)}
-                        className="h-8 w-8"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          setAssetToDelete(fixedIncomeAsset);
-                        }}
-                        className="h-8 w-8"
-                      >
-                        <Trash className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+                  {canOperateOwnPortfolio && (
+                    <TableCell>
+                      <div className="flex">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditAsset(fixedIncomeAsset)}
+                          className="h-8 w-8"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            setAssetToDelete(fixedIncomeAsset);
+                          }}
+                          className="h-8 w-8"
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
-        {/* simple pagination */}
+        </div>
         <PaginationControls pagination={pagination} />
       </Card>
     </div>

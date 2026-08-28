@@ -1,7 +1,8 @@
 import { Toaster } from "@/shared/components/ui/toaster";
 import { Toaster as Sonner } from "@/shared/components/ui/sonner";
 import { TooltipProvider } from "@/shared/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/shared/lib/queryClient";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/shared/contexts/AuthContext";
 import { LoginForm } from "@/features/auth/components/LoginForm";
@@ -16,10 +17,22 @@ import {
   ErrorFallback,
 } from "@/shared/components/ErrorBoundary";
 import { RootRedirect } from "@/components/RootRedirect";
+import { useAutoRefreshPrices } from "@/shared/hooks/useAutoRefreshPrices";
 import "@/shared/i18n/config";
 import { UserProfile } from "@/pages/UserProfile";
+import { ManagerLinksPage } from "@/features/manager/pages/ManagerLinksPage";
+import { ManagerDashboardPage } from "@/features/manager/pages/ManagerDashboardPage";
+import { ClientPositionsPage } from "@/features/manager/pages/ClientPositionsPage";
+import { ClientTargetsPage } from "@/features/manager/pages/ClientTargetsPage";
+import { ClientDashboardPage } from "@/features/manager/pages/ClientDashboardPage";
+import { ClientSettingsPage } from "@/features/manager/pages/ClientSettingsPage";
+import { AdminUsersPage } from "@/features/admin/pages/AdminUsersPage";
+import { AdminDashboardPage } from "@/features/admin/pages/AdminDashboardPage";
 
-const queryClient = new QueryClient();
+function AutoRefreshPrices() {
+  useAutoRefreshPrices();
+  return null;
+}
 
 const App = () => (
   <ErrorBoundary
@@ -30,6 +43,7 @@ const App = () => (
   >
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <AutoRefreshPrices />
         <TooltipProvider>
           <Toaster />
           <Sonner />
@@ -41,7 +55,7 @@ const App = () => (
               <Route
                 path="/positions"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requiredRole="investor">
                     <Positions />
                   </ProtectedRoute>
                 }
@@ -49,7 +63,7 @@ const App = () => (
               <Route
                 path="/dashboard"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requiredRole="investor">
                     <Dashboard />
                   </ProtectedRoute>
                 }
@@ -57,7 +71,7 @@ const App = () => (
               <Route
                 path="/settings"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requiredRole="investor">
                     <Settings />
                   </ProtectedRoute>
                 }
@@ -72,6 +86,74 @@ const App = () => (
                 }
               />
               <Route path="/login" element={<LoginForm />} />
+
+              {/* Vínculos gestor-cliente: qualquer role autenticada pode ter seus próprios gestores */}
+              <Route
+                path="/my-managers"
+                element={
+                  <ProtectedRoute>
+                    <ManagerLinksPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Manager routes */}
+              <Route
+                path="/manager/dashboard"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <ManagerDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/manager/clients/:investorId/positions"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <ClientPositionsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/manager/clients/:investorId/targets"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <ClientTargetsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/manager/clients/:investorId/dashboard"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <ClientDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/manager/clients/:investorId/settings"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <ClientSettingsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/users"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminUsersPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/dashboard"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

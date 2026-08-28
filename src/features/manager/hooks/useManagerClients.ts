@@ -1,0 +1,72 @@
+import { managerService } from "@/features/manager/services/managerService";
+import { managerLinkService } from "@/features/manager/services/managerLinkService";
+import { QUERY_KEYS } from "@/shared/constants/queryKeys";
+import { ClientScope, ClientSortBy } from "@/shared/types/manager";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { toast } from "sonner";
+import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
+import { useTranslation } from "react-i18next";
+
+export const useManagerClients = (params?: {
+  search?: string;
+  page?: number;
+  itemsPerPage?: number;
+  sortBy?: ClientSortBy;
+  order?: string;
+  scope?: ClientScope;
+  activeOnly?: boolean;
+}) => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: QUERY_KEYS.managerClients(params),
+    queryFn: () => managerService.getMyClients(params ?? {}),
+    staleTime: 30 * 1000,
+    placeholderData: keepPreviousData,
+  });
+
+  const createLinkMutation = useMutation({
+    mutationFn: ({
+      investorId,
+      managerId,
+    }: {
+      investorId: number;
+      managerId?: number;
+    }) => managerLinkService.createLink(investorId, managerId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.managerClientsRoot });
+      toast.success(t("clients.clientAdded"));
+    },
+    onError: (error) => {
+      toast.error(resolveErrorMessage(error, "clients.addClientError"));
+    },
+  });
+
+  const revokeMutation = useMutation({
+    mutationFn: (linkId: number) => managerLinkService.revokeLink(linkId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.managerClientsRoot });
+      toast.success(t("clients.linkRevoked"));
+    },
+    onError: (error) => {
+      toast.error(resolveErrorMessage(error, "clients.revokeError"));
+    },
+  });
+
+  return {
+    clients: data?.data ?? [],
+    meta: data?.meta,
+    isLoading,
+    error,
+    createLink: createLinkMutation.mutateAsync,
+    isCreating: createLinkMutation.isPending,
+    revokeLink: revokeMutation.mutateAsync,
+    isRevoking: revokeMutation.isPending,
+  };
+};

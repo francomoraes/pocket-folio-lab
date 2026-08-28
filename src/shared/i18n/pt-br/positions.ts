@@ -6,12 +6,18 @@ export default {
     refreshPrices: "Atualizar Cotações",
     uploadCsv: "Importar CSV",
     downloadCsv: "Baixar CSV",
+    hideZeroQuantity: "Ocultar posições zeradas",
+    viewHistory: "Ver histórico",
   },
   summary: {
     patrimonyUSD: "Patromônio (parte em dólares)",
     patrimonyBRL: "Patromônio (parte em reais)",
     consolidatedPatrimony: "Patrimônio Consolidado",
     patrimony: "Patrimônio",
+    pnlBalance: "Saldo L/P",
+    netContribution: "Aporte Líquido",
+    unreinvestedDividends: "Proventos Não Reinvestidos",
+    totalDividends: "Proventos",
     currencyTitles: {
       brl: "Real Brasileiro",
       usd: "Dólar Americano",
@@ -20,6 +26,7 @@ export default {
   tabs: {
     variableIncome: "Renda Variável",
     fixedIncome: "Renda Fixa",
+    transactions: "Operações",
   },
   table: {
     headers: {
@@ -29,6 +36,7 @@ export default {
       averagePrice: "PM Compra",
       currentPrice: "Cotação",
       total: "Total",
+      dividends: "Proventos",
       profitLoss: "L/P",
       institution: "Instituição",
       portfolioPercentage: "% Carteira",
@@ -46,6 +54,13 @@ export default {
     priceUnavailable: "N/D",
     priceUnavailableTooltip:
       "Cotação indisponível. Edite o ativo para informar o preço manualmente. Última atualização: {{date}}",
+    syncedTooltip: "Sincronizado via integração com Mercado Bitcoin",
+    lockedFieldTooltip:
+      "Este ativo é sincronizado automaticamente e não permite edição manual deste campo.",
+  },
+  autonomy: {
+    readOnlyNotice:
+      "Seu gestor está com o controle da sua carteira no momento. Peça a ele para reativar sua autonomia se quiser lançar por conta própria.",
   },
   fixedIncome: {
     manualMode: "Manual",

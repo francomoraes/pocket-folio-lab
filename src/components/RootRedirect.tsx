@@ -1,9 +1,10 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/shared/hooks/useAuth";
 import CircularProgress from "@/shared/components/ui/circular-progress";
+import { HomePage } from "@/features/home/components/HomePage";
 
 export const RootRedirect = () => {
-  const { isAuthenticated, isInitializing } = useAuth();
+  const { isAuthenticated, isInitializing, user } = useAuth();
 
   if (isInitializing) {
     return (
@@ -13,5 +14,14 @@ export const RootRedirect = () => {
     );
   }
 
-  return <Navigate to={isAuthenticated ? "/positions" : "/login"} replace />;
+  if (isAuthenticated) {
+    return (
+      <Navigate
+        to={user?.role === "investor" ? "/dashboard" : "/manager/dashboard"}
+        replace
+      />
+    );
+  }
+
+  return <HomePage />;
 };

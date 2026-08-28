@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/shared/hooks/useAuth";
+import { useAuthConfig } from "@/features/auth/hooks/useAuthConfig";
 import {
   loginSchema,
   registerSchema,
@@ -11,11 +12,18 @@ import {
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
+import { useNavigate } from "react-router-dom";
+
+export type LoginTab = "investor" | "manager";
 
 export const useLoginForm = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [isRegisterMode, setIsRegisterMode] = useState(false);
-  const { login, register: registerUser, isLoading } = useAuth();
+  const [loginTab, setLoginTab] = useState<LoginTab>("investor");
+  const { login, register: registerUser, isLoading, isAuthenticated, user } =
+    useAuth();
+  const { selfRegistrationEnabled } = useAuthConfig();
 
   const {
     register,
@@ -29,17 +37,26 @@ export const useLoginForm = () => {
   const onSubmit = async (data: RegisterFormData) => {
     try {
       if (isRegisterMode) {
-        await registerUser({
+        const registeredUser = await registerUser({
           name: data.name,
           email: data.email,
           password: data.password,
         });
         toast.success(t("auth.messages.registerSuccess"));
+        navigate(
+          registeredUser.role === "investor" ? "/dashboard" : "/manager/dashboard",
+        );
       } else {
-        await login({ email: data.email, password: data.password });
+        const loggedInUser = await login({
+          email: data.email,
+          password: data.password,
+          loginAs: loginTab,
+        });
         toast.success(t("auth.messages.loginSuccess"));
+        navigate(
+          loggedInUser.role === "investor" ? "/dashboard" : "/manager/dashboard",
+        );
       }
-      window.location.href = "/";
     } catch (error) {
       const fallbackKey = isRegisterMode
         ? "auth.messages.registerError"
@@ -53,13 +70,31 @@ export const useLoginForm = () => {
     reset();
   };
 
+  const changeTab = (tab: LoginTab) => {
+    setLoginTab(tab);
+    setIsRegisterMode(false);
+    reset();
+  };
+
+  const canRegister = loginTab === "investor" && selfRegistrationEnabled;
+
+  const redirectTo = isAuthenticated
+    ? user?.role === "investor"
+      ? "/dashboard"
+      : "/manager/dashboard"
+    : null;
+
   return {
     isRegisterMode,
     isLoading,
+    loginTab,
+    changeTab,
+    canRegister,
     register,
     handleSubmit,
     errors,
     onSubmit,
     toggleMode,
+    redirectTo,
   };
 };

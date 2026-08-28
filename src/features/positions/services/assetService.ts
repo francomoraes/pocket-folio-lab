@@ -14,13 +14,22 @@ class AssetService {
     sortBy = "ticker",
     order = "ASC",
     skipPagination = false,
-  }): Promise<PaginatedResponse<Asset>> {
+    includeZeroQuantity = true,
+  }: {
+    page?: number;
+    itemsPerPage?: number;
+    sortBy?: string;
+    order?: string;
+    skipPagination?: boolean;
+    includeZeroQuantity?: boolean;
+  } = {}): Promise<PaginatedResponse<Asset>> {
     const params = new URLSearchParams({
       page: String(page),
       itemsPerPage: String(itemsPerPage),
       sortBy,
       order,
       ...(skipPagination && { skipPagination: "true" }),
+      ...(!includeZeroQuantity && { includeZeroQuantity: "false" }),
     });
 
     const requestUrl = `${API_ENDPOINTS.assets.list}?${params.toString()}`;
@@ -49,6 +58,12 @@ class AssetService {
     const response = await api.get<Blob>(API_ENDPOINTS.assets.export, {
       responseType: "blob",
     });
+    return response.data;
+  }
+
+  async retryPrice(id: number): Promise<{ message: string; asset: Asset }> {
+    const url = API_ENDPOINTS.assets.retryPrice.replace(":id", id.toString());
+    const response = await api.post<{ message: string; asset: Asset }>(url);
     return response.data;
   }
 

@@ -9,6 +9,7 @@ export default {
     success: "Positions imported successfully",
     error: "Error importing positions",
     uploadedSuccess: "CSV file uploaded successfully!",
+    autoCreatedSummary: "{{count}} entit(y/ies) created automatically.",
     downloadedSuccess: "CSV file downloaded successfully!",
     uploadError: "Error uploading CSV file.",
     downloadError: "Error downloading CSV file.",

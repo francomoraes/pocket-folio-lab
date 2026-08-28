@@ -16,12 +16,15 @@ import { useMemo, useState } from "react";
 import { Card } from "@/shared/components/ui/card";
 import { useTranslation } from "react-i18next";
 import { SortableTableHead } from "@/shared/components/ui/sortable-table-head";
+import { useAuth } from "@/shared/hooks/useAuth";
 
 type SortOrder = "ASC" | "DESC";
 
-export const InstitutionsTable = () => {
+export const InstitutionsTable = ({ investorId }: { investorId?: number } = {}) => {
+  const { canOperateOwnPortfolio } = useAuth();
+  const canWrite = !!investorId || canOperateOwnPortfolio;
   const { institutions, isLoading, deleteInstitution, isDeleting } =
-    useInstitutions();
+    useInstitutions(investorId);
   const [editingInstitution, setEditingInstitution] =
     useState<Institution | null>(null);
   const [deletingInstitution, setDeletingInstitution] =
@@ -48,7 +51,7 @@ export const InstitutionsTable = () => {
     return (
       <div>
         <p>{t("common.status.noData")}</p>
-        <InstitutionDialog mode="create" />
+        {canWrite && <InstitutionDialog mode="create" investorId={investorId} />}
       </div>
     );
   }
@@ -56,10 +59,10 @@ export const InstitutionsTable = () => {
   return (
     <div className="flex flex-col gap-3 h-[calc(100vh-216px)] p-3">
       <div className="flex justify-end">
-        <InstitutionDialog mode="create" />
+        {canWrite && <InstitutionDialog mode="create" investorId={investorId} />}
       </div>
       <Card className="flex-1 flex flex-col min-h-0">
-        <Table>
+        <Table wrapperClassName="flex-1 min-h-0">
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
               <SortableTableHead
@@ -69,33 +72,37 @@ export const InstitutionsTable = () => {
                 currentOrder={order}
                 onSort={toggleSort}
               />
-              <TableHead className="text-right">
-                {t("settings.institutions.table.actions")}
-              </TableHead>
+              {canWrite && (
+                <TableHead className="text-right">
+                  {t("settings.institutions.table.actions")}
+                </TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
             {sortedInstitutions.map((institution) => (
               <TableRow key={institution.id}>
                 <TableCell>{institution.name}</TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setEditingInstitution(institution)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setDeletingInstitution(institution)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
+                {canWrite && (
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setEditingInstitution(institution)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setDeletingInstitution(institution)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>
@@ -107,6 +114,7 @@ export const InstitutionsTable = () => {
           mode="edit"
           institution={editingInstitution}
           onClose={() => setEditingInstitution(null)}
+          investorId={investorId}
         />
       )}
 

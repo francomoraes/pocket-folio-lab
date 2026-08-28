@@ -18,6 +18,7 @@ export default {
       percentage: "%",
       actualPercentage: "% Actual",
       targetPercentage: "% Target",
+      deviation: "Deviation",
     },
     empty: "No data available",
   },
@@ -30,10 +31,18 @@ export default {
     axisValueBrl: "Value (BRL)",
     insufficientData: "Insufficient data to render chart",
   },
+  adherence: {
+    badge: "Total deviation: {{value}} pp",
+    rowDeviation: "deviation {{value}} pp",
+  },
   assetClasses: {
     stocks: "Stocks",
     fiis: "REITs",
     fixed_income: "Fixed Income",
+  },
+  autonomy: {
+    readOnlyNotice:
+      "Your manager currently has control of your portfolio. Ask them to re-enable your autonomy if you want to manage it yourself.",
   },
   wealthHistory: {
     addHistory: "+ Add History",

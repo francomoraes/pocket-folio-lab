@@ -14,40 +14,73 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/shared/components/ui/tooltip";
 import { useInstitutions } from "@/features/settings/hooks/useInstitutions";
 import { useAssetTypes } from "@/features/settings/hooks/useAssetTypes";
 import { useAssetForm } from "@/features/positions/components/AssetFormDialog/useAssetForm";
 import { useTranslation } from "react-i18next";
 import { Asset } from "@/shared/types/asset";
-import { Loader2 } from "lucide-react";
+import { Loader2, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 interface AssetFormDialogProps {
   asset?: Asset | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  investorId?: number;
 }
+
+const LockedFieldTooltip = ({
+  locked,
+  message,
+  children,
+}: {
+  locked: boolean;
+  message: string;
+  children: React.ReactNode;
+}) => {
+  if (!locked) return <>{children}</>;
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div>{children}</div>
+      </TooltipTrigger>
+      <TooltipContent>{message}</TooltipContent>
+    </Tooltip>
+  );
+};
 
 export const AssetFormDialog = ({
   asset,
   open,
   onOpenChange,
+  investorId,
 }: AssetFormDialogProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const goToSettings = () => {
-    navigate("/settings");
+    navigate(investorId ? `/manager/clients/${investorId}/settings` : "/settings");
   };
 
   const {
     formData,
     updateField,
     handleSubmit,
+    handleRetryPrice,
     resetForm,
     isSubmitting,
+    isRetryingPrice,
     isEditMode,
-  } = useAssetForm(asset, () => onOpenChange(false));
+    isLocked,
+  } = useAssetForm(asset, () => onOpenChange(false), investorId);
+
+  const lockedFieldMessage = t("positions.table.lockedFieldTooltip");
 
   const handleOpenChange = (isOpen: boolean) => {
     onOpenChange(isOpen);
@@ -56,12 +89,34 @@ export const AssetFormDialog = ({
     }
   };
 
-  const { institutions, isLoading: isLoadingInstitutions } = useInstitutions({
-    enabled: open,
-  });
-  const { assetTypes, isLoading: isLoadingTypes } = useAssetTypes({
-    enabled: open,
-  });
+  const { institutions, isLoading: isLoadingInstitutions } = useInstitutions(
+    investorId,
+    { enabled: open },
+  );
+  const { assetTypes, isLoading: isLoadingTypes } = useAssetTypes(
+    investorId,
+    { enabled: open },
+  );
+
+  useEffect(() => {
+    if (open && assetTypes?.length) {
+      if (isEditMode && asset) {
+        updateField("type", asset.type.name);
+      } else {
+        updateField("type", assetTypes[0].name);
+      }
+    }
+  }, [open, assetTypes, isEditMode, asset]);
+
+  useEffect(() => {
+    if (open && institutions?.length) {
+      if (isEditMode && asset) {
+        updateField("institutionId", asset.institution.id.toString());
+      } else if (!formData.institutionId) {
+        updateField("institutionId", institutions[0].id.toString());
+      }
+    }
+  }, [open, institutions, isEditMode, asset, formData.institutionId]);
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -129,14 +184,17 @@ export const AssetFormDialog = ({
 
           <div className="space-y-2">
             <Label htmlFor="quantity">{t("transaction.fields.quantity")}</Label>
-            <Input
-              id="quantity"
-              type="number"
-              step="0.01"
-              placeholder={t("transaction.placeholders.quantity")}
-              value={formData.quantity}
-              onChange={(e) => updateField("quantity", e.target.value)}
-            />
+            <LockedFieldTooltip locked={isLocked} message={lockedFieldMessage}>
+              <Input
+                id="quantity"
+                type="number"
+                step="0.01"
+                placeholder={t("transaction.placeholders.quantity")}
+                value={formData.quantity}
+                onChange={(e) => updateField("quantity", e.target.value)}
+                disabled={isLocked}
+              />
+            </LockedFieldTooltip>
           </div>
 
           <div className="space-y-2">
@@ -211,22 +269,25 @@ export const AssetFormDialog = ({
 
           <div className="space-y-2">
             <Label htmlFor="currency">{t("transaction.fields.currency")}</Label>
-            <Select
-              value={formData.currency}
-              onValueChange={(v) => updateField("currency", v)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="BRL">
-                  {t("transaction.currency.brl")}
-                </SelectItem>
-                <SelectItem value="USD">
-                  {t("transaction.currency.usd")}
-                </SelectItem>
-              </SelectContent>
-            </Select>
+            <LockedFieldTooltip locked={isLocked} message={lockedFieldMessage}>
+              <Select
+                value={formData.currency}
+                onValueChange={(v) => updateField("currency", v)}
+                disabled={isLocked}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="BRL">
+                    {t("transaction.currency.brl")}
+                  </SelectItem>
+                  <SelectItem value="USD">
+                    {t("transaction.currency.usd")}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </LockedFieldTooltip>
           </div>
 
           {isEditMode && asset?.priceUnavailable && (
@@ -250,6 +311,21 @@ export const AssetFormDialog = ({
                   date: new Date(asset.updatedAt).toLocaleDateString(),
                 })}
               </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="w-full gap-2 border-amber-500/40 text-amber-600 hover:bg-amber-500/20 dark:text-amber-400"
+                onClick={handleRetryPrice}
+                disabled={isRetryingPrice}
+              >
+                {isRetryingPrice ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="h-4 w-4" />
+                )}
+                {t("transaction.messages.retryPrice")}
+              </Button>
             </div>
           )}
 
