@@ -21,6 +21,7 @@ import {
   AssetFormDialog,
   CsvUploadDialog,
 } from "@/features/positions/components";
+import { AssetTransactionDialog } from "@/features/positions/components/AssetTransactionDialog/AssetTransactionDialog";
 import { usePositions } from "@/features/positions/hooks/usePositions";
 import CircularProgress from "@/shared/components/ui/circular-progress";
 import {
@@ -36,6 +37,10 @@ import { ConfirmDeleteDialog } from "@/shared/components/ConfirmDeleteDialog";
 import { SortableTableHead } from "@/shared/components/ui/sortable-table-head";
 import { useAuth } from "@/shared/hooks/useAuth";
 
+// TODO(franco): reavaliar se "Adicionar Ativo" volta a ficar visível junto
+// com "Lançar Operação", ou se o fluxo de criar ativo direto sai de vez.
+const SHOW_ADD_ASSET_BUTTON = false;
+
 const VariableIncome = ({ investorId }: { investorId?: number } = {}) => {
   const { t } = useTranslation();
   const { canOperateOwnPortfolio } = useAuth();
@@ -43,6 +48,7 @@ const VariableIncome = ({ investorId }: { investorId?: number } = {}) => {
   const pagination = usePagination();
   const [searchParams, setSearchParams] = useSearchParams();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [transactionDialogOpen, setTransactionDialogOpen] = useState(false);
   const [editingAsset, setEditingAsset] = useState<Asset | undefined>(
     undefined,
   );
@@ -126,8 +132,16 @@ const VariableIncome = ({ investorId }: { investorId?: number } = {}) => {
             <RefreshCw className="h-4 w-4" />
             {t("positions.actions.refreshPrices")}
           </Button>
-          <Button className="w-full sm:w-min" onClick={handleCreateAsset}>
-            {t("positions.actions.addAsset")}
+          {SHOW_ADD_ASSET_BUTTON && (
+            <Button className="w-full sm:w-min" onClick={handleCreateAsset}>
+              {t("positions.actions.addAsset")}
+            </Button>
+          )}
+          <Button
+            className="w-full sm:w-min"
+            onClick={() => setTransactionDialogOpen(true)}
+          >
+            {t("transaction.history.addOperation")}
           </Button>
         </div>
       )}
@@ -147,6 +161,12 @@ const VariableIncome = ({ investorId }: { investorId?: number } = {}) => {
         asset={editingAsset}
         open={dialogOpen}
         onOpenChange={handleCloseDialog}
+        investorId={investorId}
+      />
+
+      <AssetTransactionDialog
+        open={transactionDialogOpen}
+        onOpenChange={setTransactionDialogOpen}
         investorId={investorId}
       />
 

@@ -10,15 +10,17 @@ export default {
     linkedAt: "Linked since",
     riskProfile: "Risk profile",
     wealth: "Current wealth",
+    status: "Status",
     actions: "Actions",
     viewPortfolio: "View portfolio",
     endLink: "End link",
-    empty: "No active clients at the moment",
+    empty: "No clients found",
   },
   scope: {
     mine: "My clients",
     all: "All investors",
   },
+  activeOnly: "Active links only",
   search: "Search by name or email",
   sortBy: {
     label: "Sort by",

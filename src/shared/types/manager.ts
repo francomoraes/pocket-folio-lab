@@ -38,7 +38,8 @@ export interface AvailableInvestor {
 export interface ManagerHistoryCycle {
   managerId: number;
   managerName: string;
-  status: "active" | "closed";
+  managerEmail: string;
+  linkStatus: LinkStatus;
   cycleStartAt: string;
   cycleEndAt: string | null;
   initialWealthCents: number;
@@ -50,9 +51,10 @@ export interface ManagerClient {
   investorId: number;
   investorName: string;
   investorEmail: string;
-  activatedAt: string;
+  activatedAt: string | null;
   currentWealthCents: number;
-  linkId: number;
+  linkId: number | null;
+  linkStatus: LinkStatus | null;
   riskProfile: RiskProfile | null;
   adherenceIndexPp: number | null;
   monthlyVariationPct: number | null;
@@ -64,6 +66,8 @@ export type ClientSortBy =
   | "wealth"
   | "adherenceIndex"
   | "monthlyVariation";
+
+export type ClientScope = "mine" | "all";
 
 export interface ManagerDashboard {
   activeClientsCount: number;
@@ -125,6 +129,9 @@ export interface ManagerRankingRow {
   managerEmail: string;
   activeClientsCount: number;
   totalWealthCents: number;
+  totalInitialWealthCents: number;
+  absoluteVariationCents: number;
+  percentageVariation: number;
 }
 
 export interface AdminDashboard {

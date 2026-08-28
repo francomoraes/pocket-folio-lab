@@ -10,15 +10,17 @@ export default {
     linkedAt: "Vínculo desde",
     riskProfile: "Perfil",
     wealth: "Patrimônio atual",
+    status: "Status",
     actions: "Ações",
     viewPortfolio: "Ver carteira",
     endLink: "Encerrar vínculo",
-    empty: "Nenhum cliente ativo no momento",
+    empty: "Nenhum cliente encontrado",
   },
   scope: {
     mine: "Meus clientes",
     all: "Todos os investidores",
   },
+  activeOnly: "Somente vínculos ativos",
   search: "Buscar por nome ou e-mail",
   sortBy: {
     label: "Ordenar por",

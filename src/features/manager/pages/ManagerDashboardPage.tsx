@@ -5,6 +5,7 @@ import { useManagerDashboard } from "@/features/manager/hooks/useManagerDashboar
 import { useManagerClients } from "@/features/manager/hooks/useManagerClients";
 import { ManagerDashboardStats } from "@/features/manager/components/ManagerDashboardStats";
 import { AvailableInvestorsList } from "@/features/manager/components/AvailableInvestorsList";
+import { LinkStatusBadge } from "@/features/manager/components/LinkStatusBadge";
 import { CreateUserDialog } from "@/features/users/components/CreateUserDialog";
 import { RiskProfileBadge } from "@/shared/components/RiskProfileBadge";
 import {
@@ -15,7 +16,9 @@ import {
 } from "@/shared/components/ui/accordion";
 import { Button } from "@/shared/components/ui/button";
 import { Card } from "@/shared/components/ui/card";
+import { Checkbox } from "@/shared/components/ui/checkbox";
 import { Input } from "@/shared/components/ui/input";
+import { Label } from "@/shared/components/ui/label";
 import {
   Sheet,
   SheetContent,
@@ -52,7 +55,11 @@ import {
   getAdherenceColor,
   getVariationColor,
 } from "@/shared/utils/formatters";
-import { ClientSortBy, ManagerClient } from "@/shared/types/manager";
+import {
+  ClientScope,
+  ClientSortBy,
+  ManagerClient,
+} from "@/shared/types/manager";
 
 const STATS_ACCORDION_STORAGE_KEY = "manager-dashboard-stats-open";
 const CLIENTS_ITEMS_PER_PAGE_OPTIONS = [10, 25, 50];
@@ -60,8 +67,12 @@ const CLIENTS_ITEMS_PER_PAGE_OPTIONS = [10, 25, 50];
 export const ManagerDashboardPage = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { isAdmin } = useAuth();
-  const { dashboard, isLoading: isDashboardLoading } = useManagerDashboard();
+  const { isAdmin, user } = useAuth();
+  const [scope, setScope] = useState<ClientScope>("mine");
+  const [activeOnly, setActiveOnly] = useState(false);
+  const { dashboard, isLoading: isDashboardLoading } = useManagerDashboard({
+    scope: isAdmin ? scope : undefined,
+  });
 
   const [statsOpen, setStatsOpen] = useState(
     () => localStorage.getItem(STATS_ACCORDION_STORAGE_KEY) !== "closed",
@@ -71,7 +82,6 @@ export const ManagerDashboardPage = () => {
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [scope, setScope] = useState<"mine" | "all">("mine");
   const [clientToRevoke, setClientToRevoke] = useState<ManagerClient | null>(
     null,
   );
@@ -103,7 +113,13 @@ export const ManagerDashboardPage = () => {
     itemsPerPage,
     sortBy: sortBy as ClientSortBy,
     order,
+    scope: isAdmin ? scope : undefined,
+    activeOnly,
   });
+
+  const handleQuickAddClient = async (investorId: number) => {
+    await createLink({ investorId, managerId: user?.id });
+  };
 
   useEffect(() => {
     if (meta) setMeta(meta);
@@ -112,7 +128,7 @@ export const ManagerDashboardPage = () => {
   useEffect(() => {
     goToPage(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearch, scope]);
+  }, [debouncedSearch, scope, activeOnly]);
 
   const toggleStatsOpen = (open: boolean) => {
     setStatsOpen(open);
@@ -125,7 +141,8 @@ export const ManagerDashboardPage = () => {
   };
 
   const locale = i18n.resolvedLanguage || "pt-BR";
-  const formatDate = (d: string) => new Date(d).toLocaleDateString(locale);
+  const formatDate = (d: string | null) =>
+    d ? new Date(d).toLocaleDateString(locale) : "—";
 
   return (
     <div className="flex flex-col gap-2 p-4">
@@ -178,6 +195,25 @@ export const ManagerDashboardPage = () => {
         allowedRoles={["investor"]}
       />
 
+      {isAdmin && (
+        <div className="flex items-center gap-2">
+          <Button
+            variant={scope === "mine" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setScope("mine")}
+          >
+            {t("clients.scope.mine")}
+          </Button>
+          <Button
+            variant={scope === "all" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setScope("all")}
+          >
+            {t("clients.scope.all")}
+          </Button>
+        </div>
+      )}
+
       {isDashboardLoading ? (
         <div className="flex justify-center p-8">
           <CircularProgress />
@@ -202,148 +238,141 @@ export const ManagerDashboardPage = () => {
         </Accordion>
       )}
 
-      {isAdmin && (
-        <div className="flex items-center gap-2">
-          <Button
-            variant={scope === "mine" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setScope("mine")}
-          >
-            {t("clients.scope.mine")}
-          </Button>
-          <Button
-            variant={scope === "all" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setScope("all")}
-          >
-            {t("clients.scope.all")}
-          </Button>
-        </div>
-      )}
-
-      {isAdmin && scope === "all" ? (
-        <section>
-          <AvailableInvestorsList
-            onView={(investorId) =>
-              navigate(`/manager/clients/${investorId}/dashboard`)
-            }
-          />
-        </section>
-      ) : (
-        <section>
+      <section>
+        <div className="flex flex-wrap items-center gap-4 mb-4">
           <Input
             placeholder={t("clients.search")}
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
-            className="max-w-sm mb-4"
+            className="max-w-sm"
           />
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="active-only"
+              checked={activeOnly}
+              onCheckedChange={(checked) => setActiveOnly(checked === true)}
+            />
+            <Label htmlFor="active-only" className="text-sm font-normal cursor-pointer">
+              {t("clients.activeOnly")}
+            </Label>
+          </div>
+        </div>
 
-          {isClientsLoading && !clients.length ? (
-            <div className="flex justify-center p-8">
-              <CircularProgress />
-            </div>
-          ) : clients.length === 0 ? (
-            <p className="text-muted-foreground text-sm">
-              {t("clients.table.empty")}
-            </p>
-          ) : (
-            <Card>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <SortableTableHead
-                        label={t("clients.table.name")}
-                        sortKey="name"
-                        currentSortBy={sortBy}
-                        currentOrder={order}
-                        onSort={toggleSort}
-                      />
-                      <SortableTableHead
-                        label={t("clients.table.linkedAt")}
-                        sortKey="activatedAt"
-                        currentSortBy={sortBy}
-                        currentOrder={order}
-                        onSort={toggleSort}
-                      />
-                      <TableHead>{t("clients.table.riskProfile")}</TableHead>
-                      <SortableTableHead
-                        label={t("clients.table.wealth")}
-                        sortKey="wealth"
-                        currentSortBy={sortBy}
-                        currentOrder={order}
-                        onSort={toggleSort}
-                      />
-                      <SortableTableHead
-                        label={t("clients.adherence.label")}
-                        sortKey="adherenceIndex"
-                        currentSortBy={sortBy}
-                        currentOrder={order}
-                        onSort={toggleSort}
-                      />
-                      <SortableTableHead
-                        label={t("clients.variation.label")}
-                        sortKey="monthlyVariation"
-                        currentSortBy={sortBy}
-                        currentOrder={order}
-                        onSort={toggleSort}
-                      />
-                      <TableHead>{t("clients.table.actions")}</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {clients.map((client) => (
-                      <TableRow key={client.investorId}>
-                        <TableCell>
-                          <p className="font-medium">{client.investorName}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {client.investorEmail}
-                          </p>
-                        </TableCell>
-                        <TableCell>{formatDate(client.activatedAt)}</TableCell>
-                        <TableCell>
-                          <RiskProfileBadge riskProfile={client.riskProfile} />
-                        </TableCell>
-                        <TableCell>
-                          {formatCentsToCurrency(
-                            client.currentWealthCents,
-                            "BRL",
-                          )}
-                        </TableCell>
-                        <TableCell
-                          className={getAdherenceColor(client.adherenceIndexPp)}
-                          title={
-                            client.adherenceIndexPp === null
-                              ? t("clients.adherence.tooltipNoData")
-                              : undefined
-                          }
-                        >
-                          {formatAdherence(client.adherenceIndexPp)}
-                        </TableCell>
-                        <TableCell
-                          className={getVariationColor(
-                            client.monthlyVariationPct,
-                          )}
-                          title={
-                            client.monthlyVariationPct === null
-                              ? t("clients.variation.tooltipNoData")
-                              : undefined
-                          }
-                        >
-                          {formatVariation(client.monthlyVariationPct)}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              onClick={() =>
-                                navigate(
-                                  `/manager/clients/${client.investorId}/targets`,
-                                )
-                              }
-                            >
-                              {t("clients.table.viewPortfolio")}
-                            </Button>
+        {isClientsLoading && !clients.length ? (
+          <div className="flex justify-center p-8">
+            <CircularProgress />
+          </div>
+        ) : clients.length === 0 ? (
+          <p className="text-muted-foreground text-sm">
+            {t("clients.table.empty")}
+          </p>
+        ) : (
+          <Card>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <SortableTableHead
+                      label={t("clients.table.name")}
+                      sortKey="name"
+                      currentSortBy={sortBy}
+                      currentOrder={order}
+                      onSort={toggleSort}
+                    />
+                    <SortableTableHead
+                      label={t("clients.table.linkedAt")}
+                      sortKey="activatedAt"
+                      currentSortBy={sortBy}
+                      currentOrder={order}
+                      onSort={toggleSort}
+                    />
+                    <TableHead>{t("clients.table.riskProfile")}</TableHead>
+                    <TableHead>{t("clients.table.status")}</TableHead>
+                    <SortableTableHead
+                      label={t("clients.table.wealth")}
+                      sortKey="wealth"
+                      currentSortBy={sortBy}
+                      currentOrder={order}
+                      onSort={toggleSort}
+                    />
+                    <SortableTableHead
+                      label={t("clients.adherence.label")}
+                      sortKey="adherenceIndex"
+                      currentSortBy={sortBy}
+                      currentOrder={order}
+                      onSort={toggleSort}
+                    />
+                    <SortableTableHead
+                      label={t("clients.variation.label")}
+                      sortKey="monthlyVariation"
+                      currentSortBy={sortBy}
+                      currentOrder={order}
+                      onSort={toggleSort}
+                    />
+                    <TableHead>{t("clients.table.actions")}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {clients.map((client) => (
+                    <TableRow key={client.investorId}>
+                      <TableCell>
+                        <p className="font-medium">{client.investorName}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {client.investorEmail}
+                        </p>
+                      </TableCell>
+                      <TableCell>{formatDate(client.activatedAt)}</TableCell>
+                      <TableCell>
+                        <RiskProfileBadge riskProfile={client.riskProfile} />
+                      </TableCell>
+                      <TableCell>
+                        {client.linkStatus ? (
+                          <LinkStatusBadge status={client.linkStatus} />
+                        ) : (
+                          "—"
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {formatCentsToCurrency(
+                          client.currentWealthCents,
+                          "BRL",
+                        )}
+                      </TableCell>
+                      <TableCell
+                        className={getAdherenceColor(client.adherenceIndexPp)}
+                        title={
+                          client.adherenceIndexPp === null
+                            ? t("clients.adherence.tooltipNoData")
+                            : undefined
+                        }
+                      >
+                        {formatAdherence(client.adherenceIndexPp)}
+                      </TableCell>
+                      <TableCell
+                        className={getVariationColor(
+                          client.monthlyVariationPct,
+                        )}
+                        title={
+                          client.monthlyVariationPct === null
+                            ? t("clients.variation.tooltipNoData")
+                            : undefined
+                        }
+                      >
+                        {formatVariation(client.monthlyVariationPct)}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            onClick={() =>
+                              navigate(
+                                `/manager/clients/${client.investorId}/dashboard`,
+                              )
+                            }
+                          >
+                            {t("clients.table.viewPortfolio")}
+                          </Button>
+                          {client.linkStatus === "active" ? (
                             <Button
                               size="sm"
                               variant="outline"
@@ -351,21 +380,32 @@ export const ManagerDashboardPage = () => {
                             >
                               {t("clients.table.endLink")}
                             </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-              <PaginationControls
-                pagination={pagination}
-                itemsPerPageOptions={CLIENTS_ITEMS_PER_PAGE_OPTIONS}
-              />
-            </Card>
-          )}
-        </section>
-      )}
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() =>
+                                handleQuickAddClient(client.investorId)
+                              }
+                              disabled={isCreating}
+                            >
+                              {t("clients.addClient")}
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            <PaginationControls
+              pagination={pagination}
+              itemsPerPageOptions={CLIENTS_ITEMS_PER_PAGE_OPTIONS}
+            />
+          </Card>
+        )}
+      </section>
 
       <Dialog
         open={!!clientToRevoke}
@@ -387,7 +427,7 @@ export const ManagerDashboardPage = () => {
             <Button
               variant="destructive"
               onClick={async () => {
-                if (clientToRevoke) {
+                if (clientToRevoke?.linkId) {
                   await revokeLink(clientToRevoke.linkId);
                   setClientToRevoke(null);
                 }

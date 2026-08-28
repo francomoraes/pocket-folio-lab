@@ -241,6 +241,15 @@ export const Dashboard = () => {
   const deviationByClass = new Map(
     (adherence?.byClass ?? []).map((c) => [c.assetClassName, c.deviationPp]),
   );
+  // Soma dos desvios já agregados por classe (decisão do fix do bug de
+  // cancelamento) — não é o mesmo número que adherence.totalPp, que soma os
+  // desvios por TIPO. Cada accordion mostra o total que bate com suas
+  // próprias linhas.
+  const classDeviationTotal = adherence?.byClass.length
+    ? Number(
+        adherence.byClass.reduce((sum, c) => sum + c.deviationPp, 0).toFixed(2),
+      )
+    : null;
   const deviationByType = new Map(
     (adherence?.byType ?? []).map((t) => [
       `${t.assetClassName}|${t.assetTypeName}`,
@@ -296,6 +305,10 @@ export const Dashboard = () => {
       case "class": aVal = aName; bVal = bName; break;
       case "value": aVal = aData.actualValueBRL; bVal = bData.actualValueBRL; break;
       case "targetPercentage": aVal = aData.targetPercentage; bVal = bData.targetPercentage; break;
+      case "deviation":
+        aVal = deviationByClass.get(aName) ?? -1;
+        bVal = deviationByClass.get(bName) ?? -1;
+        break;
       default: aVal = aData.actualPercentage; bVal = bData.actualPercentage;
     }
     if (typeof aVal === "string" && typeof bVal === "string") {
@@ -315,6 +328,10 @@ export const Dashboard = () => {
         bVal = b.currency === "USD" ? (b.actualValue ?? 0) * usdToBrlRate : (b.actualValue ?? 0);
         break;
       case "targetPercentage": aVal = a.targetPercentage ?? 0; bVal = b.targetPercentage ?? 0; break;
+      case "deviation":
+        aVal = deviationByType.get(`${a.class}|${a.type}`) ?? -1;
+        bVal = deviationByType.get(`${b.class}|${b.type}`) ?? -1;
+        break;
       default: aVal = a.actualPercentage ?? 0; bVal = b.actualPercentage ?? 0;
     }
     if (typeof aVal === "string" && typeof bVal === "string") {
@@ -368,12 +385,12 @@ export const Dashboard = () => {
                           <span className="text-lg font-semibold">
                             {t("dashboard.sections.allocationByClass")}
                           </span>
-                          {adherence && adherence.totalPp !== null && (
+                          {classDeviationTotal !== null && (
                             <span
-                              className={`text-sm font-normal ${getAdherenceColor(adherence.totalPp)}`}
+                              className={`text-sm font-normal ${getAdherenceColor(classDeviationTotal)}`}
                             >
                               {t("dashboard.adherence.badge", {
-                                value: adherence.totalPp.toFixed(2),
+                                value: classDeviationTotal.toFixed(2),
                               })}
                             </span>
                           )}
@@ -409,13 +426,21 @@ export const Dashboard = () => {
                                     onSort={toggleClassSort}
                                     className="text-right whitespace-nowrap"
                                   />
+                                  <SortableTableHead
+                                    label={t("dashboard.table.headers.deviation")}
+                                    sortKey="deviation"
+                                    currentSortBy={classSort.key}
+                                    currentOrder={classSort.order}
+                                    onSort={toggleClassSort}
+                                    className="text-right whitespace-nowrap"
+                                  />
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
                                 {Object.keys(classGroups).length === 0 ? (
                                   <TableRow>
                                     <TableCell
-                                      colSpan={3}
+                                      colSpan={4}
                                       className="text-center text-muted-foreground py-8"
                                     >
                                       {t("dashboard.table.empty")}
@@ -448,15 +473,6 @@ export const Dashboard = () => {
                                                 {(data.actualPercentage * 100).toFixed(1)}%
                                               </span>
                                             </div>
-                                            {deviationByClass.has(className) && (
-                                              <span
-                                                className={`text-xs ${getAdherenceColor(deviationByClass.get(className)!)}`}
-                                              >
-                                                {t("dashboard.adherence.rowDeviation", {
-                                                  value: deviationByClass.get(className)!.toFixed(1),
-                                                })}
-                                              </span>
-                                            )}
                                           </div>
                                         </TableCell>
                                         <TableCell className="text-right text-sm whitespace-nowrap">
@@ -474,6 +490,17 @@ export const Dashboard = () => {
                                         </TableCell>
                                         <TableCell className="text-right font-medium text-sm whitespace-nowrap">
                                           {(data.targetPercentage * 100).toFixed(1)}%
+                                        </TableCell>
+                                        <TableCell
+                                          className={`text-right text-sm whitespace-nowrap ${
+                                            deviationByClass.has(className)
+                                              ? getAdherenceColor(deviationByClass.get(className)!)
+                                              : "text-muted-foreground"
+                                          }`}
+                                        >
+                                          {deviationByClass.has(className)
+                                            ? `${deviationByClass.get(className)!.toFixed(1)} pp`
+                                            : "—"}
                                         </TableCell>
                                       </TableRow>
                                     ),
@@ -500,9 +527,20 @@ export const Dashboard = () => {
                       className="border rounded-lg mt-2"
                     >
                       <AccordionTrigger className="pl-10 pr-4 hover:no-underline">
-                        <span className="text-lg font-semibold">
-                          {t("dashboard.sections.allocationByType")}
-                        </span>
+                        <div className="flex items-center justify-between w-full pr-2">
+                          <span className="text-lg font-semibold">
+                            {t("dashboard.sections.allocationByType")}
+                          </span>
+                          {adherence && adherence.totalPp !== null && (
+                            <span
+                              className={`text-sm font-normal ${getAdherenceColor(adherence.totalPp)}`}
+                            >
+                              {t("dashboard.adherence.badge", {
+                                value: adherence.totalPp.toFixed(2),
+                              })}
+                            </span>
+                          )}
+                        </div>
                       </AccordionTrigger>
                       <AccordionContent className="p-0">
                         <Card className="rounded-none border-t">
@@ -534,13 +572,21 @@ export const Dashboard = () => {
                                     onSort={toggleTypeSort}
                                     className="text-right whitespace-nowrap"
                                   />
+                                  <SortableTableHead
+                                    label={t("dashboard.table.headers.deviation")}
+                                    sortKey="deviation"
+                                    currentSortBy={typeSort.key}
+                                    currentOrder={typeSort.order}
+                                    onSort={toggleTypeSort}
+                                    className="text-right whitespace-nowrap"
+                                  />
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
                                 {allocationByClass.length === 0 ? (
                                   <TableRow>
                                     <TableCell
-                                      colSpan={3}
+                                      colSpan={4}
                                       className="text-center text-muted-foreground py-8"
                                     >
                                       {t("dashboard.table.empty")}
@@ -576,17 +622,6 @@ export const Dashboard = () => {
                                               {(item.actualPercentage * 100).toFixed(1)}%
                                             </span>
                                           </div>
-                                          {deviationByType.has(`${item.class}|${item.type}`) && (
-                                            <span
-                                              className={`text-xs ${getAdherenceColor(deviationByType.get(`${item.class}|${item.type}`)!)}`}
-                                            >
-                                              {t("dashboard.adherence.rowDeviation", {
-                                                value: deviationByType
-                                                  .get(`${item.class}|${item.type}`)!
-                                                  .toFixed(1),
-                                              })}
-                                            </span>
-                                          )}
                                         </div>
                                       </TableCell>
                                       <TableCell className="text-right text-sm whitespace-nowrap">
@@ -597,6 +632,17 @@ export const Dashboard = () => {
                                       </TableCell>
                                       <TableCell className="text-right font-medium text-sm whitespace-nowrap">
                                         {(item.targetPercentage * 100).toFixed(1)}%
+                                      </TableCell>
+                                      <TableCell
+                                        className={`text-right text-sm whitespace-nowrap ${
+                                          deviationByType.has(`${item.class}|${item.type}`)
+                                            ? getAdherenceColor(deviationByType.get(`${item.class}|${item.type}`)!)
+                                            : "text-muted-foreground"
+                                        }`}
+                                      >
+                                        {deviationByType.has(`${item.class}|${item.type}`)
+                                          ? `${deviationByType.get(`${item.class}|${item.type}`)!.toFixed(1)} pp`
+                                          : "—"}
                                       </TableCell>
                                     </TableRow>
                                   ))

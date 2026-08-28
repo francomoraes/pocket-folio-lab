@@ -1,6 +1,5 @@
-import { useMyLinks } from "@/features/manager/hooks/useMyLinks";
 import { useMyLinkHistory } from "@/features/manager/hooks/useMyLinkHistory";
-import { ManagerLinkCard } from "@/features/manager/components/ManagerLinkCard";
+import { LinkStatusBadge } from "@/features/manager/components/LinkStatusBadge";
 import {
   Accordion,
   AccordionContent,
@@ -24,7 +23,6 @@ export const ManagerLinksPage = () => {
   const { t, i18n } = useTranslation();
   const locale = i18n.resolvedLanguage || "pt-BR";
 
-  const { links, isLoading } = useMyLinks();
   const { history, isLoading: isLoadingHistory } = useMyLinkHistory();
 
   const fmt = (d: string | null) =>
@@ -34,28 +32,15 @@ export const ManagerLinksPage = () => {
     cents != null ? formatCentsToCurrency(cents, "BRL") : "—";
 
   return (
-    <div className="flex flex-col gap-6 p-4 max-w-3xl mx-auto">
+    <div className="flex flex-col gap-6 p-4 max-w-5xl mx-auto">
       <div>
         <h1 className="text-2xl font-bold">{t("managers.title")}</h1>
-        <p className="text-muted-foreground text-sm">{t("managers.subtitle")}</p>
+        <p className="text-muted-foreground text-sm">
+          {t("managers.subtitle")}
+        </p>
       </div>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-3">{t("managers.myManagers")}</h2>
-        {isLoading ? (
-          <CircularProgress />
-        ) : links.length === 0 ? (
-          <p className="text-muted-foreground text-sm">{t("managers.noLinks")}</p>
-        ) : (
-          <div className="flex flex-col gap-2">
-            {links.map((link) => (
-              <ManagerLinkCard key={link.id} link={link} />
-            ))}
-          </div>
-        )}
-      </section>
-
-      <Accordion type="single" collapsible>
+      <Accordion type="single" collapsible defaultValue="history">
         <AccordionItem value="history" className="border rounded-lg">
           <AccordionTrigger className="px-4 hover:no-underline">
             <span className="font-semibold">{t("managers.history.title")}</span>
@@ -76,10 +61,15 @@ export const ManagerLinksPage = () => {
                     <TableHeader>
                       <TableRow>
                         <TableHead>{t("managers.history.manager")}</TableHead>
+                        <TableHead>{t("managers.history.email")}</TableHead>
                         <TableHead>{t("managers.history.start")}</TableHead>
                         <TableHead>{t("managers.history.end")}</TableHead>
-                        <TableHead>{t("managers.history.initialWealth")}</TableHead>
-                        <TableHead>{t("managers.history.finalWealth")}</TableHead>
+                        <TableHead>
+                          {t("managers.history.initialWealth")}
+                        </TableHead>
+                        <TableHead>
+                          {t("managers.history.finalWealth")}
+                        </TableHead>
                         <TableHead>{t("managers.history.status")}</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -87,18 +77,19 @@ export const ManagerLinksPage = () => {
                       {history.map((cycle, idx) => (
                         <TableRow key={idx}>
                           <TableCell>{cycle.managerName}</TableCell>
+                          <TableCell>{cycle.managerEmail}</TableCell>
                           <TableCell>{fmt(cycle.cycleStartAt)}</TableCell>
                           <TableCell>{fmt(cycle.cycleEndAt)}</TableCell>
                           <TableCell>
                             {formatWealth(cycle.initialWealthCents)}
                           </TableCell>
                           <TableCell>
-                            {cycle.status === "active"
+                            {cycle.linkStatus === "active"
                               ? formatWealth(cycle.currentWealthCents)
                               : formatWealth(cycle.finalWealthCents)}
                           </TableCell>
-                          <TableCell className="capitalize">
-                            {t(`linkStatus.${cycle.status}`)}
+                          <TableCell>
+                            <LinkStatusBadge status={cycle.linkStatus} />
                           </TableCell>
                         </TableRow>
                       ))}

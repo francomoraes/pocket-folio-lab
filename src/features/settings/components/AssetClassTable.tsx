@@ -107,7 +107,9 @@ export const AssetClassTable = ({ investorId }: { investorId?: number } = {}) =>
   return (
     <div className="flex flex-col gap-3 h-[calc(100vh-216px)] p-3">
       <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
-        {canWrite && <AssetClassDialog mode="create" investorId={investorId} />}
+        <div>
+          {canWrite && <AssetClassDialog mode="create" investorId={investorId} />}
+        </div>
         <Card
           className={`p-3 sm:p-4 border-2 flex justify-between sm:flex-col flex-row items-center gap-2 w-full sm:w-auto ${getPercentageBgColor(totalPercentage)}`}
         >

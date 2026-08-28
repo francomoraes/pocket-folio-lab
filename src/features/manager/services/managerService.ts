@@ -2,6 +2,7 @@ import { API_ENDPOINTS } from "@/config/api";
 import { api } from "@/lib/axios";
 import {
   AvailableManager,
+  ClientScope,
   ClientSortBy,
   ManagerClientsResponse,
   ManagerDashboard,
@@ -63,9 +64,10 @@ class ManagerService {
     return response.data;
   }
 
-  async getDashboard(): Promise<ManagerDashboard> {
+  async getDashboard(params?: { scope?: ClientScope }): Promise<ManagerDashboard> {
     const response = await api.get<ManagerDashboard>(
       API_ENDPOINTS.managers.dashboard,
+      { params },
     );
     return response.data;
   }
@@ -76,6 +78,8 @@ class ManagerService {
     itemsPerPage?: number;
     sortBy?: ClientSortBy;
     order?: string;
+    scope?: ClientScope;
+    activeOnly?: boolean;
   }): Promise<ManagerClientsResponse> {
     const response = await api.get<ManagerClientsResponse>(
       API_ENDPOINTS.managers.clients,

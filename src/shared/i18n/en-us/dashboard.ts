@@ -18,6 +18,7 @@ export default {
       percentage: "%",
       actualPercentage: "% Actual",
       targetPercentage: "% Target",
+      deviation: "Deviation",
     },
     empty: "No data available",
   },

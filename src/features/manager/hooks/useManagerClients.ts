@@ -1,7 +1,7 @@
 import { managerService } from "@/features/manager/services/managerService";
 import { managerLinkService } from "@/features/manager/services/managerLinkService";
 import { QUERY_KEYS } from "@/shared/constants/queryKeys";
-import { ClientSortBy } from "@/shared/types/manager";
+import { ClientScope, ClientSortBy } from "@/shared/types/manager";
 import {
   keepPreviousData,
   useMutation,
@@ -18,6 +18,8 @@ export const useManagerClients = (params?: {
   itemsPerPage?: number;
   sortBy?: ClientSortBy;
   order?: string;
+  scope?: ClientScope;
+  activeOnly?: boolean;
 }) => {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
