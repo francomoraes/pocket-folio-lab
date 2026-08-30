@@ -15,6 +15,7 @@ export default {
     viewPortfolio: "Ver carteira",
     endLink: "Encerrar vínculo",
     empty: "Nenhum cliente encontrado",
+    loadError: "Erro ao carregar clientes",
   },
   scope: {
     mine: "Meus clientes",

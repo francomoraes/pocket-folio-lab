@@ -15,6 +15,7 @@ export default {
     viewPortfolio: "View portfolio",
     endLink: "End link",
     empty: "No clients found",
+    loadError: "Error loading clients",
   },
   scope: {
     mine: "My clients",

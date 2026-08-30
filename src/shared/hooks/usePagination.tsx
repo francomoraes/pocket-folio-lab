@@ -42,9 +42,12 @@ export const usePagination = ({
 
   const goToPage = (pageNumber: number) => {
     if (!meta) return;
-    const validPage = Math.min(Math.max(1, pageNumber), meta.totalPages);
+    const upperBound = meta.totalPages > 0 ? meta.totalPages : 1;
+    const validPage = Math.min(Math.max(1, pageNumber), upperBound);
     setPage(validPage);
   };
+
+  const resetPage = () => setPage(1);
 
   const changeItemsPerPage = (newItemsPerPage: number) => {
     localStorage.setItem(STORAGE_KEY, String(newItemsPerPage));
@@ -73,6 +76,7 @@ export const usePagination = ({
     nextPage,
     previousPage,
     goToPage,
+    resetPage,
     changeItemsPerPage,
     toggleSort,
   };

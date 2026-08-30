@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 import { useManagerDashboard } from "@/features/manager/hooks/useManagerDashboard";
 import { useManagerClients } from "@/features/manager/hooks/useManagerClients";
 import { ManagerDashboardStats } from "@/features/manager/components/ManagerDashboardStats";
@@ -90,8 +92,15 @@ export const ManagerDashboardPage = () => {
     initialItemsPerPage: 10,
     initialSortBy: "name",
   });
-  const { page, itemsPerPage, sortBy, order, setMeta, toggleSort, goToPage } =
-    pagination;
+  const {
+    page,
+    itemsPerPage,
+    sortBy,
+    order,
+    setMeta,
+    toggleSort,
+    resetPage,
+  } = pagination;
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -103,6 +112,7 @@ export const ManagerDashboardPage = () => {
     clients,
     meta,
     isLoading: isClientsLoading,
+    error: clientsError,
     createLink,
     isCreating,
     revokeLink,
@@ -126,9 +136,15 @@ export const ManagerDashboardPage = () => {
   }, [meta, setMeta]);
 
   useEffect(() => {
-    goToPage(1);
+    resetPage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch, scope, activeOnly]);
+
+  useEffect(() => {
+    if (clientsError) {
+      toast.error(resolveErrorMessage(clientsError, "clients.table.loadError"));
+    }
+  }, [clientsError]);
 
   const toggleStatsOpen = (open: boolean) => {
     setStatsOpen(open);
