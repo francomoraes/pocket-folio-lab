@@ -35,6 +35,7 @@ export default {
     delete: "Delete Asset Type",
     table: {
       name: "Name",
+      previousTargetPercentage: "Previous target",
       targetPercentage: "Target Percentage (%)",
       class: "Class",
       actions: "Actions",

@@ -9,6 +9,7 @@ import {
   PaginationMeta,
   ClientAssetTypeTarget,
   RiskProfile,
+  ManagerHistoryCycle,
 } from "@/shared/types/manager";
 import { SummaryData, SummaryResponse } from "@/shared/types/summary";
 import {
@@ -50,6 +51,10 @@ import {
   CreateAssetTransactionRequest,
   UpdateAssetTransactionRequest,
 } from "@/shared/types/assetTransaction";
+import {
+  OperationLogAction,
+  OperationLogListResponse,
+} from "@/shared/types/operationLog";
 
 class ManagerService {
   async getAvailableManagers(params: {
@@ -473,6 +478,24 @@ class ManagerService {
       user: { id: number; riskProfile: RiskProfile; riskProfileUpdatedAt: string };
     }>(API_ENDPOINTS.managers.clientRiskProfile(investorId), { riskProfile });
     return response.data;
+  }
+
+  async getClientOperationLogs(
+    investorId: number,
+    params?: { page?: number; itemsPerPage?: number; action?: OperationLogAction },
+  ): Promise<OperationLogListResponse> {
+    const response = await api.get<OperationLogListResponse>(
+      API_ENDPOINTS.managers.clientOperationLogs(investorId),
+      { params },
+    );
+    return response.data;
+  }
+
+  async getClientLinkHistory(investorId: number): Promise<ManagerHistoryCycle[]> {
+    const response = await api.get<{ data: ManagerHistoryCycle[] }>(
+      API_ENDPOINTS.managers.clientLinkHistory(investorId),
+    );
+    return response.data.data;
   }
 }
 

@@ -41,6 +41,11 @@ import { useAuth } from "@/shared/hooks/useAuth";
 // com "Lançar Operação", ou se o fluxo de criar ativo direto sai de vez.
 const SHOW_ADD_ASSET_BUTTON = false;
 
+// TODO(franco): reavaliar exibição das ações de editar/excluir ativo
+// diretamente enquanto as condições de edição manual são validadas com o
+// sócio. Lógica de edição/exclusão continua intacta, só a coluna some.
+const SHOW_ASSET_ACTIONS_COLUMN = false;
+
 const VariableIncome = ({ investorId }: { investorId?: number } = {}) => {
   const { t } = useTranslation();
   const { canOperateOwnPortfolio } = useAuth();
@@ -262,7 +267,7 @@ const VariableIncome = ({ investorId }: { investorId?: number } = {}) => {
                 <TableHead className="w-[50px]">
                   {t("positions.actions.viewHistory")}
                 </TableHead>
-                {canOperate && (
+                {canOperate && SHOW_ASSET_ACTIONS_COLUMN && (
                   <TableHead className="w-[80px]">
                     {t("positions.table.headers.actions")}
                   </TableHead>
@@ -273,7 +278,7 @@ const VariableIncome = ({ investorId }: { investorId?: number } = {}) => {
               {!assets || assets?.data?.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={canOperate ? 12 : 11}
+                    colSpan={canOperate && SHOW_ASSET_ACTIONS_COLUMN ? 12 : 11}
                     className="text-center text-muted-foreground py-8"
                   >
                     {t("positions.table.empty")}
@@ -380,7 +385,7 @@ const VariableIncome = ({ investorId }: { investorId?: number } = {}) => {
                         <History className="h-4 w-4" />
                       </Button>
                     </TableCell>
-                    {canOperate && (
+                    {canOperate && SHOW_ASSET_ACTIONS_COLUMN && (
                       <TableCell>
                         <div className="flex">
                           <Button

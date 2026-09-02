@@ -5,6 +5,7 @@ export default {
     dashboard: "Dashboard",
     settings: "Configurações",
     managers: "Gestores",
+    history: "Logs",
     clients: "Clientes",
     managerDashboard: "Dashboard Gestor",
     adminDashboard: "Dashboard Admin",

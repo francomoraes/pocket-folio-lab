@@ -72,6 +72,9 @@ export const ManagerContextBanner = ({
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.clientProfile(investorId),
       });
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.clientOperationLogs(investorId),
+      });
       toast.success(t("managerContext.autonomy.updated"));
     },
     onError: (error) => {
@@ -85,6 +88,9 @@ export const ManagerContextBanner = ({
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.clientProfile(investorId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.clientOperationLogs(investorId),
       });
       toast.success(t("managerContext.riskProfile.updated"));
     },
@@ -179,6 +185,12 @@ export const ManagerContextBanner = ({
             className={navLinkClass}
           >
             {t("managerContext.nav.settings")}
+          </NavLink>
+          <NavLink
+            to={`/manager/clients/${investorId}/history`}
+            className={navLinkClass}
+          >
+            {t("managerContext.nav.history")}
           </NavLink>
         </nav>
 

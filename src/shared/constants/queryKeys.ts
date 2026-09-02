@@ -46,4 +46,13 @@ export const QUERY_KEYS = {
     ["manager", "clients", investorId, "profile"] as const,
   adminUsers: (params?: object) => ["admin", "users", params],
   adminDashboard: ["admin", "dashboard"] as const,
+
+  myOperationLogs: (params?: object) =>
+    params ? (["operation-logs", "me", params] as const) : (["operation-logs", "me"] as const),
+  clientOperationLogs: (investorId: number, params?: object) =>
+    params
+      ? (["manager", "clients", investorId, "operation-logs", params] as const)
+      : (["manager", "clients", investorId, "operation-logs"] as const),
+  clientLinkHistory: (investorId: number) =>
+    ["manager", "clients", investorId, "link-history"] as const,
 };

@@ -6,6 +6,7 @@ export default {
     positions: "Posições",
     targets: "Metas",
     settings: "Configurações",
+    history: "Logs",
   },
   autonomy: {
     label: "Autonomia",

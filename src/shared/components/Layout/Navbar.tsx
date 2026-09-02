@@ -36,6 +36,7 @@ export const Navbar = () => {
           { to: "/positions", label: t("navbar.links.positions") },
           { to: "/settings", label: t("navbar.links.settings") },
           { to: "/my-managers", label: t("navbar.links.managers") },
+          { to: "/history", label: t("navbar.links.history") },
         ]),
   ];
 

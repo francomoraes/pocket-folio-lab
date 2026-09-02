@@ -18,6 +18,9 @@ export const useWealthHistory = (investorId?: number) => {
   const queryKey = investorId
     ? QUERY_KEYS.clientWealthHistory(investorId)
     : (["wealthHistory"] as const);
+  const operationLogsKey = investorId
+    ? QUERY_KEYS.clientOperationLogs(investorId)
+    : QUERY_KEYS.myOperationLogs();
 
   const {
     data: wealthHistory,
@@ -42,6 +45,7 @@ export const useWealthHistory = (investorId?: number) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: operationLogsKey });
       toast.success(t("dashboard.wealthHistory.messages.created"));
     },
     onError: (error: Error) => {
@@ -68,6 +72,7 @@ export const useWealthHistory = (investorId?: number) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: operationLogsKey });
       toast.success(t("dashboard.wealthHistory.messages.updated"));
     },
     onError: (error: Error) => {
@@ -88,6 +93,7 @@ export const useWealthHistory = (investorId?: number) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: operationLogsKey });
       toast.success(t("dashboard.wealthHistory.messages.deleted"));
     },
     onError: (error: Error) => {

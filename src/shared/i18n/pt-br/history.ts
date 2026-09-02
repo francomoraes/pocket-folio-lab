@@ -1,0 +1,43 @@
+export default {
+  title: "Logs",
+  linkHistory: {
+    title: "Histórico de vínculo",
+  },
+  log: {
+    title: "Log de alterações",
+    subtitle: "Tudo que mudou na sua carteira, quando e por quem.",
+    empty: "Nenhuma alteração registrada ainda.",
+  },
+  actors: {
+    investor: "cliente",
+    manager: "gestor",
+    admin: "admin",
+    system: "Snapshot automático",
+  },
+  actions: {
+    target_percentage_change: "alterou a meta",
+    asset_class_created: "criou a classe de ativo",
+    asset_class_updated: "renomeou a classe de ativo",
+    asset_class_deleted: "excluiu a classe de ativo",
+    asset_type_created: "criou o tipo de ativo",
+    asset_type_updated: "editou o tipo de ativo",
+    asset_type_deleted: "excluiu o tipo de ativo",
+    institution_created: "criou a instituição",
+    institution_updated: "renomeou a instituição",
+    institution_deleted: "excluiu a instituição",
+    link_added: "adicionou o vínculo com o gestor",
+    link_revoked: "encerrou o vínculo com o gestor",
+    autonomy_granted: "concedeu autonomia",
+    autonomy_revoked: "revogou autonomia",
+    risk_profile_changed: "alterou o perfil de risco",
+    wealth_history_created: "lançou patrimônio",
+    wealth_history_updated: "editou um lançamento de patrimônio",
+    wealth_history_deleted: "excluiu um lançamento de patrimônio",
+    asset_manual_edit: "editou um ativo manualmente",
+  },
+  badge: {
+    changed: "alterado em {{date}}",
+    tooltip: "de {{before}}% para {{after}}%, por {{actor}}",
+    tooltipNoBefore: "para {{after}}%, por {{actor}}",
+  },
+};

@@ -1,0 +1,43 @@
+export default {
+  title: "Logs",
+  linkHistory: {
+    title: "Link history",
+  },
+  log: {
+    title: "Change log",
+    subtitle: "Everything that changed in your portfolio, when, and by whom.",
+    empty: "No changes recorded yet.",
+  },
+  actors: {
+    investor: "client",
+    manager: "manager",
+    admin: "admin",
+    system: "Automatic snapshot",
+  },
+  actions: {
+    target_percentage_change: "changed the target",
+    asset_class_created: "created the asset class",
+    asset_class_updated: "renamed the asset class",
+    asset_class_deleted: "deleted the asset class",
+    asset_type_created: "created the asset type",
+    asset_type_updated: "edited the asset type",
+    asset_type_deleted: "deleted the asset type",
+    institution_created: "created the institution",
+    institution_updated: "renamed the institution",
+    institution_deleted: "deleted the institution",
+    link_added: "added the manager link",
+    link_revoked: "ended the manager link",
+    autonomy_granted: "granted autonomy",
+    autonomy_revoked: "revoked autonomy",
+    risk_profile_changed: "changed the risk profile",
+    wealth_history_created: "logged wealth",
+    wealth_history_updated: "edited a wealth entry",
+    wealth_history_deleted: "deleted a wealth entry",
+    asset_manual_edit: "manually edited an asset",
+  },
+  badge: {
+    changed: "changed on {{date}}",
+    tooltip: "from {{before}}% to {{after}}%, by {{actor}}",
+    tooltipNoBefore: "to {{after}}%, by {{actor}}",
+  },
+};

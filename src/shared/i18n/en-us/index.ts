@@ -17,6 +17,7 @@ import admin from "./admin";
 import linkStatus from "./linkStatus";
 import users from "./users";
 import riskProfile from "./riskProfile";
+import history from "./history";
 
 export default {
   common,
@@ -38,4 +39,5 @@ export default {
   linkStatus,
   users,
   riskProfile,
+  history,
 };

@@ -18,6 +18,9 @@ export const useInstitutions = (
   const queryKey = investorId
     ? QUERY_KEYS.clientInstitutions(investorId)
     : QUERY_KEYS.INSTITUTIONS;
+  const operationLogsKey = investorId
+    ? QUERY_KEYS.clientOperationLogs(investorId)
+    : QUERY_KEYS.myOperationLogs();
 
   const {
     data: rawInstitutions,
@@ -45,6 +48,7 @@ export const useInstitutions = (
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: operationLogsKey });
     },
     onError: (error: Error) => {
       toast.error(
@@ -64,6 +68,7 @@ export const useInstitutions = (
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: operationLogsKey });
     },
     onError: (error: Error) => {
       toast.error(resolveErrorMessage(error, "auth.messages.updateError"));
@@ -78,6 +83,7 @@ export const useInstitutions = (
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: operationLogsKey });
     },
     onError: (error: Error) => {
       toast.error(

@@ -72,6 +72,9 @@ export const API_ENDPOINTS = {
     update: "wealth-history/:id",
     delete: "wealth-history/:id",
   },
+  operationLogs: {
+    list: "operation-logs",
+  },
   managers: {
     list: "managers",
     dashboard: "managers/me/dashboard",
@@ -166,6 +169,10 @@ export const API_ENDPOINTS = {
       delete: (investorId: number, id: number) =>
         `managers/me/clients/${investorId}/wealth-history/${id}`,
     },
+    clientOperationLogs: (investorId: number) =>
+      `managers/me/clients/${investorId}/operation-logs`,
+    clientLinkHistory: (investorId: number) =>
+      `managers/me/clients/${investorId}/link-history`,
   },
   managerLinks: {
     create: "manager-links",

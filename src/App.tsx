@@ -26,8 +26,10 @@ import { ClientPositionsPage } from "@/features/manager/pages/ClientPositionsPag
 import { ClientTargetsPage } from "@/features/manager/pages/ClientTargetsPage";
 import { ClientDashboardPage } from "@/features/manager/pages/ClientDashboardPage";
 import { ClientSettingsPage } from "@/features/manager/pages/ClientSettingsPage";
+import { ClientHistoryPage } from "@/features/manager/pages/ClientHistoryPage";
 import { AdminUsersPage } from "@/features/admin/pages/AdminUsersPage";
 import { AdminDashboardPage } from "@/features/admin/pages/AdminDashboardPage";
+import { HistoryPage } from "@/pages/HistoryPage";
 
 function AutoRefreshPrices() {
   useAutoRefreshPrices();
@@ -85,6 +87,14 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/history"
+                element={
+                  <ProtectedRoute requiredRole="investor">
+                    <HistoryPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/login" element={<LoginForm />} />
 
               {/* Vínculos gestor-cliente: qualquer role autenticada pode ter seus próprios gestores */}
@@ -135,6 +145,14 @@ const App = () => (
                 element={
                   <ProtectedRoute requiredRole="manager">
                     <ClientSettingsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/manager/clients/:investorId/history"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <ClientHistoryPage />
                   </ProtectedRoute>
                 }
               />

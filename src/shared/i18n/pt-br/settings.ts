@@ -35,6 +35,7 @@ export default {
     delete: "Excluir Tipo de Ativo",
     table: {
       name: "Nome",
+      previousTargetPercentage: "Meta anterior",
       targetPercentage: "Percentual Meta (%)",
       class: "Classe",
       actions: "Ações",

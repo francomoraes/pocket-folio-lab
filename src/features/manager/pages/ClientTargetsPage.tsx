@@ -26,6 +26,8 @@ import {
   getPercentageBgColor,
   getPercentageColor,
 } from "@/shared/utils/formatters";
+import { useRecentTargetPercentageChanges } from "@/shared/hooks/useRecentTargetPercentageChanges";
+import { TargetPercentageChangedBadge } from "@/shared/components/TargetPercentageChangedBadge";
 
 export const ClientTargetsPage = () => {
   const { investorId } = useParams<{ investorId: string }>();
@@ -35,6 +37,7 @@ export const ClientTargetsPage = () => {
 
   const [editValues, setEditValues] = useState<Record<number, string>>({});
   const [savingId, setSavingId] = useState<number | null>(null);
+  const recentChanges = useRecentTargetPercentageChanges(id);
 
   const { data, isLoading } = useQuery({
     queryKey: QUERY_KEYS.clientProfile(id),
@@ -72,6 +75,9 @@ export const ClientTargetsPage = () => {
       ),
     onSuccess: (_, { assetTypeId }) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.clientProfile(id) });
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.clientOperationLogs(id),
+      });
       setEditValues((prev) => {
         const next = { ...prev };
         delete next[assetTypeId];
@@ -218,6 +224,9 @@ export const ClientTargetsPage = () => {
                             className="w-24 h-8 text-sm"
                           />
                           <span className="text-sm text-muted-foreground">%</span>
+                          <TargetPercentageChangedBadge
+                            change={recentChanges.get(assetType.assetTypeId)}
+                          />
                         </div>
                       </TableCell>
                       <TableCell>

@@ -36,6 +36,8 @@ import {
 } from "@/shared/components/ui/sheet";
 import { SortableTableHead } from "@/shared/components/ui/sortable-table-head";
 import { useAuth } from "@/shared/hooks/useAuth";
+import { useRecentTargetPercentageChanges } from "@/shared/hooks/useRecentTargetPercentageChanges";
+import { TargetPercentageChangedBadge } from "@/shared/components/TargetPercentageChangedBadge";
 
 type SortBy = "name" | "targetPercentage" | "class";
 type SortOrder = "ASC" | "DESC";
@@ -43,6 +45,7 @@ type SortOrder = "ASC" | "DESC";
 export const AssetTypesTable = ({ investorId }: { investorId?: number } = {}) => {
   const { canOperateOwnPortfolio } = useAuth();
   const canWrite = !!investorId || canOperateOwnPortfolio;
+  const recentChanges = useRecentTargetPercentageChanges(investorId);
   const { assetTypes, isLoading, deleteAssetType, isDeleting } =
     useAssetTypes(investorId);
   const [editingClass, setEditingClass] = useState<AssetType | null>(null);
@@ -289,6 +292,9 @@ export const AssetTypesTable = ({ investorId }: { investorId?: number } = {}) =>
                 currentOrder={order}
                 onSort={toggleSort}
               />
+              <TableHead>
+                {t("settings.assetTypes.table.previousTargetPercentage")}
+              </TableHead>
               <SortableTableHead
                 label={t("settings.assetTypes.table.targetPercentage")}
                 sortKey="targetPercentage"
@@ -314,7 +320,19 @@ export const AssetTypesTable = ({ investorId }: { investorId?: number } = {}) =>
             {sortedAssetTypes.map((assetType) => (
               <TableRow key={assetType.id}>
                 <TableCell>{assetType.name}</TableCell>
-                <TableCell>{assetType.targetPercentage * 100 + "%"}</TableCell>
+                <TableCell className="text-muted-foreground">
+                  {recentChanges.get(assetType.id)?.beforeTargetPercentage != null
+                    ? `${(recentChanges.get(assetType.id)!.beforeTargetPercentage! * 100).toFixed(1)}%`
+                    : "-"}
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    {assetType.targetPercentage * 100 + "%"}
+                    <TargetPercentageChangedBadge
+                      change={recentChanges.get(assetType.id)}
+                    />
+                  </div>
+                </TableCell>
                 <TableCell>{assetType.assetClass.name}</TableCell>
                 {canWrite && (
                   <TableCell className="text-right">

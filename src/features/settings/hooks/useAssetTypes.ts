@@ -15,6 +15,9 @@ export const useAssetTypes = (
   const queryKey = investorId
     ? QUERY_KEYS.clientAssetTypes(investorId)
     : QUERY_KEYS.ASSET_TYPES;
+  const operationLogsKey = investorId
+    ? QUERY_KEYS.clientOperationLogs(investorId)
+    : QUERY_KEYS.myOperationLogs();
 
   const {
     data: rawAssetTypes,
@@ -44,6 +47,7 @@ export const useAssetTypes = (
       queryClient.invalidateQueries({ queryKey });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
+      queryClient.invalidateQueries({ queryKey: operationLogsKey });
     },
     onError: (error: Error) => {
       toast.error(
@@ -62,6 +66,7 @@ export const useAssetTypes = (
       queryClient.invalidateQueries({ queryKey });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
+      queryClient.invalidateQueries({ queryKey: operationLogsKey });
     },
     onError: (error: Error) => {
       toast.error(resolveErrorMessage(error, "auth.messages.updateError"));
@@ -78,6 +83,7 @@ export const useAssetTypes = (
       queryClient.invalidateQueries({ queryKey });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SUMMARY });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OVERVIEW });
+      queryClient.invalidateQueries({ queryKey: operationLogsKey });
     },
     onError: (error: Error) => {
       toast.error(
