@@ -8,23 +8,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from "@/shared/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { useLoginForm } from "@/features/auth/components/LoginForm/useLoginForm";
 import { useTranslation } from "react-i18next";
-import { cn } from "@/lib/utils";
 import { Navigate } from "react-router-dom";
 
 export const LoginForm = () => {
   const {
     isRegisterMode,
     isLoading,
-    loginTab,
-    changeTab,
     canRegister,
     register,
     handleSubmit,
@@ -41,12 +33,7 @@ export const LoginForm = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4 bg-background">
-      <Card
-        className={cn(
-          "w-full max-w-md border-t-4 transition-colors",
-          loginTab === "investor" ? "border-t-accent" : "border-t-warning",
-        )}
-      >
+      <Card className="w-full max-w-md border-t-4 border-t-accent">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold">
             {t("navbar.appName")}
@@ -59,28 +46,6 @@ export const LoginForm = () => {
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <Tabs
-            value={loginTab}
-            onValueChange={(v) => changeTab(v as "investor" | "manager")}
-          >
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger
-                value="investor"
-                disabled={isLoading}
-                className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
-              >
-                {t("auth.login.tabs.client")}
-              </TabsTrigger>
-              <TabsTrigger
-                value="manager"
-                disabled={isLoading}
-                className="data-[state=active]:bg-warning data-[state=active]:text-warning-foreground"
-              >
-                {t("auth.login.tabs.manager")}
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {isRegisterMode && (
               <div className="space-y-2">
@@ -139,12 +104,7 @@ export const LoginForm = () => {
 
             <Button
               type="submit"
-              className={cn(
-                "w-full",
-                loginTab === "investor"
-                  ? "bg-accent text-accent-foreground hover:bg-accent/90"
-                  : "bg-warning text-warning-foreground hover:bg-warning/90",
-              )}
+              className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
               disabled={isLoading}
             >
               {isLoading ? (

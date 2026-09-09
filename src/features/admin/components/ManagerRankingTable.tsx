@@ -18,6 +18,8 @@ import { useTranslation } from "react-i18next";
 
 interface ManagerRankingTableProps {
   ranking: ManagerRankingRow[];
+  currency: "BRL" | "USD";
+  usdToBrlRate: number;
 }
 
 type SortKey =
@@ -38,10 +40,17 @@ const SORT_VALUE: Record<SortKey, (row: ManagerRankingRow) => string | number> =
   percentageVariation: (row) => row.percentageVariation,
 };
 
-export const ManagerRankingTable = ({ ranking }: ManagerRankingTableProps) => {
+export const ManagerRankingTable = ({
+  ranking,
+  currency,
+  usdToBrlRate,
+}: ManagerRankingTableProps) => {
   const { t } = useTranslation();
   const [sortBy, setSortBy] = useState<SortKey>("wealth");
   const [order, setOrder] = useState<SortOrder>("DESC");
+
+  const toDisplay = (cents: number) =>
+    currency === "BRL" ? cents : Math.round(cents / usdToBrlRate);
 
   const toggleSort = (key: string) => {
     if (key === sortBy) {
@@ -142,10 +151,16 @@ export const ManagerRankingTable = ({ ranking }: ManagerRankingTableProps) => {
                     {manager.activeClientsCount}
                   </TableCell>
                   <TableCell className="text-right">
-                    {formatCentsToCurrency(manager.totalWealthCents, "BRL")}
+                    {formatCentsToCurrency(
+                      toDisplay(manager.totalWealthCents),
+                      currency,
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
-                    {formatCentsToCurrency(manager.totalInitialWealthCents, "BRL")}
+                    {formatCentsToCurrency(
+                      toDisplay(manager.totalInitialWealthCents),
+                      currency,
+                    )}
                   </TableCell>
                   <TableCell
                     className={`text-right ${
@@ -153,7 +168,10 @@ export const ManagerRankingTable = ({ ranking }: ManagerRankingTableProps) => {
                     }`}
                   >
                     {variationPositive ? "+" : ""}
-                    {formatCentsToCurrency(manager.absoluteVariationCents, "BRL")}
+                    {formatCentsToCurrency(
+                      toDisplay(manager.absoluteVariationCents),
+                      currency,
+                    )}
                   </TableCell>
                   <TableCell
                     className={`text-right ${getVariationColor(manager.percentageVariation)}`}

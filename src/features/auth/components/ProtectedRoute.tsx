@@ -1,6 +1,7 @@
 import CircularProgress from "@/shared/components/ui/circular-progress";
 import { useAuth } from "@/shared/hooks/useAuth";
 import { UserRole } from "@/shared/types/roles";
+import { resolveHomePathForRole } from "@/shared/utils/roles";
 import { Navigate } from "react-router-dom";
 
 type ProtectedRoutesProps = {
@@ -31,12 +32,7 @@ export const ProtectedRoute = ({ children, requiredRole }: ProtectedRoutesProps)
   }
 
   if (requiredRole && !hasAccess(user?.role, requiredRole)) {
-    return (
-      <Navigate
-        to={user?.role === "investor" ? "/dashboard" : "/manager/dashboard"}
-        replace
-      />
-    );
+    return <Navigate to={resolveHomePathForRole(user?.role)} replace />;
   }
 
   return <>{children}</>;

@@ -7,10 +7,6 @@ export default {
     submit: "Sign In",
     noAccount: "Don't have an account?",
     createAccount: "Create account",
-    tabs: {
-      client: "I'm a client",
-      manager: "I'm a manager",
-    },
     placeholders: {
       name: "Your name",
       email: "your@email.com",
@@ -136,7 +132,6 @@ export default {
     CRYPTO_ACCOUNT_NOT_FOUND: "Crypto account not found.",
     CONNECTED_ASSET_QUANTITY_LOCKED:
       "This asset is synced automatically and does not allow manual editing of quantity, ticker, or currency.",
-    ROLE_TAB_MISMATCH: "This account doesn't belong to this tab. Try the other tab.",
     SELF_REGISTRATION_DISABLED: "Self-registration is currently disabled.",
     ROLE_NOT_ALLOWED: "You don't have permission to create a user with this role.",
     MANAGER_CANNOT_OWN_PORTFOLIO: "Managers cannot have their own portfolio.",

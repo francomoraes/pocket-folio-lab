@@ -7,10 +7,6 @@ export default {
     submit: "Entrar",
     noAccount: "Não tem uma conta?",
     createAccount: "Criar conta",
-    tabs: {
-      client: "Sou cliente",
-      manager: "Sou gestor",
-    },
     placeholders: {
       name: "Seu nome",
       email: "seu@email.com",
@@ -136,8 +132,6 @@ export default {
     CRYPTO_ACCOUNT_NOT_FOUND: "Conta cripto não encontrada.",
     CONNECTED_ASSET_QUANTITY_LOCKED:
       "Este ativo é sincronizado automaticamente e não permite edição manual de quantidade, ticker ou moeda.",
-    ROLE_TAB_MISMATCH:
-      "Esta conta não é dessa aba. Tente entrar pela outra aba.",
     SELF_REGISTRATION_DISABLED: "O autocadastro está desativado no momento.",
     ROLE_NOT_ALLOWED: "Você não tem permissão para criar um usuário com esse perfil.",
     MANAGER_CANNOT_OWN_PORTFOLIO: "Gestores não podem ter carteira própria.",

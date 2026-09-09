@@ -11,4 +11,5 @@ export default {
     adminDashboard: "Dashboard Admin",
     adminUsers: "Usuários",
   },
+  exchangeRate: "US$ 1 = R$ {{value}}",
 };

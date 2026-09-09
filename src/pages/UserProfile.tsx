@@ -25,6 +25,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Loader2, Upload, X as XIcon } from "lucide-react";
 import { authService } from "@/features/auth/services/authService";
+import { RiskProfileBadge } from "@/shared/components/RiskProfileBadge";
 
 export const UserProfile = () => {
   const { t } = useTranslation();
@@ -253,6 +254,16 @@ export const UserProfile = () => {
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Risk profile */}
+            {user.role === "investor" && (
+              <div className="space-y-2">
+                <Label>{t("riskProfile.label")}</Label>
+                <div>
+                  <RiskProfileBadge riskProfile={user.riskProfile} />
+                </div>
+              </div>
+            )}
 
             {/* Password Section */}
             <div className="pt-4 border-t">

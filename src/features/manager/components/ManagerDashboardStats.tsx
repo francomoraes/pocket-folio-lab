@@ -1,21 +1,42 @@
 import { ManagerDashboard } from "@/shared/types/manager";
 import { Card } from "@/shared/components/ui/card";
-import { formatCentsToCurrency } from "@/shared/utils/formatters";
+import { CurrencyToggle } from "@/shared/components/CurrencyToggle";
+import {
+  formatCentsToCurrency,
+  formatVariation,
+  getVariationColor,
+} from "@/shared/utils/formatters";
 import { useTranslation } from "react-i18next";
 
+type ManagerDashboardStatsDashboard = Pick<
+  ManagerDashboard,
+  | "activeClientsCount"
+  | "totalWealthUnderManagementCents"
+  | "totalInitialWealthCents"
+  | "absoluteVariationCents"
+  | "percentageVariation"
+  | "exchangeRate"
+>;
+
 interface ManagerDashboardStatsProps {
-  dashboard: ManagerDashboard;
+  dashboard: ManagerDashboardStatsDashboard;
+  currency: "BRL" | "USD";
+  onCurrencyChange: (currency: "BRL" | "USD") => void;
 }
 
 export const ManagerDashboardStats = ({
   dashboard,
+  currency,
+  onCurrencyChange,
 }: ManagerDashboardStatsProps) => {
   const { t } = useTranslation();
 
-  const variationPositive = dashboard.absoluteVariationCents >= 0;
+  const usdToBrlRate = dashboard.exchangeRate?.usdToBrl || 5.7;
+  const toDisplay = (cents: number) =>
+    currency === "BRL" ? cents : Math.round(cents / usdToBrlRate);
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+    <>
       <Card className="p-4">
         <p className="text-sm text-muted-foreground">
           {t("managerDashboard.metrics.activeClients")}
@@ -24,14 +45,25 @@ export const ManagerDashboardStats = ({
       </Card>
 
       <Card className="p-4">
-        <p className="text-sm text-muted-foreground">
-          {t("managerDashboard.metrics.totalWealth")}
-        </p>
+        <div className="flex items-center justify-between gap-2 mb-1">
+          <p className="text-sm text-muted-foreground">
+            {t("managerDashboard.metrics.totalWealth")}
+          </p>
+          <CurrencyToggle value={currency} onChange={onCurrencyChange} />
+        </div>
         <p className="text-xl font-semibold">
           {formatCentsToCurrency(
-            dashboard.totalWealthUnderManagementCents,
-            "BRL",
+            toDisplay(dashboard.totalWealthUnderManagementCents),
+            currency,
           )}
+        </p>
+        <p className={`text-sm ${getVariationColor(dashboard.percentageVariation)}`}>
+          {dashboard.absoluteVariationCents < 0 ? "- " : "+"}
+          {formatCentsToCurrency(
+            Math.abs(toDisplay(dashboard.absoluteVariationCents)),
+            currency,
+          )}{" "}
+          · {formatVariation(dashboard.percentageVariation)}
         </p>
       </Card>
 
@@ -40,37 +72,12 @@ export const ManagerDashboardStats = ({
           {t("managerDashboard.metrics.initialWealth")}
         </p>
         <p className="text-xl font-semibold">
-          {formatCentsToCurrency(dashboard.totalInitialWealthCents, "BRL")}
+          {formatCentsToCurrency(
+            toDisplay(dashboard.totalInitialWealthCents),
+            currency,
+          )}
         </p>
       </Card>
-
-      <Card className="p-4">
-        <p className="text-sm text-muted-foreground">
-          {t("managerDashboard.metrics.absoluteVariation")}
-        </p>
-        <p
-          className={`text-xl font-semibold ${
-            variationPositive ? "text-green-600" : "text-red-600"
-          }`}
-        >
-          {variationPositive ? "+" : ""}
-          {formatCentsToCurrency(dashboard.absoluteVariationCents, "BRL")}
-        </p>
-      </Card>
-
-      <Card className="p-4">
-        <p className="text-sm text-muted-foreground">
-          {t("managerDashboard.metrics.percentageVariation")}
-        </p>
-        <p
-          className={`text-xl font-semibold ${
-            variationPositive ? "text-green-600" : "text-red-600"
-          }`}
-        >
-          {variationPositive ? "+" : ""}
-          {dashboard.percentageVariation.toFixed(2)}%
-        </p>
-      </Card>
-    </div>
+    </>
   );
 };

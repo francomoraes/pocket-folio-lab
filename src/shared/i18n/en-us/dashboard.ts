@@ -81,6 +81,7 @@ export default {
       sp500: "S&P500",
       cdi: "CDI",
       ipca: "IPCA",
+      ifix: "IFIX",
     },
     wealthLegend: "Wealth",
   },

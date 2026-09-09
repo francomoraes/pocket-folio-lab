@@ -1,12 +1,32 @@
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useAdminDashboard } from "@/features/admin/hooks/useAdminDashboard";
 import { AdminDashboardStats } from "@/features/admin/components/AdminDashboardStats";
 import { ManagerRankingTable } from "@/features/admin/components/ManagerRankingTable";
+import { ClientsListSection } from "@/features/manager/components/ClientsListSection";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/components/ui/tabs";
 import { useTranslation } from "react-i18next";
 import CircularProgress from "@/shared/components/ui/circular-progress";
 
 export const AdminDashboardPage = () => {
   const { t } = useTranslation();
   const { dashboard, isLoading } = useAdminDashboard();
+  const [currency, setCurrency] = useState<"BRL" | "USD">("BRL");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get("tab") ?? "ranking";
+
+  const handleTabChange = (value: string) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("tab", value);
+      return next;
+    });
+  };
 
   if (isLoading) {
     return (
@@ -33,14 +53,35 @@ export const AdminDashboardPage = () => {
         </p>
       </div>
 
-      <AdminDashboardStats dashboard={dashboard} />
+      <AdminDashboardStats
+        dashboard={dashboard}
+        currency={currency}
+        onCurrencyChange={setCurrency}
+      />
 
-      <section>
-        <h2 className="text-lg font-semibold mb-3">
-          {t("admin.dashboard.ranking.title")}
-        </h2>
-        <ManagerRankingTable ranking={dashboard.managerRanking} />
-      </section>
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <TabsList>
+          <TabsTrigger value="ranking">{t("admin.dashboard.tabs.ranking")}</TabsTrigger>
+          <TabsTrigger value="investors">
+            {t("admin.dashboard.tabs.investors")}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="ranking" className="mt-4">
+          <ManagerRankingTable
+            ranking={dashboard.managerRanking}
+            currency={currency}
+            usdToBrlRate={dashboard.exchangeRate?.usdToBrl || 5.7}
+          />
+        </TabsContent>
+        <TabsContent value="investors" className="mt-4">
+          <ClientsListSection
+            scope="all"
+            currency={currency}
+            usdToBrlRate={dashboard.exchangeRate?.usdToBrl || 5.7}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

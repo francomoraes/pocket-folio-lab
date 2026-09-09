@@ -13,14 +13,12 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 import { useNavigate } from "react-router-dom";
-
-export type LoginTab = "investor" | "manager";
+import { resolveHomePathForRole } from "@/shared/utils/roles";
 
 export const useLoginForm = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [isRegisterMode, setIsRegisterMode] = useState(false);
-  const [loginTab, setLoginTab] = useState<LoginTab>("investor");
   const { login, register: registerUser, isLoading, isAuthenticated, user } =
     useAuth();
   const { selfRegistrationEnabled } = useAuthConfig();
@@ -43,19 +41,14 @@ export const useLoginForm = () => {
           password: data.password,
         });
         toast.success(t("auth.messages.registerSuccess"));
-        navigate(
-          registeredUser.role === "investor" ? "/dashboard" : "/manager/dashboard",
-        );
+        navigate(resolveHomePathForRole(registeredUser.role));
       } else {
         const loggedInUser = await login({
           email: data.email,
           password: data.password,
-          loginAs: loginTab,
         });
         toast.success(t("auth.messages.loginSuccess"));
-        navigate(
-          loggedInUser.role === "investor" ? "/dashboard" : "/manager/dashboard",
-        );
+        navigate(resolveHomePathForRole(loggedInUser.role));
       }
     } catch (error) {
       const fallbackKey = isRegisterMode
@@ -70,25 +63,13 @@ export const useLoginForm = () => {
     reset();
   };
 
-  const changeTab = (tab: LoginTab) => {
-    setLoginTab(tab);
-    setIsRegisterMode(false);
-    reset();
-  };
+  const canRegister = selfRegistrationEnabled;
 
-  const canRegister = loginTab === "investor" && selfRegistrationEnabled;
-
-  const redirectTo = isAuthenticated
-    ? user?.role === "investor"
-      ? "/dashboard"
-      : "/manager/dashboard"
-    : null;
+  const redirectTo = isAuthenticated ? resolveHomePathForRole(user?.role) : null;
 
   return {
     isRegisterMode,
     isLoading,
-    loginTab,
-    changeTab,
     canRegister,
     register,
     handleSubmit,

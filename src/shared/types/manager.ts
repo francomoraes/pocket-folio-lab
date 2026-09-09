@@ -58,6 +58,7 @@ export interface ManagerClient {
   riskProfile: RiskProfile | null;
   adherenceIndexPp: number | null;
   monthlyVariationPct: number | null;
+  managers?: { id: number; name: string; email: string }[];
 }
 
 export type ClientSortBy =
@@ -75,6 +76,7 @@ export interface ManagerDashboard {
   totalInitialWealthCents: number;
   absoluteVariationCents: number;
   percentageVariation: number;
+  exchangeRate: { usdToBrl: number };
   topInvestors: {
     investorId: number;
     name: string;
@@ -134,9 +136,7 @@ export interface ManagerRankingRow {
   percentageVariation: number;
 }
 
-export interface AdminDashboard {
+export interface AdminDashboard extends Omit<ManagerDashboard, "topInvestors"> {
   managersCount: number;
-  totalActiveClientsCount: number;
-  totalWealthUnderManagementCents: number;
   managerRanking: ManagerRankingRow[];
 }

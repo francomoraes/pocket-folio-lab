@@ -27,6 +27,7 @@ type MarketIndicesResponse = {
   cdi: MarketIndexPoint[];
   ipca: MarketIndexPoint[];
   sp500: MarketIndexPoint[];
+  ifix: MarketIndexPoint[];
 };
 
 const getPeriodKey = (date: Date, granularity: Granularity): string => {
@@ -254,6 +255,7 @@ export const WealthEvolutionChart = ({
     sp500: false,
     cdi: false,
     ipca: false,
+    ifix: false,
   });
   const [indicesData, setIndicesData] = useState<MarketIndicesResponse | null>(
     null,
@@ -288,7 +290,8 @@ export const WealthEvolutionChart = ({
 
   useEffect(() => {
     const shouldFetchIndices =
-      (showIndices.sp500 || showIndices.cdi || showIndices.ipca) && !!range;
+      (showIndices.sp500 || showIndices.cdi || showIndices.ipca || showIndices.ifix) &&
+      !!range;
 
     if (shouldFetchIndices && !indicesData && !loadingIndices) {
       setLoadingIndices(true);
@@ -322,6 +325,12 @@ export const WealthEvolutionChart = ({
       granularity,
       initialValue,
     );
+    const ifixSeries = buildNormalizedPriceSeries(
+      indicesData.ifix,
+      periodOrder,
+      granularity,
+      initialValue,
+    );
     const cdiSeries = buildNormalizedRateSeries(
       indicesData.cdi,
       periodOrder,
@@ -342,6 +351,10 @@ export const WealthEvolutionChart = ({
 
       if (showIndices.sp500) {
         enriched.sp500 = sp500Series.get(point.periodKey) ?? null;
+      }
+
+      if (showIndices.ifix) {
+        enriched.ifix = ifixSeries.get(point.periodKey) ?? null;
       }
 
       if (showIndices.cdi) {
@@ -403,6 +416,17 @@ export const WealthEvolutionChart = ({
               className="w-4 h-4"
             />
             {t("dashboard.wealthHistory.indices.sp500")}
+          </label>
+          <label className="flex items-center gap-1 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showIndices.ifix}
+              onChange={(e) =>
+                setShowIndices({ ...showIndices, ifix: e.target.checked })
+              }
+              className="w-4 h-4"
+            />
+            {t("dashboard.wealthHistory.indices.ifix")}
           </label>
           <label className="flex items-center gap-1 cursor-pointer">
             <input
@@ -478,6 +502,17 @@ export const WealthEvolutionChart = ({
                 dataKey="sp500"
                 stroke="#ff7300"
                 name="S&P500"
+                dot={false}
+                strokeWidth={2}
+                isAnimationActive={false}
+              />
+            )}
+            {showIndices.ifix && (
+              <Line
+                type="monotone"
+                dataKey="ifix"
+                stroke="#d62728"
+                name="IFIX"
                 dot={false}
                 strokeWidth={2}
                 isAnimationActive={false}

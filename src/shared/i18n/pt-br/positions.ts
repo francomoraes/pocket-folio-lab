@@ -15,9 +15,11 @@ export default {
     consolidatedPatrimony: "Patrimônio Consolidado",
     patrimony: "Patrimônio",
     pnlBalance: "Saldo L/P",
-    netContribution: "Aporte Líquido",
-    unreinvestedDividends: "Proventos Não Reinvestidos",
+    totalPurchases: "Total de Compras",
     totalDividends: "Proventos",
+    initialWealth: "Patrimônio Inicial",
+    initialWealthUnavailable: "Não disponível",
+    absoluteVariation: "Variação absoluta",
     currencyTitles: {
       brl: "Real Brasileiro",
       usd: "Dólar Americano",

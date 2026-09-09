@@ -11,17 +11,14 @@ export default {
     riskProfile: "Risk profile",
     wealth: "Current wealth",
     status: "Status",
+    managers: "Manager(s)",
     actions: "Actions",
     viewPortfolio: "View portfolio",
     endLink: "End link",
     empty: "No clients found",
     loadError: "Error loading clients",
   },
-  scope: {
-    mine: "My clients",
-    all: "All investors",
-  },
-  activeOnly: "Active links only",
+  showEndedLinks: "Show ended links",
   search: "Search by name or email",
   sortBy: {
     label: "Sort by",
@@ -29,7 +26,7 @@ export default {
     activatedAt: "Link date",
     wealth: "Wealth",
     adherenceIndex: "Adherence",
-    monthlyVariation: "Monthly variation",
+    monthlyVariation: "Current month variation",
   },
   adherence: {
     label: "Adherence",
@@ -37,7 +34,7 @@ export default {
     tooltipNoData: "No targets configured",
   },
   variation: {
-    label: "Monthly variation",
+    label: "Current month variation",
     noData: "—",
     tooltipNoData: "No data for the previous month",
   },

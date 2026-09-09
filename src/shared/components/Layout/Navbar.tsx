@@ -3,6 +3,7 @@ import { TrendingUp, Menu } from "lucide-react";
 import { NavLink, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/shared/hooks/useAuth";
+import { useExchangeRate } from "@/shared/hooks/useExchangeRate";
 import { useState } from "react";
 import {
   Sheet,
@@ -17,6 +18,7 @@ export const Navbar = () => {
   const { t } = useTranslation();
   const { isAuthenticated, isInitializing, isManager, isAdmin } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const { exchangeRate } = useExchangeRate();
 
   type NavItem = { to: string; label: string };
 
@@ -109,6 +111,15 @@ export const Navbar = () => {
                 </SheetContent>
               </Sheet>
             </>
+          )}
+
+          {/* Cotação do dólar */}
+          {isAuthenticated && !isInitializing && exchangeRate && (
+            <span className="hidden md:inline text-xs text-muted-foreground whitespace-nowrap">
+              {t("navbar.exchangeRate", {
+                value: exchangeRate.usdToBrl.toFixed(2).replace(".", ","),
+              })}
+            </span>
           )}
 
           {/* Desktop User Menu */}

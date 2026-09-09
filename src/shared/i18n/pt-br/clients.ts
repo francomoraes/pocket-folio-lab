@@ -11,17 +11,14 @@ export default {
     riskProfile: "Perfil",
     wealth: "Patrimônio atual",
     status: "Status",
+    managers: "Gestor(es)",
     actions: "Ações",
     viewPortfolio: "Ver carteira",
     endLink: "Encerrar vínculo",
     empty: "Nenhum cliente encontrado",
     loadError: "Erro ao carregar clientes",
   },
-  scope: {
-    mine: "Meus clientes",
-    all: "Todos os investidores",
-  },
-  activeOnly: "Somente vínculos ativos",
+  showEndedLinks: "Ver vínculos encerrados",
   search: "Buscar por nome ou e-mail",
   sortBy: {
     label: "Ordenar por",
@@ -29,7 +26,7 @@ export default {
     activatedAt: "Data de vínculo",
     wealth: "Patrimônio",
     adherenceIndex: "Aderência",
-    monthlyVariation: "Variação mensal",
+    monthlyVariation: "Variação do mês atual",
   },
   adherence: {
     label: "Aderência",
@@ -37,7 +34,7 @@ export default {
     tooltipNoData: "Sem metas configuradas",
   },
   variation: {
-    label: "Variação mensal",
+    label: "Variação do mês atual",
     noData: "—",
     tooltipNoData: "Sem dado do mês anterior",
   },

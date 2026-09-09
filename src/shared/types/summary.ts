@@ -13,8 +13,7 @@ export type ExchangeRate = {
 };
 
 export type CashFlow = {
-  netContributionCents: number;
-  unreinvestedDividendsCents: number;
+  totalPurchasesCents: number;
   totalDividendsCents: number;
 };
 
@@ -48,6 +47,9 @@ export type SummaryResponse = {
   totalPnlCents: number;
   cashFlow: CashFlow;
   adherence: Adherence;
+  initialWealthCents: number | null;
+  absoluteVariationCents: number | null;
+  percentageVariation: number | null;
 };
 
 export type OverviewData = {

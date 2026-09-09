@@ -35,6 +35,9 @@ export const API_ENDPOINTS = {
     get: "summary",
     overviewByCurrency: "summary/overview",
   },
+  exchangeRate: {
+    get: "exchange-rate",
+  },
   assetClasses: {
     list: "asset-class",
     create: "asset-class",

@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { Card } from "@/shared/components/ui/card";
 import {
   Table,
@@ -19,11 +19,11 @@ import {
 } from "@/shared/utils/formatters";
 import { useTranslation } from "react-i18next";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/shared/components/ui/accordion";
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/components/ui/tabs";
 import { Button } from "@/shared/components/ui/button";
 import { WealthEvolutionChart } from "@/shared/components/WealthEvolutionChart";
 import { WealthHistoryFormDialog } from "@/shared/components/WealthHistoryFormDialog";
@@ -54,6 +54,16 @@ export const ClientDashboardPage = () => {
     useWealthHistory(id);
   const { t, i18n } = useTranslation();
   const usdToBrlRate = exchangeRate?.usdToBrl ?? 5.7;
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get("tab") ?? "table";
+  const handleTabChange = (value: string) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("tab", value);
+      return next;
+    });
+  };
 
   const getClassLabel = (className: string) => {
     if (className === "stocks") return t("dashboard.assetClasses.stocks");
@@ -256,25 +266,31 @@ export const ClientDashboardPage = () => {
         <>
         <h2 className="text-2xl font-semibold mb-2">{t("dashboard.title")}</h2>
 
-        <Accordion type="single" collapsible defaultValue="table-class">
-          <AccordionItem value="table-class" className="border rounded-lg mt-2">
-            <AccordionTrigger className="px-4 hover:no-underline">
-              <div className="flex items-center justify-between w-full pr-2">
-                <span className="text-lg font-semibold">
-                  {t("dashboard.sections.allocationByClass")}
+        <Tabs value={activeTab} onValueChange={handleTabChange}>
+          <TabsList>
+            <TabsTrigger value="table">
+              {t("dashboard.sections.allocationByType")}
+            </TabsTrigger>
+            <TabsTrigger value="table-class">
+              {t("dashboard.sections.allocationByClass")}
+            </TabsTrigger>
+            <TabsTrigger value="wealth-evolution">
+              {t("dashboard.sections.wealthEvolution")}
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="table-class" className="mt-2">
+            {classDeviationTotal !== null && (
+              <div className="flex justify-end pb-2">
+                <span
+                  className={`text-sm font-normal ${getAdherenceColor(classDeviationTotal)}`}
+                >
+                  {t("dashboard.adherence.badge", {
+                    value: classDeviationTotal.toFixed(2),
+                  })}
                 </span>
-                {classDeviationTotal !== null && (
-                  <span
-                    className={`text-sm font-normal ${getAdherenceColor(classDeviationTotal)}`}
-                  >
-                    {t("dashboard.adherence.badge", {
-                      value: classDeviationTotal.toFixed(2),
-                    })}
-                  </span>
-                )}
               </div>
-            </AccordionTrigger>
-            <AccordionContent className="p-0">
+            )}
               <Card className="rounded-none border-t">
                 <div className="overflow-x-auto">
                   <Table className="min-w-[480px]">
@@ -383,27 +399,20 @@ export const ClientDashboardPage = () => {
                   </Table>
                 </div>
               </Card>
-            </AccordionContent>
-          </AccordionItem>
+          </TabsContent>
 
-          <AccordionItem value="table" className="border rounded-lg mt-2">
-            <AccordionTrigger className="px-4 hover:no-underline">
-              <div className="flex items-center justify-between w-full pr-2">
-                <span className="text-lg font-semibold">
-                  {t("dashboard.sections.allocationByType")}
+          <TabsContent value="table" className="mt-2">
+            {adherence && adherence.totalPp !== null && (
+              <div className="flex justify-end pb-2">
+                <span
+                  className={`text-sm font-normal ${getAdherenceColor(adherence.totalPp)}`}
+                >
+                  {t("dashboard.adherence.badge", {
+                    value: adherence.totalPp.toFixed(2),
+                  })}
                 </span>
-                {adherence && adherence.totalPp !== null && (
-                  <span
-                    className={`text-sm font-normal ${getAdherenceColor(adherence.totalPp)}`}
-                  >
-                    {t("dashboard.adherence.badge", {
-                      value: adherence.totalPp.toFixed(2),
-                    })}
-                  </span>
-                )}
               </div>
-            </AccordionTrigger>
-            <AccordionContent className="p-0">
+            )}
               <Card className="rounded-none border-t">
                 <div className="overflow-x-auto">
                   <Table className="min-w-[480px]">
@@ -506,16 +515,9 @@ export const ClientDashboardPage = () => {
                   </Table>
                 </div>
               </Card>
-            </AccordionContent>
-          </AccordionItem>
+          </TabsContent>
 
-          <AccordionItem value="wealth-evolution" className="border rounded-lg mt-2">
-            <AccordionTrigger className="px-4 hover:no-underline">
-              <span className="text-lg font-semibold">
-                {t("dashboard.sections.wealthEvolution")}
-              </span>
-            </AccordionTrigger>
-            <AccordionContent className="p-0">
+          <TabsContent value="wealth-evolution" className="mt-2">
               <Card className="p-4 sm:p-6 rounded-none border-t">
                 <div className="space-y-4">
                   <div className="flex justify-end">
@@ -548,9 +550,8 @@ export const ClientDashboardPage = () => {
                   )}
                 </div>
               </Card>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+          </TabsContent>
+        </Tabs>
 
         <WealthHistoryFormDialog
           item={editingWealthHistory}

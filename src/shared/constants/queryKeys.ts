@@ -8,6 +8,7 @@ export const QUERY_KEYS = {
   FIXED_INCOME_ASSETS: ["fixed-income-assets"],
   SUMMARY: ["summary"],
   OVERVIEW: ["overview"],
+  EXCHANGE_RATE: ["exchange-rate"],
 
   assetTransactions: (params?: object) =>
     params ? ["asset-transactions", params] : ["asset-transactions"],

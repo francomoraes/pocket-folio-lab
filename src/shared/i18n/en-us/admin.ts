@@ -5,8 +5,10 @@ export default {
     empty: "No data available yet",
     metrics: {
       managersCount: "Managers",
-      activeClients: "Active clients",
-      totalWealth: "Wealth under management",
+    },
+    tabs: {
+      ranking: "Manager ranking",
+      investors: "All investors",
     },
     ranking: {
       title: "Manager ranking",

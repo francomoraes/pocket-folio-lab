@@ -51,11 +51,13 @@ class WealthHistoryService {
     cdi: Array<{ date: string; value: number }>;
     ipca: Array<{ date: string; value: number }>;
     sp500: Array<{ date: string; value: number }>;
+    ifix: Array<{ date: string; value: number }>;
   }> {
     const response = await api.get<{
       cdi: Array<{ date: string; value: number }>;
       ipca: Array<{ date: string; value: number }>;
       sp500: Array<{ date: string; value: number }>;
+      ifix: Array<{ date: string; value: number }>;
     }>(`${API_ENDPOINTS.wealthHistory.list}/market-indices`, {
       params: { startDate, endDate },
     });

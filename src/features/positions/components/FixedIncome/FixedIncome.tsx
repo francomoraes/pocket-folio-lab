@@ -260,13 +260,12 @@ const FixedIncome = () => {
                   </TableCell>
                   <TableCell>{fixedIncomeAsset.type.assetClass.name}</TableCell>
                   <TableCell>
-                    {fixedIncomeAsset.manualMode || !fixedIncomeAsset.startDate
+                    {!fixedIncomeAsset.startDate
                       ? "—"
                       : formatDateOnly(fixedIncomeAsset.startDate)}
                   </TableCell>
                   <TableCell>
-                    {fixedIncomeAsset.manualMode ||
-                    !fixedIncomeAsset.maturityDate
+                    {!fixedIncomeAsset.maturityDate
                       ? "—"
                       : formatDateOnly(fixedIncomeAsset.maturityDate)}
                   </TableCell>

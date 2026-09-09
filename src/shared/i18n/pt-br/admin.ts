@@ -5,8 +5,10 @@ export default {
     empty: "Nenhum dado disponível ainda",
     metrics: {
       managersCount: "Gestores",
-      activeClients: "Clientes ativos",
-      totalWealth: "Patrimônio sob gestão",
+    },
+    tabs: {
+      ranking: "Ranking de gestores",
+      investors: "Lista de todos os investidores",
     },
     ranking: {
       title: "Ranking de gestores",

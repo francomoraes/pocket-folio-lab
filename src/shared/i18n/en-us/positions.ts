@@ -15,9 +15,11 @@ export default {
     consolidatedPatrimony: "Consolidated Net Worth",
     patrimony: "Net Worth",
     pnlBalance: "P&L Balance",
-    netContribution: "Net Contribution",
-    unreinvestedDividends: "Unreinvested Dividends",
+    totalPurchases: "Total Purchases",
     totalDividends: "Dividends",
+    initialWealth: "Initial Net Worth",
+    initialWealthUnavailable: "Not available",
+    absoluteVariation: "Absolute variation",
     currencyTitles: {
       brl: "Brazilian Real",
       usd: "US Dollar",
