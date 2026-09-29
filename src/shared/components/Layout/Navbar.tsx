@@ -1,5 +1,5 @@
 import { UserMenu } from "@/shared/components/Layout";
-import { TrendingUp, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { NavLink, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/shared/hooks/useAuth";
@@ -25,10 +25,16 @@ export const Navbar = () => {
   const navItems: NavItem[] = [
     ...(isManager
       ? [
-          { to: "/manager/dashboard", label: t("navbar.links.managerDashboard") },
+          {
+            to: "/manager/dashboard",
+            label: t("navbar.links.managerDashboard"),
+          },
           ...(isAdmin
             ? [
-                { to: "/admin/dashboard", label: t("navbar.links.adminDashboard") },
+                {
+                  to: "/admin/dashboard",
+                  label: t("navbar.links.adminDashboard"),
+                },
                 { to: "/admin/users", label: t("navbar.links.adminUsers") },
               ]
             : []),
@@ -45,14 +51,14 @@ export const Navbar = () => {
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="px-4 py-3 flex items-center justify-between">
-        <Link
-          className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-          to="/"
-        >
-          <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
-          <h1 className="text-base sm:text-xl md:text-2xl font-bold">
-            {t("navbar.appName")}
-          </h1>
+        <Link className="hover:opacity-80 transition-opacity" to="/">
+          <div className="bg-[#030016] rounded-md px-3 py-1.5 flex items-center">
+            <img
+              src="/peta-capital-logo.webp"
+              alt={t("navbar.appName")}
+              className="h-6 sm:h-7 w-auto"
+            />
+          </div>
         </Link>
 
         <nav className="flex items-center gap-4">
@@ -84,9 +90,14 @@ export const Navbar = () => {
                 </SheetTrigger>
                 <SheetContent side="right" className="w-[280px] sm:w-[350px]">
                   <SheetHeader>
-                    <SheetTitle className="flex items-center gap-2">
-                      <TrendingUp className="h-5 w-5 text-accent" />
-                      {t("navbar.appName")}
+                    <SheetTitle>
+                      <div className="bg-[#030016] rounded-md px-3 py-1.5 inline-flex items-center">
+                        <img
+                          src="/peta-capital-logo.webp"
+                          alt={t("navbar.appName")}
+                          className="h-6 w-auto"
+                        />
+                      </div>
                     </SheetTitle>
                   </SheetHeader>
                   <nav className="flex flex-col gap-4 mt-8">
