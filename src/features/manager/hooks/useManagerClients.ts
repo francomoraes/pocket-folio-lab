@@ -20,6 +20,7 @@ export const useManagerClients = (params?: {
   order?: string;
   scope?: ClientScope;
   activeOnly?: boolean;
+  managerFilter?: number;
 }) => {
   const queryClient = useQueryClient();
   const { t } = useTranslation();

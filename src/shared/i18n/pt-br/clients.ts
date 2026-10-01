@@ -20,6 +20,10 @@ export default {
   },
   showEndedLinks: "Ver vínculos encerrados",
   search: "Buscar por nome ou e-mail",
+  filterByManager: {
+    placeholder: "Filtrar por gestor",
+    allManagers: "Todos os gestores",
+  },
   sortBy: {
     label: "Ordenar por",
     name: "Nome",

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { resolveErrorMessage } from "@/lib/resolveErrorMessage";
 import { useManagerClients } from "@/features/manager/hooks/useManagerClients";
+import { useAvailableManagers } from "@/features/manager/hooks/useAvailableManagers";
 import { LinkStatusBadge } from "@/features/manager/components/LinkStatusBadge";
 import { RiskProfileBadge } from "@/shared/components/RiskProfileBadge";
 import { Button } from "@/shared/components/ui/button";
@@ -11,6 +12,13 @@ import { Card } from "@/shared/components/ui/card";
 import { Checkbox } from "@/shared/components/ui/checkbox";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/components/ui/select";
 import {
   Table,
   TableBody,
@@ -59,6 +67,9 @@ export const ClientsListSection = ({
   const { user } = useAuth();
   const isPlatformWide = scope === "all";
   const [showEndedLinks, setShowEndedLinks] = useState(false);
+  const [managerFilter, setManagerFilter] = useState<number | undefined>(
+    undefined,
+  );
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -79,6 +90,11 @@ export const ClientsListSection = ({
     debounceTimer.current = setTimeout(() => setDebouncedSearch(value), 400);
   };
 
+  const { managers: availableManagers } = useAvailableManagers(
+    undefined,
+    isPlatformWide,
+  );
+
   const {
     clients,
     meta,
@@ -96,6 +112,7 @@ export const ClientsListSection = ({
     order,
     scope,
     activeOnly: isPlatformWide ? undefined : !showEndedLinks,
+    managerFilter: isPlatformWide ? managerFilter : undefined,
   });
 
   const handleQuickAddClient = async (investorId: number) => {
@@ -109,7 +126,7 @@ export const ClientsListSection = ({
   useEffect(() => {
     resetPage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearch, scope, showEndedLinks]);
+  }, [debouncedSearch, scope, showEndedLinks, managerFilter]);
 
   useEffect(() => {
     if (clientsError) {
@@ -147,6 +164,28 @@ export const ClientsListSection = ({
               {t("clients.showEndedLinks")}
             </Label>
           </div>
+        )}
+        {isPlatformWide && (
+          <Select
+            value={managerFilter ? String(managerFilter) : "all"}
+            onValueChange={(value) =>
+              setManagerFilter(value === "all" ? undefined : Number(value))
+            }
+          >
+            <SelectTrigger className="w-auto min-w-[200px]">
+              <SelectValue placeholder={t("clients.filterByManager.placeholder")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">
+                {t("clients.filterByManager.allManagers")}
+              </SelectItem>
+              {availableManagers.map((manager) => (
+                <SelectItem key={manager.id} value={String(manager.id)}>
+                  {manager.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         )}
       </div>
 

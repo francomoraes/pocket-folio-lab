@@ -20,6 +20,10 @@ export default {
   },
   showEndedLinks: "Show ended links",
   search: "Search by name or email",
+  filterByManager: {
+    placeholder: "Filter by manager",
+    allManagers: "All managers",
+  },
   sortBy: {
     label: "Sort by",
     name: "Name",

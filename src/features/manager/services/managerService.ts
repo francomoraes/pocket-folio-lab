@@ -85,6 +85,7 @@ class ManagerService {
     order?: string;
     scope?: ClientScope;
     activeOnly?: boolean;
+    managerFilter?: number;
   }): Promise<ManagerClientsResponse> {
     const response = await api.get<ManagerClientsResponse>(
       API_ENDPOINTS.managers.clients,
