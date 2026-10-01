@@ -1,6 +1,6 @@
 export default {
-  viewing: "Visualizando carteira de:",
   exitContext: "Sair do contexto",
+  menuTitle: "Opções do cliente",
   nav: {
     dashboard: "Dashboard",
     positions: "Posições",

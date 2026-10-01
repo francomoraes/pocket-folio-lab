@@ -9,7 +9,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
-import { User, ArrowLeft } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/shared/components/ui/sheet";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/shared/components/ui/tooltip";
+import { User, ArrowLeft, Menu } from "lucide-react";
 import { RiskProfile } from "@/shared/types/riskProfile";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { managerService } from "@/features/manager/services/managerService";
@@ -34,6 +46,7 @@ export const ManagerContextBanner = ({
   const queryClient = useQueryClient();
   const { isAdmin } = useAuth();
   const [scope, setScope] = useState<"mine" | "all">("all");
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const { data: profile } = useQuery({
     queryKey: QUERY_KEYS.clientProfile(investorId),
@@ -102,21 +115,132 @@ export const ManagerContextBanner = ({
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `text-sm font-medium px-3 py-1 rounded-md transition-colors ${
       isActive
-        ? "bg-amber-700/20 text-amber-900 font-semibold"
-        : "hover:bg-amber-700/10 text-amber-800"
+        ? "bg-warning/20 text-foreground font-semibold"
+        : "hover:bg-warning/10 text-muted-foreground"
     }`;
 
+  const scopeToggle = isAdmin && (
+    <div className="flex items-center gap-1 shrink-0">
+      <button
+        type="button"
+        onClick={() => setScope("mine")}
+        className={`text-xs px-2 py-0.5 rounded-md transition-colors ${
+          scope === "mine"
+            ? "bg-warning/20 text-foreground font-semibold"
+            : "text-muted-foreground hover:bg-warning/10"
+        }`}
+      >
+        {t("managerContext.scope.mine")}
+      </button>
+      <button
+        type="button"
+        onClick={() => setScope("all")}
+        className={`text-xs px-2 py-0.5 rounded-md transition-colors ${
+          scope === "all"
+            ? "bg-warning/20 text-foreground font-semibold"
+            : "text-muted-foreground hover:bg-warning/10"
+        }`}
+      >
+        {t("managerContext.scope.all")}
+      </button>
+    </div>
+  );
+
+  const navLinks = (stacked: boolean, onNavigate?: () => void) => (
+    <nav
+      className={`flex items-center gap-1 ${stacked ? "flex-col items-stretch" : ""}`}
+    >
+      <NavLink
+        to={`/manager/clients/${investorId}/dashboard`}
+        className={navLinkClass}
+        onClick={onNavigate}
+      >
+        {t("managerContext.nav.dashboard")}
+      </NavLink>
+      <NavLink
+        to={`/manager/clients/${investorId}/positions`}
+        className={navLinkClass}
+        onClick={onNavigate}
+      >
+        {t("managerContext.nav.positions")}
+      </NavLink>
+      <NavLink
+        to={`/manager/clients/${investorId}/targets`}
+        className={navLinkClass}
+        onClick={onNavigate}
+      >
+        {t("managerContext.nav.targets")}
+      </NavLink>
+      <NavLink
+        to={`/manager/clients/${investorId}/settings`}
+        className={navLinkClass}
+        onClick={onNavigate}
+      >
+        {t("managerContext.nav.settings")}
+      </NavLink>
+      <NavLink
+        to={`/manager/clients/${investorId}/history`}
+        className={navLinkClass}
+        onClick={onNavigate}
+      >
+        {t("managerContext.nav.history")}
+      </NavLink>
+    </nav>
+  );
+
+  const autonomyControl = (
+    <div className="flex items-center gap-2 shrink-0 justify-between">
+      <span className="text-sm text-muted-foreground whitespace-nowrap">
+        {t("managerContext.autonomy.label")}
+      </span>
+      <Switch
+        checked={profile?.user.selfServiceEnabled ?? false}
+        disabled={autonomyMutation.isPending}
+        onCheckedChange={(checked) => autonomyMutation.mutate(checked)}
+      />
+    </div>
+  );
+
+  const riskProfileControl = (
+    <div className="flex items-center gap-2 shrink-0 justify-between">
+      <span className="text-sm text-muted-foreground whitespace-nowrap">
+        {t("managerContext.riskProfile.label")}
+      </span>
+      <Select
+        value={profile?.user.riskProfile ?? undefined}
+        disabled={riskProfileMutation.isPending}
+        onValueChange={(value) =>
+          riskProfileMutation.mutate(value as RiskProfile)
+        }
+      >
+        <SelectTrigger className="h-7 w-auto min-w-[140px] border-warning/40 bg-warning/15 text-sm font-semibold text-foreground">
+          <SelectValue
+            placeholder={t("managerContext.riskProfile.placeholder")}
+          />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="conservative">
+            {t("riskProfile.conservative")}
+          </SelectItem>
+          <SelectItem value="moderate">
+            {t("riskProfile.moderate")}
+          </SelectItem>
+          <SelectItem value="aggressive">
+            {t("riskProfile.aggressive")}
+          </SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+
   return (
-    <div className="sticky top-[61px] z-40 bg-amber-50 border-b border-amber-200 shadow-sm">
-      <div className="px-4 py-2 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+    <div className="sticky top-[61px] z-40 bg-warning/30 backdrop-blur-md supports-[backdrop-filter]:bg-warning/15 border-b border-warning/30 shadow-sm">
+      <div className="px-4 py-2 flex items-center gap-2 sm:gap-4">
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <User className="h-4 w-4 text-amber-600 shrink-0" />
-          <span className="text-sm text-amber-700 whitespace-nowrap">
-            {t("managerContext.viewing")}
-          </span>
+          <User className="h-4 w-4 text-warning shrink-0" />
           {clientOptions.length > 0 ? (
             <Select value={String(investorId)} onValueChange={handleClientChange}>
-              <SelectTrigger className="h-7 w-auto min-w-[140px] border-amber-300 bg-amber-100/50 text-sm font-semibold text-amber-900">
+              <SelectTrigger className="h-7 w-auto min-w-[140px] border-warning/40 bg-warning/15 text-sm font-semibold text-foreground">
                 <SelectValue placeholder={investorName} />
               </SelectTrigger>
               <SelectContent>
@@ -128,122 +252,60 @@ export const ManagerContextBanner = ({
               </SelectContent>
             </Select>
           ) : (
-            <span className="text-sm font-semibold text-amber-900 truncate">
+            <span className="text-sm font-semibold text-foreground truncate">
               {investorName}
             </span>
           )}
 
-          {isAdmin && (
-            <div className="flex items-center gap-1 shrink-0">
-              <button
-                type="button"
-                onClick={() => setScope("mine")}
-                className={`text-xs px-2 py-0.5 rounded-md transition-colors ${
-                  scope === "mine"
-                    ? "bg-amber-700/20 text-amber-900 font-semibold"
-                    : "text-amber-700 hover:bg-amber-700/10"
-                }`}
-              >
-                {t("managerContext.scope.mine")}
-              </button>
-              <button
-                type="button"
-                onClick={() => setScope("all")}
-                className={`text-xs px-2 py-0.5 rounded-md transition-colors ${
-                  scope === "all"
-                    ? "bg-amber-700/20 text-amber-900 font-semibold"
-                    : "text-amber-700 hover:bg-amber-700/10"
-                }`}
-              >
-                {t("managerContext.scope.all")}
-              </button>
+          {scopeToggle}
+        </div>
+
+        <div className="hidden min-[1320px]:flex items-center gap-4">
+          {navLinks(false)}
+          {autonomyControl}
+          {riskProfileControl}
+        </div>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground hover:bg-warning/10 shrink-0"
+              onClick={() => navigate("/manager/dashboard")}
+            >
+              <ArrowLeft className="h-4 w-4 sm:mr-1" />
+              <span className="hidden sm:inline">
+                {t("managerContext.exitContext")}
+              </span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent className="sm:hidden">
+            {t("managerContext.exitContext")}
+          </TooltipContent>
+        </Tooltip>
+
+        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+          <SheetTrigger asChild className="min-[1320px]:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 shrink-0 text-muted-foreground hover:text-foreground hover:bg-warning/10"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-[280px] sm:w-[350px]">
+            <SheetHeader>
+              <SheetTitle>{t("managerContext.menuTitle")}</SheetTitle>
+            </SheetHeader>
+            <div className="flex flex-col gap-6 mt-6">
+              {navLinks(true, () => setIsSheetOpen(false))}
+              {autonomyControl}
+              {riskProfileControl}
             </div>
-          )}
-        </div>
-
-        <nav className="flex items-center gap-1">
-          <NavLink
-            to={`/manager/clients/${investorId}/dashboard`}
-            className={navLinkClass}
-          >
-            {t("managerContext.nav.dashboard")}
-          </NavLink>
-          <NavLink
-            to={`/manager/clients/${investorId}/positions`}
-            className={navLinkClass}
-          >
-            {t("managerContext.nav.positions")}
-          </NavLink>
-          <NavLink
-            to={`/manager/clients/${investorId}/targets`}
-            className={navLinkClass}
-          >
-            {t("managerContext.nav.targets")}
-          </NavLink>
-          <NavLink
-            to={`/manager/clients/${investorId}/settings`}
-            className={navLinkClass}
-          >
-            {t("managerContext.nav.settings")}
-          </NavLink>
-          <NavLink
-            to={`/manager/clients/${investorId}/history`}
-            className={navLinkClass}
-          >
-            {t("managerContext.nav.history")}
-          </NavLink>
-        </nav>
-
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-sm text-amber-700 whitespace-nowrap">
-            {t("managerContext.autonomy.label")}
-          </span>
-          <Switch
-            checked={profile?.user.selfServiceEnabled ?? false}
-            disabled={autonomyMutation.isPending}
-            onCheckedChange={(checked) => autonomyMutation.mutate(checked)}
-          />
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-sm text-amber-700 whitespace-nowrap">
-            {t("managerContext.riskProfile.label")}
-          </span>
-          <Select
-            value={profile?.user.riskProfile ?? undefined}
-            disabled={riskProfileMutation.isPending}
-            onValueChange={(value) =>
-              riskProfileMutation.mutate(value as RiskProfile)
-            }
-          >
-            <SelectTrigger className="h-7 w-auto min-w-[140px] border-amber-300 bg-amber-100/50 text-sm font-semibold text-amber-900">
-              <SelectValue
-                placeholder={t("managerContext.riskProfile.placeholder")}
-              />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="conservative">
-                {t("riskProfile.conservative")}
-              </SelectItem>
-              <SelectItem value="moderate">
-                {t("riskProfile.moderate")}
-              </SelectItem>
-              <SelectItem value="aggressive">
-                {t("riskProfile.aggressive")}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-amber-700 hover:text-amber-900 hover:bg-amber-100 shrink-0"
-          onClick={() => navigate("/manager/dashboard")}
-        >
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          {t("managerContext.exitContext")}
-        </Button>
+          </SheetContent>
+        </Sheet>
       </div>
     </div>
   );

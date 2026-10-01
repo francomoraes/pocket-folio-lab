@@ -4,6 +4,7 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
 import { useAuth } from "@/shared/hooks/useAuth";
+import { useTheme } from "@/shared/hooks/useTheme";
 import {
   Select,
   SelectContent,
@@ -14,11 +15,13 @@ import {
 import { useTranslation } from "react-i18next";
 import { Button } from "@/shared/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { Moon, Sun } from "lucide-react";
 
 export const UserMenu = () => {
   const { user, logout, updateUser } = useAuth();
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   if (!user) {
     return (
@@ -36,7 +39,7 @@ export const UserMenu = () => {
   return (
     <div className="flex items-center gap-4">
       <DropdownMenu>
-        <DropdownMenuTrigger className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+        <DropdownMenuTrigger className="px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors">
           {user.name}
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -86,6 +89,25 @@ export const UserMenu = () => {
               </SelectItem>
             </SelectContent>
           </Select>
+          <Button
+            variant="outline"
+            onClick={toggleTheme}
+            className="flex items-center gap-2 justify-start"
+            aria-label={
+              theme === "dark"
+                ? t("auth.userMenu.theme.light")
+                : t("auth.userMenu.theme.dark")
+            }
+          >
+            {theme === "dark" ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+            {theme === "dark"
+              ? t("auth.userMenu.theme.light")
+              : t("auth.userMenu.theme.dark")}
+          </Button>
           <Button variant="destructive" onClick={logout}>
             {t("auth.userMenu.logout")}
           </Button>

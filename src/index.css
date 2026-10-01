@@ -17,7 +17,7 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 220 13% 18%;
 
-    --primary: 220 13% 18%;
+    --primary: 242 100% 6%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 220 13% 95%;
@@ -26,7 +26,7 @@ All colors MUST be HSL.
     --muted: 220 13% 95%;
     --muted-foreground: 220 9% 46%;
 
-    --accent: 142 24% 52%;
+    --accent: 36 43% 48%;
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84% 60%;
@@ -40,7 +40,7 @@ All colors MUST be HSL.
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 220 13% 18%;
+    --ring: 242 100% 6%;
 
     --radius: 0.5rem;
 
@@ -58,39 +58,50 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 220 13% 12%;
+    --background: 242 100% 6%;
     --foreground: 0 0% 95%;
 
-    --card: 220 13% 15%;
+    --card: 243 38% 12%;
     --card-foreground: 0 0% 95%;
 
-    --popover: 220 13% 15%;
+    --popover: 243 38% 12%;
     --popover-foreground: 0 0% 95%;
 
-    --primary: 0 0% 95%;
-    --primary-foreground: 220 13% 18%;
+    --primary: 36 41% 60%;
+    --primary-foreground: 243 38% 12%;
 
-    --secondary: 220 13% 20%;
+    --secondary: 243 30% 18%;
     --secondary-foreground: 0 0% 95%;
 
-    --muted: 220 13% 20%;
+    --muted: 243 30% 18%;
     --muted-foreground: 220 9% 65%;
 
-    --accent: 142 76% 36%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 36 41% 60%;
+    --accent-foreground: 243 38% 12%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 70% 70%;
     --destructive-foreground: 0 0% 98%;
 
-    --success: 142 76% 36%;
+    --success: 145 60% 55%;
     --success-foreground: 0 0% 98%;
 
-    --warning: 38 92% 50%;
+    --warning: 40 78% 65%;
     --warning-foreground: 0 0% 98%;
 
-    --border: 220 13% 25%;
-    --input: 220 13% 25%;
-    --ring: 0 0% 95%;
+    --border: 243 30% 20%;
+    --input: 243 30% 20%;
+    --ring: 36 41% 60%;
+
+    --chart-1: 210 85% 46%;
+    --chart-2: 174 90% 24%;
+    --chart-3: 48 90% 52%;
+    --chart-4: 348 85% 50%;
+    --chart-5: 291 80% 52%;
+    --chart-6: 39 90% 40%;
+    --chart-7: 141 90% 28%;
+    --chart-8: 26 90% 45%;
+    --chart-9: 199 90% 34%;
+    --chart-10: 327 85% 47%;
   }
 }
 

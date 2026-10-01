@@ -3,16 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>InvestTracker - Gestão de Investimentos</title>
+    <title>Peta Tracker - Gestão de Investimentos</title>
     <meta
       name="description"
       content="Ferramenta moderna e intuitiva para gerenciar seu portfólio de investimentos"
     />
-    <meta name="author" content="InvestTracker" />
+    <meta name="author" content="Peta Tracker" />
 
     <meta
       property="og:title"
-      content="InvestTracker - Gestão de Investimentos"
+      content="Peta Tracker - Gestão de Investimentos"
     />
     <meta
       property="og:description"
@@ -23,15 +23,31 @@
     <meta name="twitter:card" content="summary" />
     <meta
       name="twitter:title"
-      content="InvestTracker - Gestão de Investimentos"
+      content="Peta Tracker - Gestão de Investimentos"
     />
     <meta
       name="twitter:description"
       content="Ferramenta moderna e intuitiva para gerenciar seu portfólio de investimentos"
     />
+
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
 
   <body>
+    <script>
+      (function () {
+        var theme = localStorage.getItem("theme");
+        if (theme !== "light") {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

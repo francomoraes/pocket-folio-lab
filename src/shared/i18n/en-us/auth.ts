@@ -31,6 +31,10 @@ export default {
     login: "Login",
     logout: "Logout",
     profile: "Profile",
+    theme: {
+      light: "Light theme",
+      dark: "Dark theme",
+    },
   },
   profile: {
     title: "My Profile",

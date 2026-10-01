@@ -1,5 +1,5 @@
 export default {
-  appName: "InvestTracker",
+  appName: "Peta Tracker",
   links: {
     positions: "Positions",
     dashboard: "Dashboard",

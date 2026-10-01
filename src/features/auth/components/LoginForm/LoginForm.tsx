@@ -35,8 +35,14 @@ export const LoginForm = () => {
     <div className="flex min-h-screen items-center justify-center p-4 bg-background">
       <Card className="w-full max-w-md border-t-4 border-t-accent">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">
-            {t("navbar.appName")}
+          <CardTitle className="flex justify-center">
+            <div className="bg-[#030016] rounded-md px-3 py-1.5 inline-flex items-center">
+              <img
+                src="/peta-capital-logo.webp"
+                alt={t("navbar.appName")}
+                className="h-7 w-auto"
+              />
+            </div>
           </CardTitle>
           <CardDescription>
             {isRegisterMode

@@ -8,7 +8,6 @@ import {
   FileSpreadsheet,
   Globe2,
   PieChart,
-  TrendingUp,
   ShieldCheck,
   WifiOff,
   FileX2,
@@ -31,9 +30,12 @@ export const HomePage = () => {
     <main className="flex flex-col">
       {/* Hero */}
       <section className="flex flex-col items-center justify-center text-center px-4 py-20 sm:py-32 gap-6">
-        <div className="flex items-center gap-2 text-accent mb-2">
-          <TrendingUp className="h-8 w-8" />
-          <span className="text-2xl font-bold">Invest Tracker</span>
+        <div className="bg-[#030016] rounded-md px-4 py-2 mb-2">
+          <img
+            src="/peta-capital-logo.webp"
+            alt={t("navbar.appName")}
+            className="h-8 w-auto"
+          />
         </div>
 
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight max-w-3xl">

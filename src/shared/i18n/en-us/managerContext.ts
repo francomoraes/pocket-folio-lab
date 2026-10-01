@@ -1,6 +1,6 @@
 export default {
-  viewing: "Viewing portfolio of:",
   exitContext: "Exit context",
+  menuTitle: "Client options",
   nav: {
     dashboard: "Dashboard",
     positions: "Positions",
